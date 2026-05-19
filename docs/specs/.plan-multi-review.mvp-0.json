@@ -1,0 +1,133 @@
+{
+  "ok": false,
+  "unanimous_blockers": [
+    "T13 (file_count_max=14) НЕ помечен challenge-gate несмотря на operator-loop правило 'risk_tier ∈ {db_migration, security} OR file_count_max > 5'. Применение rule буквально → 13/15 packets fire challenge, plan + manifest list только 4. ENG + ARCHITECT raised. Fix: либо wave-spec override clause (e.g. 'AND risk_tier ≥ strong_gate'), либо reduce file_count_max на T01/T02/T05/T06/T10/T13/T15, либо добавить exempted-packets list.",
+    "Strategic checkpoint cross-file расхождение: mvp-0.md § 5+§ 7+§ 9 говорят 'после T03/T06/T09/T12' (=3/6/9/12 per STRATEGIC_REVIEW_EVERY=3 counter); mvp-0-packets.md § 5 говорит 'после T03/T07/T10/T13'. ENG + ARCHITECT raised. Per operator-loop semantics counter-based 3/6/9/12 correct — packets manifest § 5 содержит numerically wrong claim.",
+    "Critical-path bottleneck T09 (deps T07+T08, оба ≠trivial). CEO + ENG raised. T08 db_migration challenge-gate ~3 rounds typical → T09 blocked даже когда T07 ready. CEO interprets как 'wave не завершится к defense'; ENG interprets как 'wall increases wave time 2x'. Single-threaded 10-hop critical path остаётся.",
+    "Numerical inconsistencies в обоих files: '9 ordinary / 4 strong_gate / 2 db_migration' — actual count 8/5/2 (sum 15 ✓ но cuts wrong). '8 architect calls' но manifest Architect=да на 7 packets. Also '11 ordinary-tier Sonnet calls' wrong per operator-loop model dispatch (strong+db → Opus = 7 Opus + 8 Sonnet). ARCHITECT raised (ENG separately noted).",
+    "Wave spec § 12 'Open decisions blocking wave init' (12.1-12.8) outdated — ADR-022..028 уже приняты в 04-technical-decisions.md (bun, Android SDK, Result manual, tests location, flat layout, Capacitor SQLite, web memory-only). Section должен быть resolved/closed. ARCHITECT raised."
+  ],
+  "conflicts": [
+    {
+      "critic_a": "ceo",
+      "critic_b": "eng",
+      "topic": "wave scope: shrink 15→5-8 packets + killer feature vs keep 15 + fix tech blockers",
+      "ceo_says": "Drop T04/T05/T06/T07/T10/T14/T15. 10 packets infrastructure pure → throw-away risk высокий. Keep ~8 + add T-new (OCR syllabus / AI daily triage / voice quick-capture) для distinctive defense story. Ambition=3/10.",
+      "eng_says": "15 packets keep. Tighten within-scope: add T02→T08 dep (Capacitor plugin install requires platform), document migration down path, calibrate health weights, fix HEALTH_TIMEOUT_CAP, lock idempotency contract (no-op vs error Result), explicit single-TX migration wrap."
+    },
+    {
+      "critic_a": "ceo",
+      "critic_b": "architect",
+      "topic": "gamification scope (XP формула strong_gate worth it?)",
+      "ceo_says": "T05 (XP strong_gate + architect + critic) over-engineered для формулы floor(xp/1000)+1 без motivational loop (drops/mascot/rewards в MVP-1). Дипломная новизна=0. Drop T05.",
+      "architect_says": "T05 layer placement correct, watchlist § 13 #3 (level formula) hard-MVP-0 invariant — boundary tests xpTotal=0/999/1000/1001 must pass. Fix typo в 07 § 5 worked example (computeProgress dup), keep T05 strong_gate."
+    }
+  ],
+  "per_critic": {
+    "ceo": {
+      "ok": false,
+      "scope_gap": "Plan ships hexagonal scaffold + CRUD todo + trivial XP формула. Claims 'working core' но real user value = generic todo + прогресс-бар. 10+ из 15 packets — pure infrastructure. User-facing logic = T13/T14 (18 files).",
+      "ambition_score": 3,
+      "ten_star_idea": "Pick ONE specific student pain (например 'дедлайны курсачей теряются между Telegram/тетрадь/память') и build narrow killer feature: photo-of-syllabus → OCR → auto-tasks + один agentic loop 'что из 5 задач реально сегодня?' Hexagonal arch демонстрируется на одном вертикальном slice глубоко.",
+      "narrowest_wedge": "5 packets вместо 15: scaffold, SQLite+migration+TaskRepo, create/list/complete usecase + memory, UI minimal, Android deploy. Profile/XP/archive/groups/ordered-tree → MVP-1.",
+      "blockers": [
+        "NO acute user identified — spec generic todo",
+        "Gamification core T05 strong_gate + architect — over-engineered для floor(xp/1000)+1 без motivational loop",
+        "Critical path 10 hops single-threaded, 5 strong_gate/db_migration blockers",
+        "T08+T09 db_migration tier inflated для одной таблицы tasks + profile",
+        "Ordered complexity tree (T06) без validated user need",
+        "T10 memory repos дублирование infra effort для browser dev (Android target)",
+        "No retention/engagement metric defined — success = persistence test, не product",
+        "T01-T12 = 12 packets pure plumbing reusable только если MVP-1/2 случится"
+      ],
+      "notes": "Ambition 3/10. Recommend keep ~8 packets + 1 killer feature. Throw-away risk 80% если defense закрывает project."
+    },
+    "eng": {
+      "ok": false,
+      "arch_concerns": [
+        "UoW context type leak: optional MVP-1/2 repos (inventory?, mascot?, settings?, visualState?) в UnitOfWorkContext per 02 § 13; MVP-0 packets ships только 3 repos — unclear declare-undefined vs trim type",
+        "T12 bootstrap-flow deps только T11, но bootstrap runs migrations — где живёт migration runner invocation (T11 ctor / T12 / SqliteUnitOfWork ctor)? Critical ambiguity",
+        "T10 memory-repos deps T07 inverted: MemoryUoW нужен для T07 use case tier-2 tests до T10",
+        "T13 file_count_max=14 → challenge per rule, но manifest exempts",
+        "completeTask idempotency: '.status===active guard ИЛИ no-op Result / domain error' — два контракта, worker угадает"
+      ],
+      "edge_cases_missing": [
+        "Capacitor SQLite background→foreground .open() race",
+        "Partial migration crash между SQL commit и schema_migrations insert (single-TX wrap не explicit)",
+        "Empty profile bootstrap race (create profile/progression separate writes без UoW.run)",
+        "Concurrent completeTask READ-MODIFY-WRITE pattern не documented",
+        "archive→unarchive flow не предусмотрен (scope drift risk)",
+        "infrastructure/sqlite/* bundle leak если Vite tree-shake fails (verification не required)",
+        "UoW abort при background app kill"
+      ],
+      "test_gaps": [
+        "Capacitor SQLite integration test невозможно в CI без emulator — T09 challenge требует UoW atomicity verify",
+        "Migration rollback path test не упомянут в T08 acceptance",
+        "Idempotency completeTask только Tier 1 domain test — Tier 2 двойной call не cross-referenced",
+        "Health check bun test scope для T09 (emulator) — 90s cap нереалистичен"
+      ],
+      "perf_hotspots": [
+        "T13 task list O(n log n) re-sort на каждый reactive write без memoization",
+        "PRAGMA на каждый transaction если SqliteUoW open per call",
+        "completeTask chain 5 round-trips в одной TX → IPC overhead Android",
+        "Bootstrap cold-start >500ms blank screen потенциально"
+      ],
+      "failure_modes": [
+        "Crash mid-migration без single-TX wrap → schema applied no row → CREATE TABLE fails next run",
+        "DI race на bootstrap (Nuxt plugin async resolve)",
+        "Capacitor SQLite plugin install fail — T08 deps только T01 (не T02), dependency graph wrong",
+        "Memory UoW non-atomicity (Map в place mod, no rollback) — Tier 3 test parity broken",
+        "schema_migrations cleanup при wave abort undocumented"
+      ],
+      "blockers": [
+        "STRATEGIC_REVIEW checkpoint расхождение mvp-0.md vs packets.md (3/6/9/12 vs 3/7/10/13)",
+        "T13 challenge-gate rule vs list inconsistency",
+        "T09 critical-path bottleneck (no mitigation, sequential lock)",
+        "Migration runner DOWN path не specified",
+        "T08 dependency missing T02 (Capacitor plugin install)",
+        "Health weighting tsc 0.35 / test 0.35 / loc 0.15 / secrets 0.15 без justification",
+        "HEALTH_TIMEOUT_CAP 90s нереалистичен для T09/T13 — guaranteed null health = gate disabled"
+      ],
+      "notes": "Plan strong в product vision/domain logic; orchestration layer имеет 6 hard blockers. Recommend pre-init patch session."
+    },
+    "architect": {
+      "ok": false,
+      "missing": [
+        "T13/T15/T05/T06/T10 challenge-gate per rule file_count_max>5 не упомянуты — implicit drop клаузы без override",
+        "Watchlist § 13 completeTask onLevelUp hook signature нигде формально не специфицирован (02 § 13 нет hook)",
+        "Strategic_review_results checkpoint IDs (3/7/10/13 in packets manifest) numerically wrong vs operator-loop counter-based (3/6/9/12)"
+      ],
+      "misplaced": [
+        "Packet T06 'mvp-0-T06-domain-task-operations' содержит suggestTaskComplexity + resolveTaskList + applyLevelProgress — per 02 § 4.3 эти EXPLICITLY use cases (`.use-case.ts`), не domain. Packet name violates layer mapping; rename 'use-cases-task-operations' либо ADR overrides 02 § 4.3",
+        "07 § 5 worked example T05 включает core/domain/progression.ts (Profile+Progression+computeLevel+computeProgress) — но T04 packet manifest также claims это scope. Worked example фактически объединяет T04+T05 (stale до splitting)"
+      ],
+      "contradictions": [
+        "Tier counts 9/4/2 claimed vs actual 8/5/2 (T05/T06/T07/T11/T12 = 5 strong_gate, не 4)",
+        "Strategic checkpoints 3/6/9/12 (wave spec) vs 3/7/10/13 (packets manifest)",
+        "Architect calls 8 claimed vs 7 actual (T05/T06/T07/T08/T09/T11/T12)",
+        "T01-T02 'ordinary, CSO/challenge skip' contradicts file_count_max trigger (T01=15, T02=10)",
+        "§ 6 internally contradicts: T07 'diff <100 LOC, файлов <5, pure' но T07 strong_gate file=10",
+        "Watchlist § 13 #14/idempotency reference T11 — но completeTask = T07. Wrong packet ID",
+        "Wave spec § 12 'Open decisions' lists ADR-022..028 как open, фактически приняты"
+      ],
+      "spec_issues": {
+        "ambiguous": [
+          "T06 tests path: use-case (co-located) vs domain (tests/domain/) — layer ambiguity propagates",
+          "CHALLENGE_TRIGGER 'OR file_count_max>5' override mechanism не provided в wave spec",
+          "07 § 5 worked example computeProgress listed дважды (typo)",
+          "Test fakes ownership packet undefined (T05 не нужен, T07 нужен — где создаются?)",
+          "UnitOfWorkContext MVP-0 optional MVP-1/2 fields keep-optional или omit?"
+        ],
+        "contradicts_reality": [
+          "@capacitor-community/sqlite полностью async — 07 § 6 'если требует async' wording stale",
+          "PRAGMA per-connection lifetime, не per-query — 'каждый open' wording возможно misread",
+          "Health computation на T01 — package.json ещё не существует, первые 1-3 packets health=null"
+        ]
+      },
+      "fix_target": "both",
+      "notes": "Plan нумерически broken на нескольких axes. CHALLENGE_TRIGGER literally fires на 13/15 packets — needs wave-level override carve-out OR file_count_max reduction. T06 layer placement contradicts 02 § 4.3. § 12 outdated после ADR acceptance. Watchlist packet IDs wrong (T11→T07)."
+    },
+    "dx": null
+  },
+  "routing": "escalate"
+}

@@ -1,0 +1,44 @@
+# Operator-loop state (constitution exception — see ~/.claude/skills/operator-loop/SKILL.md)
+.operator-state.*.json
+.operator-state.*.json.bak
+.operator-state.*.json.tmp
+.operator-state.*.lock
+.packet-context.*.json
+.packet-fail.*.r*
+
+# Node / Bun
+node_modules/
+.nuxt/
+.output/
+dist/
+*.log
+.env
+.env.local
+bun.lock.bak
+
+# Capacitor / Android (после T02)
+android/.gradle/
+android/build/
+android/app/build/
+android/app/release/
+android/local.properties
+android/captures/
+*.apk
+*.aab
+*.keystore
+
+# IDE
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Test
+coverage/
+.nyc_output/
+
+# Temp
+*.tmp
+*.swp
+*~
