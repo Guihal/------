@@ -11,7 +11,9 @@ async function sha256(sql: string): Promise<string> {
   const encoder = new TextEncoder()
   const data = encoder.encode(sql)
   const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  return btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
 }
 
 export async function applyMigrations(
@@ -114,8 +116,8 @@ async function applySingleMigration(
       } catch (err) {
         try {
           await db.execute('ROLLBACK')
-        } catch (rollbackErr) {
-          console.error('rollback failed:', rollbackErr)
+        } catch {
+          // rollback failed, but throw original error
         }
         throw err
       }
@@ -124,7 +126,7 @@ async function applySingleMigration(
 
   // SQLite doesn't support query cancellation. The timeout rejects the Promise
   // but the SQL statement continues executing in the background.
-  let timerId = setTimeout(() => {}, timeoutMs)
+  let timerId: ReturnType<typeof setTimeout>
   const timeout = new Promise<never>((_, reject) => {
     timerId = setTimeout(() => reject(new Error(`migration timeout v${m.version}`)), timeoutMs)
   })
