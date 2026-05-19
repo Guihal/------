@@ -17,5 +17,14 @@ export async function openDatabaseConnection(
       CapacitorSQLite.run({ database, statement, values, transaction: true }),
     query: async (statement: string, values?: unknown[]) =>
       CapacitorSQLite.query({ database, statement, values }),
+    executeSet: async (statements: { statement: string; values?: unknown[] }[]) =>
+      CapacitorSQLite.executeSet({
+        database,
+        set: statements.map((s) => ({
+          statement: s.statement,
+          values: s.values ?? [],
+        })),
+        transaction: true,
+      }),
   }
 }
