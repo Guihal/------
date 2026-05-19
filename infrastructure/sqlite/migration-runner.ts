@@ -28,6 +28,8 @@ export async function applyMigrations(
   }
 
   await db.execute('PRAGMA foreign_keys = ON')
+  await db.execute('PRAGMA journal_mode = WAL')
+  await db.execute('PRAGMA synchronous = NORMAL')
 
   const pending = await getPendingMigrations(db, migrations)
   for (const m of pending) {
@@ -46,6 +48,13 @@ async function getPendingMigrations(
       checksum TEXT NOT NULL
     )`,
   )
+  await db.execute(
+    `CREATE TABLE IF NOT EXISTS failed_migrations (
+      version INTEGER PRIMARY KEY,
+      error TEXT NOT NULL,
+      failed_at TEXT NOT NULL
+    )`,
+  )
   const { values } = await db.query('SELECT version, checksum FROM schema_migrations')
   const applied = new Map<number, string>()
   for (const row of values as { version: number; checksum: string }[]) {
@@ -56,6 +65,7 @@ async function getPendingMigrations(
     const cs = await sha256(m.sql)
     const existing = applied.get(m.version)
     if (existing !== undefined && existing !== cs) {
+      await recordFailedMigration(db, m.version, `schema drift detected for migration ${m.version}`)
       throw new Error(
         `schema drift detected for migration ${m.version}`,
       )
@@ -65,6 +75,17 @@ async function getPendingMigrations(
   return migrations
     .filter((m) => !applied.has(m.version))
     .sort((a, b) => a.version - b.version)
+}
+
+async function recordFailedMigration(
+  db: SqliteConnection,
+  version: number,
+  error: string,
+): Promise<void> {
+  await db.run(
+    'INSERT OR REPLACE INTO failed_migrations (version, error, failed_at) VALUES (?, ?, ?)',
+    [version, error, new Date().toISOString()],
+  )
 }
 
 async function applySingleMigration(
@@ -91,13 +112,19 @@ async function applySingleMigration(
         await db.run(insertStmt, insertValues)
         await db.execute('COMMIT')
       } catch (err) {
-        await db.execute('ROLLBACK').catch(() => {})
+        try {
+          await db.execute('ROLLBACK')
+        } catch (rollbackErr) {
+          console.error('rollback failed:', rollbackErr)
+        }
         throw err
       }
     }
   }
 
-  let timerId: ReturnType<typeof setTimeout>
+  // SQLite doesn't support query cancellation. The timeout rejects the Promise
+  // but the SQL statement continues executing in the background.
+  let timerId = setTimeout(() => {}, timeoutMs)
   const timeout = new Promise<never>((_, reject) => {
     timerId = setTimeout(() => reject(new Error(`migration timeout v${m.version}`)), timeoutMs)
   })
