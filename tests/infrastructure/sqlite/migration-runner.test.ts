@@ -50,7 +50,6 @@ if (typeof Bun === 'undefined') {
 
     beforeEach(() => {
       db = new Database(':memory:')
-      db.exec('PRAGMA foreign_keys = ON')
       conn = createBunSqliteConnection(db)
     })
 
@@ -154,6 +153,31 @@ if (typeof Bun === 'undefined') {
       expect(names).toContain('idx_tasks_profile_id')
       expect(names).toContain('idx_tasks_profile_status_due_at')
       expect(names).toContain('idx_tasks_profile_created_at')
+    })
+
+    it('rejects duplicate versions', async () => {
+      const dups = [
+        ...migrations,
+        { version: 1, name: 'dup', sql: 'SELECT 1;' },
+      ]
+      await expect(applyMigrations(conn, dups)).rejects.toThrow(/duplicate migration version/)
+    })
+
+    it('times out on slow migration', async () => {
+      const slowConn: SqliteConnection = {
+        execute: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 200))
+          return { changes: 0 }
+        },
+        run: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 200))
+          return { changes: 0 }
+        },
+        query: async () => ({ values: [] }),
+      }
+
+      const fastMigration = { version: 1, name: 'fast', sql: 'SELECT 1;' }
+      await expect(applyMigrations(slowConn, [fastMigration], 50)).rejects.toThrow(/migration timeout/)
     })
   })
 }

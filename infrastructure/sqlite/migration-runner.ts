@@ -7,26 +7,31 @@ export interface SqliteConnection {
   executeSet?(statements: { statement: string; values?: unknown[] }[]): Promise<{ changes: number }>
 }
 
-function hashCode(str: string): number {
-  let h = 0
-  for (let i = 0; i < str.length; i++) {
-    h = (h << 5) - h + str.charCodeAt(i)
-    h |= 0
-  }
-  return h
-}
-
-function checksum(sql: string): string {
-  return String(hashCode(sql))
+async function sha256(sql: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(sql)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  return btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))
 }
 
 export async function applyMigrations(
   db: SqliteConnection,
   migrations: Migration[],
+  timeoutMs = 5000,
 ): Promise<void> {
+  const seen = new Set<number>()
+  for (const m of migrations) {
+    if (seen.has(m.version)) {
+      throw new Error(`duplicate migration version: ${m.version}`)
+    }
+    seen.add(m.version)
+  }
+
+  await db.execute('PRAGMA foreign_keys = ON')
+
   const pending = await getPendingMigrations(db, migrations)
   for (const m of pending) {
-    await applySingleMigration(db, m)
+    await applySingleMigration(db, m, timeoutMs)
   }
 }
 
@@ -48,8 +53,9 @@ async function getPendingMigrations(
   }
 
   for (const m of migrations) {
+    const cs = await sha256(m.sql)
     const existing = applied.get(m.version)
-    if (existing !== undefined && existing !== checksum(m.sql)) {
+    if (existing !== undefined && existing !== cs) {
       throw new Error(
         `schema drift detected for migration ${m.version}`,
       )
@@ -66,8 +72,7 @@ async function applySingleMigration(
   m: Migration,
   timeoutMs = 5000,
 ): Promise<void> {
-  const cs = checksum(m.sql)
-  console.log(`[migration] start v${m.version}`)
+  const cs = await sha256(m.sql)
 
   const runMigration = async (): Promise<void> => {
     const insertStmt =
@@ -80,20 +85,26 @@ async function applySingleMigration(
         { statement: insertStmt, values: insertValues },
       ])
     } else {
-      await db.execute(m.sql)
-      await db.run(insertStmt, insertValues)
+      await db.execute('BEGIN TRANSACTION')
+      try {
+        await db.execute(m.sql)
+        await db.run(insertStmt, insertValues)
+        await db.execute('COMMIT')
+      } catch (err) {
+        await db.execute('ROLLBACK').catch(() => {})
+        throw err
+      }
     }
   }
 
+  let timerId: ReturnType<typeof setTimeout>
   const timeout = new Promise<never>((_, reject) => {
-    setTimeout(() => reject(new Error(`[migration] timeout v${m.version}`)), timeoutMs)
+    timerId = setTimeout(() => reject(new Error(`migration timeout v${m.version}`)), timeoutMs)
   })
 
   try {
     await Promise.race([runMigration(), timeout])
-    console.log(`[migration] done v${m.version}`)
-  } catch (err) {
-    console.error(`[migration] fail v${m.version}: ${err instanceof Error ? err.message : String(err)}`)
-    throw err
+  } finally {
+    clearTimeout(timerId)
   }
 }
