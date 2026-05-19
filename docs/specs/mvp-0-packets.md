@@ -17,7 +17,7 @@ worked examples в 07 § 4-6. Operator-loop читает таблицу § 2 к�
 | ID | Goal (1 line) | Roadmap | Deps | Risk tier | File max | Architect | Challenge |
 |----|---------------|---------|------|-----------|----------|-----------|-----------|
 | mvp-0-T01-scaffold-base | Nuxt 4 + TS strict + Pinia + Vitest + folder layout | 1 | — | ordinary | 15 | нет | нет |
-| mvp-0-T02-capacitor-android | Capacitor 6+ install + Android platform + sync skeleton | 1 | T01 | ordinary | 10 | нет | нет |
+| mvp-0-T02-capacitor-android | Capacitor 8+ install + Android platform + sync skeleton | 1 | T01 | ordinary | 10 | нет | нет |
 | mvp-0-T03-domain-task | Task type + status/priority/complexity enums + invariants tests | 2 | T01 | ordinary | 6 | нет | нет |
 | mvp-0-T04-domain-profile-progression | Profile + Progression types + computeLevel + computeProgress + XP_PER_LEVEL=1000 | 2 | T01 | ordinary | 6 | нет | нет |
 | mvp-0-T05-domain-xp-rules | task-xp.ts: BASE_XP, PRIORITY_BONUS, computeBaseXp, computeFinalXp (MVP-0 `finalXp = baseXp`, taskMultiplier=1, equipmentXpMultiplier=1 — explicit invariant) + Vitest | 2 | T03,T04 | strong_gate | 8 | да | нет |

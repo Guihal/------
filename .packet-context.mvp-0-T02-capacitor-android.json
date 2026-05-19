@@ -1,0 +1,38 @@
+{
+  "id": "mvp-0-T02-capacitor-android",
+  "wave_id": "mvp-0",
+  "goal": "Capacitor 6+ install + Android platform + sync skeleton",
+  "risk_tier": "ordinary",
+  "file_count_max": 10,
+  "diff_budget_loc": 200,
+  "deps": ["mvp-0-T01-scaffold-base"],
+  "allowed_write_paths": [
+    "package.json",
+    "bun.lock",
+    "capacitor.config.ts",
+    "capacitor.config.json",
+    "android/**",
+    "infrastructure/capacitor/**",
+    "tests/infrastructure/capacitor/**",
+    ".gitignore"
+  ],
+  "read_first": [
+    "docs/specs/mvp-0-packets.md",
+    "docs/specs/mvp-0.md",
+    "docs/04-technical-decisions.md",
+    "AGENTS.md"
+  ],
+  "acceptance": [
+    "@capacitor/core + @capacitor/cli + @capacitor-community/sqlite установлены",
+    "npx cap add android OK (или bun x cap add android)",
+    "android/ платформа сгенерирована",
+    "bun run build + npx cap sync проходят без ошибок",
+    "minSdk 22, targetSdk 34 per ADR-023",
+    "Capacitor SQLite plugin CRUD smoke в browser fallback (mock проверка)"
+  ],
+  "architect_required": false,
+  "challenge_required": false,
+  "cso_required": false,
+  "model_dispatch": "sonnet",
+  "notes": "ADR-027: @capacitor-community/sqlite plugin install + verify. T08 blocked на этот packet (deps T02)."
+}
