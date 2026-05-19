@@ -23,4 +23,12 @@ export class MemoryTaskRepository implements TaskRepositoryPort {
   async delete(profileId: string, id: string): Promise<void> {
     this.tasks.delete(this.key(profileId, id))
   }
+
+  snapshot(): Map<string, Task> {
+    return structuredClone(this.tasks)
+  }
+
+  restore(snapshot: Map<string, Task>): void {
+    this.tasks = snapshot
+  }
 }

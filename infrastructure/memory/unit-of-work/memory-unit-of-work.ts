@@ -11,12 +11,18 @@ export class MemoryUnitOfWork implements UnitOfWorkPort {
   readonly profiles: ProfileRepositoryPort
   readonly progressions: ProgressionRepositoryPort
 
+  private readonly taskRepo: MemoryTaskRepository
+  private readonly profileRepo: MemoryProfileRepository
+  private readonly progressionRepo: MemoryProgressionRepository
   private inTransaction = false
 
   constructor() {
-    this.tasks = new MemoryTaskRepository()
-    this.profiles = new MemoryProfileRepository()
-    this.progressions = new MemoryProgressionRepository()
+    this.taskRepo = new MemoryTaskRepository()
+    this.profileRepo = new MemoryProfileRepository()
+    this.progressionRepo = new MemoryProgressionRepository()
+    this.tasks = this.taskRepo
+    this.profiles = this.profileRepo
+    this.progressions = this.progressionRepo
   }
 
   async run<T>(callback: () => Promise<T>): Promise<T> {
@@ -38,21 +44,17 @@ export class MemoryUnitOfWork implements UnitOfWorkPort {
     }
   }
 
-  private snapshot(): {
-    tasks: Map<string, unknown>
-    profiles: Map<string, unknown>
-    progressions: Map<string, unknown>
-  } {
+  private snapshot() {
     return {
-      tasks: structuredClone((this.tasks as { tasks: Map<string, unknown> }).tasks),
-      profiles: structuredClone((this.profiles as { profiles: Map<string, unknown> }).profiles),
-      progressions: structuredClone((this.progressions as { progressions: Map<string, unknown> }).progressions),
+      tasks: this.taskRepo.snapshot(),
+      profiles: this.profileRepo.snapshot(),
+      progressions: this.progressionRepo.snapshot(),
     }
   }
 
-  private restore(snapshot: ReturnType<typeof this.snapshot>): void {
-    ;(this.tasks as { tasks: Map<string, unknown> }).tasks = snapshot.tasks
-    ;(this.profiles as { profiles: Map<string, unknown> }).profiles = snapshot.profiles
-    ;(this.progressions as { progressions: Map<string, unknown> }).progressions = snapshot.progressions
+  private restore(s: ReturnType<typeof this.snapshot>): void {
+    this.taskRepo.restore(s.tasks)
+    this.profileRepo.restore(s.profiles)
+    this.progressionRepo.restore(s.progressions)
   }
 }

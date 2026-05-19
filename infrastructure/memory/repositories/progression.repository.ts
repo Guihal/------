@@ -11,4 +11,12 @@ export class MemoryProgressionRepository implements ProgressionRepositoryPort {
   async save(progression: Progression): Promise<void> {
     this.progressions.set(progression.profileId, progression)
   }
+
+  snapshot(): Map<string, Progression> {
+    return structuredClone(this.progressions)
+  }
+
+  restore(snapshot: Map<string, Progression>): void {
+    this.progressions = snapshot
+  }
 }

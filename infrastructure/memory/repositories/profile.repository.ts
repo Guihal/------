@@ -11,4 +11,12 @@ export class MemoryProfileRepository implements ProfileRepositoryPort {
   async save(profile: Profile): Promise<void> {
     this.profiles.set(profile.id, profile)
   }
+
+  snapshot(): Map<string, Profile> {
+    return structuredClone(this.profiles)
+  }
+
+  restore(snapshot: Map<string, Profile>): void {
+    this.profiles = snapshot
+  }
 }
