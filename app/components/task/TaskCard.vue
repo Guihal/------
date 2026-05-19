@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Task } from "../../../core/domain/task/types"
 
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
+
 const props = defineProps<{
   task: Task
   isLoading?: boolean
@@ -41,20 +43,20 @@ const pcls: Record<Task["priority"], string> = {
 </template>
 
 <style scoped>
-.task-card { background: #1e1e2e; border: 1px solid #313244; border-radius: 12px; padding: 16px; margin-bottom: 12px; color: #cdd6f4; }
-.task-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-.task-title { margin: 0; font-size: 16px; font-weight: 600; color: #cdd6f4; word-break: break-word; }
-.task-priority { font-size: 11px; font-weight: 600; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
-.priority-low { background: #45475a; color: #a6adc8; }
-.priority-normal { background: #313244; color: #89b4fa; }
-.priority-high { background: #452434; color: #f38ba8; }
-.task-meta { display: flex; gap: 12px; font-size: 13px; color: #a6adc8; margin-bottom: 8px; }
+.task-card { background: v-bind("t.color.bgCard"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.lg"); padding: v-bind("t.spacing.lg"); margin-bottom: v-bind("t.spacing.md"); color: v-bind("t.color.textPrimary"); }
+.task-header { display: flex; align-items: center; justify-content: space-between; gap: v-bind("t.spacing.md"); margin-bottom: v-bind("t.spacing.sm"); }
+.task-title { margin: 0; font-size: v-bind("t.typography.size.lg"); font-weight: v-bind("t.typography.weight.semibold"); color: v-bind("t.color.textPrimary"); word-break: break-word; }
+.task-priority { font-size: v-bind("t.typography.size.xs"); font-weight: v-bind("t.typography.weight.semibold"); text-transform: uppercase; padding: v-bind("t.spacing.xs") v-bind("t.spacing.sm"); border-radius: v-bind("t.radius.full"); white-space: nowrap; }
+.priority-low { background: v-bind("t.color.priorityLowBg"); color: v-bind("t.color.priorityLowText"); }
+.priority-normal { background: v-bind("t.color.priorityNormalBg"); color: v-bind("t.color.priorityNormalText"); }
+.priority-high { background: v-bind("t.color.priorityHighBg"); color: v-bind("t.color.priorityHighText"); }
+.task-meta { display: flex; gap: v-bind("t.spacing.md"); font-size: v-bind("t.typography.size.sm"); color: v-bind("t.color.textSecondary"); margin-bottom: v-bind("t.spacing.sm"); }
 .task-complexity { text-transform: capitalize; }
-.task-description { font-size: 14px; color: #a6adc8; margin-bottom: 12px; line-height: 1.4; }
-.task-actions { display: flex; gap: 8px; }
-.btn-complete, .btn-archive { min-height: 44px; min-width: 44px; padding: 8px 16px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; flex: 1; }
-.btn-complete { background: #a6e3a1; color: #1e1e2e; }
+.task-description { font-size: v-bind("t.typography.size.md"); color: v-bind("t.color.textSecondary"); margin-bottom: v-bind("t.spacing.md"); line-height: v-bind("t.typography.lineHeight.normal"); }
+.task-actions { display: flex; gap: v-bind("t.spacing.sm"); }
+.btn-complete, .btn-archive { min-height: 44px; min-width: 44px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border: none; border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; flex: 1; }
+.btn-complete { background: v-bind("t.color.accentGreen"); color: v-bind("t.color.textInverse"); }
 .btn-complete:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-archive { background: #45475a; color: #cdd6f4; }
+.btn-archive { background: v-bind("t.color.priorityLowBg"); color: v-bind("t.color.textPrimary"); }
 .btn-archive:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>

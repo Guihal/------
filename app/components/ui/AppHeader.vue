@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
+
 const props = defineProps<{
   profileName: string
   totalXp: number
@@ -20,26 +22,31 @@ const props = defineProps<{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: v-bind("t.spacing.xl");
+  padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg");
+  background: v-bind("t.color.bgElevated");
+  border-radius: v-bind("t.radius.lg");
+  color: v-bind("t.color.textPrimary");
 }
 .app-header h1 {
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: v-bind("t.typography.size.xl");
+  font-weight: v-bind("t.typography.weight.bold");
+  color: v-bind("t.color.textPrimary");
 }
 .profile-badge {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
+  gap: v-bind("t.spacing.xs");
 }
 .profile-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #cdd6f4;
+  font-size: v-bind("t.typography.size.md");
+  font-weight: v-bind("t.typography.weight.semibold");
+  color: v-bind("t.color.textPrimary");
 }
 .profile-xp {
-  font-size: 12px;
-  color: #a6adc8;
+  font-size: v-bind("t.typography.size.sm");
+  color: v-bind("t.color.textSecondary");
 }
 </style>

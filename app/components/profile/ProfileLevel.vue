@@ -2,6 +2,8 @@
 import { computed } from "vue"
 import { computeLevel, computeProgress, XP_PER_LEVEL } from "../../../core/domain/progression/compute"
 
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
+
 const props = defineProps<{
   xp: number
   name: string
@@ -33,47 +35,48 @@ const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
 
 <style scoped>
 .profile-level {
-  background: #1e1e2e;
-  border: 1px solid #313244;
-  border-radius: 12px;
-  padding: 16px;
+  background: v-bind("t.color.bgCard");
+  border: 1px solid v-bind("t.color.borderSubtle");
+  border-radius: v-bind("t.radius.lg");
+  padding: v-bind("t.spacing.lg");
+  color: v-bind("t.color.textPrimary");
 }
 .profile-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: v-bind("t.spacing.md");
 }
 .profile-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #cdd6f4;
+  font-size: v-bind("t.typography.size.lg");
+  font-weight: v-bind("t.typography.weight.semibold");
+  color: v-bind("t.color.textPrimary");
 }
 .profile-level-badge {
-  font-size: 14px;
-  font-weight: 700;
-  color: #f9e2af;
+  font-size: v-bind("t.typography.size.md");
+  font-weight: v-bind("t.typography.weight.bold");
+  color: v-bind("t.color.accentYellow");
 }
 .xp-bar {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: v-bind("t.spacing.sm");
 }
 .xp-bar-track {
   height: 8px;
-  background: #313244;
-  border-radius: 4px;
+  background: v-bind("t.color.borderSubtle");
+  border-radius: v-bind("t.radius.sm");
   overflow: hidden;
 }
 .xp-bar-fill {
   height: 100%;
-  background: #a6e3a1;
-  border-radius: 4px;
+  background: v-bind("t.color.accentGreen");
+  border-radius: v-bind("t.radius.sm");
   transition: width 0.3s ease;
 }
 .xp-text {
-  font-size: 12px;
-  color: #a6adc8;
+  font-size: v-bind("t.typography.size.sm");
+  color: v-bind("t.color.textSecondary");
   text-align: right;
 }
 </style>

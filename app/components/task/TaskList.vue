@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { Task } from "../../../core/domain/task/types"
 import TaskCard from "./TaskCard.vue"
+import EmptyState from "../ui/EmptyState.vue"
 
 const props = defineProps<{
   title: string
   tasks: readonly Task[]
   emptyText: string
+  emptyDescription?: string
   loadingTaskId?: (taskId: string) => boolean
 }>()
 
@@ -19,7 +21,7 @@ const emit = defineEmits<{
   <section class="task-group" :data-testid="`group-${props.title.toLowerCase().replace(/\s+/g, '-')}`">
     <h2 class="group-title">{{ props.title }} ({{ props.tasks.length }})</h2>
     <div v-if="props.tasks.length === 0" class="group-empty">
-      {{ props.emptyText }}
+      <EmptyState :title="props.emptyText" :description="props.emptyDescription" />
     </div>
     <div v-else class="group-list">
       <TaskCard
@@ -50,13 +52,7 @@ const emit = defineEmits<{
 }
 
 .group-empty {
-  padding: 24px 16px;
-  text-align: center;
-  color: #6c7086;
-  font-size: 14px;
-  background: #181825;
-  border-radius: 12px;
-  border: 1px dashed #313244;
+  /* wrapper keeps padding/radius from EmptyState; minimal override */
 }
 
 .group-list {
