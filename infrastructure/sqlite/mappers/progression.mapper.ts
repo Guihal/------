@@ -1,4 +1,5 @@
 import type { Progression } from "../../../core/domain/progression/types"
+import { computeLevel } from "../../../core/domain/progression/compute"
 
 export type ProgressionRow = {
   profile_id: string
@@ -37,7 +38,7 @@ export function toDomain(row: unknown): Progression {
 export function toRow(progression: Progression): ProgressionRow {
   return {
     profile_id: progression.profileId,
-    level: Math.floor(progression.totalXp / 1000) + 1,
+    level: computeLevel(progression.totalXp) + 1,
     xp_total: progression.totalXp,
     updated_at: progression.updatedAt,
   }
