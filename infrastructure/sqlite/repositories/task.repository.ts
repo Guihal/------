@@ -6,10 +6,10 @@ import { toDomain, toRow } from "../mappers/task.mapper.ts"
 export class SqliteTaskRepository implements TaskRepositoryPort {
   constructor(private readonly db: SqliteConnection) {}
 
-  async findById(id: string): Promise<Task | null> {
+  async findById(profileId: string, id: string): Promise<Task | null> {
     const { values } = await this.db.query(
-      "SELECT * FROM tasks WHERE id = ?",
-      [id],
+      "SELECT * FROM tasks WHERE profile_id = ? AND id = ?",
+      [profileId, id],
     )
     if (values.length === 0) return null
     return toDomain(values[0])
@@ -39,7 +39,7 @@ export class SqliteTaskRepository implements TaskRepositoryPort {
     )
   }
 
-  async delete(id: string): Promise<void> {
-    await this.db.run("DELETE FROM tasks WHERE id = ?", [id])
+  async delete(profileId: string, id: string): Promise<void> {
+    await this.db.run("DELETE FROM tasks WHERE profile_id = ? AND id = ?", [profileId, id])
   }
 }

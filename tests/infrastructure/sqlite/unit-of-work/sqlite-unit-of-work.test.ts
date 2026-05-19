@@ -54,7 +54,7 @@ if (typeof Bun === "undefined") {
         await uow.tasks.save(task)
       })
       expect(await uow.profiles.findById("p1")).toEqual(profile)
-      expect(await uow.tasks.findById("t1")).toEqual(task)
+      expect(await uow.tasks.findById("p1", "t1")).toEqual(task)
     })
 
     it("rolls back on error leaving no partial state", async () => {
@@ -67,7 +67,7 @@ if (typeof Bun === "undefined") {
       ).rejects.toThrow("boom")
 
       expect(await uow.profiles.findById("p1")).toBeNull()
-      expect(await uow.tasks.findById("t1")).toBeNull()
+      expect(await uow.tasks.findById("p1", "t1")).toBeNull()
     })
 
     it("simulates completeTask chain: save task + save progression", async () => {
@@ -83,7 +83,7 @@ if (typeof Bun === "undefined") {
         await uow.progressions.save(updatedProg)
       })
 
-      expect(await uow.tasks.findById("t1")).toEqual(completedTask)
+      expect(await uow.tasks.findById("p1", "t1")).toEqual(completedTask)
       expect(await uow.progressions.findById("p1")).toEqual(updatedProg)
     })
 
@@ -104,7 +104,7 @@ if (typeof Bun === "undefined") {
         }),
       ).rejects.toThrow("boom")
 
-      expect((await uow.tasks.findById("t1"))!.status).toBe("active")
+      expect((await uow.tasks.findById("p1", "t1"))!.status).toBe("active")
       expect((await uow.progressions.findById("p1"))!.totalXp).toBe(0)
     })
 
@@ -119,7 +119,7 @@ if (typeof Bun === "undefined") {
       ).rejects.toThrow("Nested transactions are not supported")
 
       expect(await uow.profiles.findById("p1")).toBeNull()
-      expect(await uow.tasks.findById("t1")).toBeNull()
+      expect(await uow.tasks.findById("p1", "t1")).toBeNull()
     })
 
     it("does not mask original error when BEGIN fails", async () => {

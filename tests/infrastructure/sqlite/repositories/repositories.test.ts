@@ -63,9 +63,9 @@ if (typeof Bun === "undefined") {
 
     it("task CRUD", async () => {
       await profiles.save(profile)
-      expect(await tasks.findById("t1")).toBeNull()
+      expect(await tasks.findById("p1", "t1")).toBeNull()
       await tasks.save(task)
-      const found = await tasks.findById("t1")
+      const found = await tasks.findById("p1", "t1")
       expect(found).toEqual(task)
     })
 
@@ -82,8 +82,8 @@ if (typeof Bun === "undefined") {
     it("task delete", async () => {
       await profiles.save(profile)
       await tasks.save(task)
-      await tasks.delete("t1")
-      expect(await tasks.findById("t1")).toBeNull()
+      await tasks.delete("p1", "t1")
+      expect(await tasks.findById("p1", "t1")).toBeNull()
     })
 
     it("task save updates existing", async () => {
@@ -91,7 +91,7 @@ if (typeof Bun === "undefined") {
       await tasks.save(task)
       const updated: Task = { ...task, title: "Updated", status: "completed", completedAt: "2025-01-02T00:00:00Z" }
       await tasks.save(updated)
-      const found = await tasks.findById("t1")
+      const found = await tasks.findById("p1", "t1")
       expect(found).toEqual(updated)
     })
 
