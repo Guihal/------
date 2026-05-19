@@ -39,8 +39,10 @@ export function bootstrapDependencies(
   }
 
   const p = doBootstrap(openNative, isNativePlatform)
-  bootstrapPromise = p
-  return p
+  if (!bootstrapPromise) {
+    bootstrapPromise = p
+  }
+  return bootstrapPromise
 }
 
 async function doBootstrap(
@@ -61,11 +63,20 @@ async function doBootstrap(
   let uow: SqliteUnitOfWork | MemoryUnitOfWork
 
   if (isNative) {
+    let conn: SqliteConnection | undefined
     try {
-      const conn = await openNative()
+      conn = await openNative()
       await applyMigrations(conn, migrations)
       uow = new SqliteUnitOfWork(conn)
-    } catch {
+    } catch (e) {
+      console.error("[bootstrap] Native DB setup failed, falling back to memory:", e)
+      if (conn) {
+        try {
+          await conn.close()
+        } catch {
+          // ignore close errors during cleanup
+        }
+      }
       uow = new MemoryUnitOfWork()
     }
   } else {
