@@ -26,9 +26,9 @@ function createConn(db: Database): SqliteConnection {
 }
 
 if (typeof Bun === "undefined") {
-  describe.skip("sqlite unit of work", () => { it("skipped", () => {}) })
+  describe.skip("sqlite unit of work — transaction", () => { it("skipped", () => {}) })
 } else {
-  describe("sqlite unit of work", () => {
+  describe("sqlite unit of work — transaction", () => {
     let db: Database
     let conn: SqliteConnection
     let uow: SqliteUnitOfWork
@@ -106,63 +106,6 @@ if (typeof Bun === "undefined") {
 
       expect((await uow.tasks.findById("p1", "t1"))!.status).toBe("active")
       expect((await uow.progressions.findById("p1"))!.totalXp).toBe(0)
-    })
-
-    it("rejects nested run() calls", async () => {
-      await expect(
-        uow.run(async () => {
-          await uow.profiles.save(profile)
-          await uow.run(async () => {
-            await uow.tasks.save(task)
-          })
-        }),
-      ).rejects.toThrow("Nested transactions are not supported")
-
-      expect(await uow.profiles.findById("p1")).toBeNull()
-      expect(await uow.tasks.findById("p1", "t1")).toBeNull()
-    })
-
-    it("does not mask original error when BEGIN fails", async () => {
-      const brokenConn: SqliteConnection = {
-        execute: async () => { throw new Error("db locked") },
-        run: conn.run,
-        query: conn.query,
-      }
-      const brokenUow = new SqliteUnitOfWork(brokenConn)
-
-      await expect(
-        brokenUow.run(async () => {
-          await brokenUow.profiles.save(profile)
-        }),
-      ).rejects.toThrow("db locked")
-    })
-
-    it("preserves original error when ROLLBACK fails", async () => {
-      let callCount = 0
-      const rollbackFailingConn: SqliteConnection = {
-        execute: async (sql: string) => {
-          callCount++
-          if (sql === "BEGIN TRANSACTION") {
-            db.exec(sql)
-            return { changes: db.changes }
-          }
-          if (sql === "ROLLBACK") {
-            throw new Error("rollback failed")
-          }
-          db.exec(sql)
-          return { changes: db.changes }
-        },
-        run: conn.run,
-        query: conn.query,
-      }
-      const uow = new SqliteUnitOfWork(rollbackFailingConn)
-
-      await expect(
-        uow.run(async () => {
-          await uow.profiles.save(profile)
-          throw new Error("original boom")
-        }),
-      ).rejects.toThrow("original boom")
     })
   })
 }
