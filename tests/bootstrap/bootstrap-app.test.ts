@@ -55,8 +55,7 @@ function makeDeps(overrides?: {
 
 describe("bootstrapApp", () => {
   beforeEach(() => {
-    vi.useFakeTimers({ shouldAdvanceTime: true })
-    vi.setSystemTime(new Date("2026-05-19T12:00:00Z"))
+    vi.clearAllMocks()
   })
 
   it("creates default profile when none exists", async () => {
