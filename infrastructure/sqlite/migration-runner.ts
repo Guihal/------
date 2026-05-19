@@ -4,7 +4,6 @@ export interface SqliteConnection {
   execute(statements: string): Promise<{ changes: number }>
   run(statement: string, values?: unknown[]): Promise<{ changes: number }>
   query(statement: string, values?: unknown[]): Promise<{ values: unknown[] }>
-  executeSet?(statements: { statement: string; values?: unknown[] }[]): Promise<{ changes: number }>
 }
 
 async function sha256(sql: string): Promise<string> {
@@ -109,25 +108,25 @@ async function applySingleMigration(
       'INSERT INTO schema_migrations (version, applied_at, checksum) VALUES (?, ?, ?)'
     const insertValues = [m.version, new Date().toISOString(), cs]
 
-    if (db.executeSet) {
-      await db.executeSet([
-        { statement: m.sql },
-        { statement: insertStmt, values: insertValues },
-      ])
-    } else {
-      await db.execute('BEGIN TRANSACTION')
+    await db.execute('BEGIN TRANSACTION')
+    try {
+      await db.execute(m.sql)
+      await db.run(insertStmt, insertValues)
+      await db.execute('COMMIT')
+    } catch (err) {
+      let rollbackErr: unknown
       try {
-        await db.execute(m.sql)
-        await db.run(insertStmt, insertValues)
-        await db.execute('COMMIT')
-      } catch (err) {
-        try {
-          await db.execute('ROLLBACK')
-        } catch {
-          // rollback failed, but throw original error
-        }
-        throw err
+        await db.execute('ROLLBACK')
+      } catch (e) {
+        rollbackErr = e
       }
+      if (rollbackErr) {
+        throw new Error(
+          `migration ${m.version} failed: ${err instanceof Error ? err.message : String(err)}. ` +
+          `ROLLBACK also failed: ${rollbackErr instanceof Error ? rollbackErr.message : String(rollbackErr)}`,
+        )
+      }
+      throw err
     }
   }
 
