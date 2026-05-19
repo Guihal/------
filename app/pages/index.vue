@@ -16,7 +16,12 @@ const { overdue, upcoming, noDeadline, completed } = useTaskList()
 
 const showForm = ref(false)
 const suggestedComplexity = ref<"tiny" | "small" | "medium" | "large" | null>(null)
-const isLoading = ref(false)
+const isCreating = ref(false)
+const loadingTaskIds = ref<Set<string>>(new Set())
+
+function isTaskLoading(taskId: string): boolean {
+  return loadingTaskIds.value.has(taskId)
+}
 
 const profileName = computed(() => profileStore.profile?.name ?? "User")
 const totalXp = computed(() => profileStore.progression?.totalXp ?? 0)
@@ -57,7 +62,7 @@ async function handleCreate(data: {
 }) {
   const profileId = profileStore.profile?.id
   if (!profileId) return
-  isLoading.value = true
+  isCreating.value = true
   try {
     await taskStore.createTask({
       id: generateId(),
@@ -71,29 +76,29 @@ async function handleCreate(data: {
     showForm.value = false
     suggestedComplexity.value = null
   } finally {
-    isLoading.value = false
+    isCreating.value = false
   }
 }
 
 async function handleComplete(taskId: string) {
   const profileId = profileStore.profile?.id
   if (!profileId) return
-  isLoading.value = true
+  loadingTaskIds.value.add(taskId)
   try {
     await taskStore.completeTask({ taskId, profileId })
   } finally {
-    isLoading.value = false
+    loadingTaskIds.value.delete(taskId)
   }
 }
 
 async function handleArchive(taskId: string) {
   const profileId = profileStore.profile?.id
   if (!profileId) return
-  isLoading.value = true
+  loadingTaskIds.value.add(taskId)
   try {
     await taskStore.archiveTask({ taskId, profileId })
   } finally {
-    isLoading.value = false
+    loadingTaskIds.value.delete(taskId)
   }
 }
 </script>
@@ -107,7 +112,7 @@ async function handleArchive(taskId: string) {
         v-if="!showForm"
         class="btn-add"
         data-testid="btn-add-task"
-        :disabled="isLoading"
+        :disabled="isCreating"
         @click="showForm = true"
       >
         + Add Task
@@ -116,15 +121,15 @@ async function handleArchive(taskId: string) {
       <TaskCreateForm
         v-if="showForm"
         :suggested-complexity="suggestedComplexity"
-        :is-loading="isLoading"
+        :is-loading="isCreating"
         @submit="handleCreate"
         @cancel="showForm = false"
       />
 
-      <TaskList title="Overdue" :tasks="overdue" empty-text="No overdue tasks" @complete="handleComplete" @archive="handleArchive" />
-      <TaskList title="Upcoming" :tasks="upcoming" empty-text="No upcoming tasks" @complete="handleComplete" @archive="handleArchive" />
-      <TaskList title="No Deadline" :tasks="noDeadline" empty-text="No tasks without deadline" @complete="handleComplete" @archive="handleArchive" />
-      <TaskList title="Completed" :tasks="completed" empty-text="No completed tasks" @complete="handleComplete" @archive="handleArchive" />
+      <TaskList title="Overdue" :tasks="overdue" :loading-task-id="isTaskLoading" empty-text="No overdue tasks" @complete="handleComplete" @archive="handleArchive" />
+      <TaskList title="Upcoming" :tasks="upcoming" :loading-task-id="isTaskLoading" empty-text="No upcoming tasks" @complete="handleComplete" @archive="handleArchive" />
+      <TaskList title="No Deadline" :tasks="noDeadline" :loading-task-id="isTaskLoading" empty-text="No tasks without deadline" @complete="handleComplete" @archive="handleArchive" />
+      <TaskList title="Completed" :tasks="completed" :loading-task-id="isTaskLoading" empty-text="No completed tasks" @complete="handleComplete" @archive="handleArchive" />
     </main>
   </div>
 </template>

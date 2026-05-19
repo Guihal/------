@@ -6,6 +6,7 @@ const props = defineProps<{
   title: string
   tasks: readonly Task[]
   emptyText: string
+  loadingTaskId?: (taskId: string) => boolean
 }>()
 
 const emit = defineEmits<{
@@ -25,6 +26,7 @@ const emit = defineEmits<{
         v-for="task in props.tasks"
         :key="task.id"
         :task="task"
+        :is-loading="props.loadingTaskId?.(task.id) ?? false"
         @complete="emit('complete', $event)"
         @archive="emit('archive', $event)"
       />

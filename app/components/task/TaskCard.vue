@@ -3,6 +3,7 @@ import type { Task } from "../../../core/domain/task/types"
 
 const props = defineProps<{
   task: Task
+  isLoading?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -33,8 +34,8 @@ const pcls: Record<Task["priority"], string> = {
     </div>
     <div v-if="props.task.description" class="task-description">{{ props.task.description }}</div>
     <div v-if="props.task.status === 'active'" class="task-actions">
-      <button class="btn-complete" data-testid="btn-complete" @click="emit('complete', props.task.id)">Complete</button>
-      <button class="btn-archive" data-testid="btn-archive" @click="emit('archive', props.task.id)">Archive</button>
+      <button class="btn-complete" data-testid="btn-complete" :disabled="props.isLoading" @click="emit('complete', props.task.id)">Complete</button>
+      <button class="btn-archive" data-testid="btn-archive" :disabled="props.isLoading" @click="emit('archive', props.task.id)">Archive</button>
     </div>
   </div>
 </template>
@@ -53,5 +54,7 @@ const pcls: Record<Task["priority"], string> = {
 .task-actions { display: flex; gap: 8px; }
 .btn-complete, .btn-archive { min-height: 44px; min-width: 44px; padding: 8px 16px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; flex: 1; }
 .btn-complete { background: #a6e3a1; color: #1e1e2e; }
+.btn-complete:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-archive { background: #45475a; color: #cdd6f4; }
+.btn-archive:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>

@@ -66,12 +66,12 @@ function handleSubmit() {
     <h2 class="form-title">New Task</h2>
     <div class="field">
       <label for="task-title">Title *</label>
-      <input id="task-title" v-model="title" type="text" placeholder="What needs to be done?" data-testid="input-title" :disabled="isLoading" />
+      <input id="task-title" v-model="title" type="text" placeholder="What needs to be done?" data-testid="input-title" maxlength="100" :disabled="isLoading" />
       <span v-if="error" class="error">{{ error }}</span>
     </div>
     <div class="field">
       <label for="task-desc">Description</label>
-      <textarea id="task-desc" v-model="description" rows="3" placeholder="Optional details..." data-testid="input-description" :disabled="isLoading" />
+      <textarea id="task-desc" v-model="description" rows="3" placeholder="Optional details..." data-testid="input-description" maxlength="2000" :disabled="isLoading" />
     </div>
     <div class="field-row">
       <div class="field">
