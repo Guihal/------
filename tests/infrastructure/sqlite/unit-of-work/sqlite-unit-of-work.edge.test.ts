@@ -103,5 +103,35 @@ if (typeof Bun === "undefined") {
         }),
       ).rejects.toThrow("original boom")
     })
+
+    it("serializes concurrent run() calls", async () => {
+      const order: string[] = []
+
+      const p1 = uow.run(async () => {
+        order.push("a-begin")
+        await new Promise((r) => setTimeout(r, 20))
+        order.push("a-end")
+        return "a"
+      })
+
+      const p2 = uow.run(async () => {
+        order.push("b-begin")
+        await new Promise((r) => setTimeout(r, 10))
+        order.push("b-end")
+        return "b"
+      })
+
+      const [r1, r2] = await Promise.all([p1, p2])
+      expect(r1).toBe("a")
+      expect(r2).toBe("b")
+
+      // one transaction must fully complete before the other starts
+      const aFirst = order.indexOf("a-begin") < order.indexOf("b-begin")
+      if (aFirst) {
+        expect(order).toEqual(["a-begin", "a-end", "b-begin", "b-end"])
+      } else {
+        expect(order).toEqual(["b-begin", "b-end", "a-begin", "a-end"])
+      }
+    })
   })
 }
