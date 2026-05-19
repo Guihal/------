@@ -17,21 +17,11 @@ export const useProfileStore = defineStore("profile", () => {
     progression.value = p
   }
 
-  function addXp(delta: number) {
-    if (!progression.value) return
-    progression.value = {
-      ...progression.value,
-      totalXp: progression.value.totalXp + delta,
-      updatedAt: new Date().toISOString(),
-    }
-  }
-
   return {
     profile,
     progression,
     isLoaded,
     setProfile,
     setProgression,
-    addXp,
   }
 })
