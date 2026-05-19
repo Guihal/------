@@ -32,6 +32,9 @@ export class SqliteUnitOfWork implements UnitOfWorkPort {
     }
     const release = await this.acquireLock()
     try {
+      if (this.inTransaction) {
+        throw new Error("Nested transactions are not supported")
+      }
       await this.db.execute("BEGIN TRANSACTION")
       this.inTransaction = true
       try {
