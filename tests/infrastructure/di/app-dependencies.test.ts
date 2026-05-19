@@ -6,6 +6,10 @@ import { bootstrapDependencies, _resetBootstrapPromise } from "../../../infrastr
 import { MemoryUnitOfWork } from "../../../infrastructure/memory/unit-of-work/memory-unit-of-work"
 import { SqliteUnitOfWork } from "../../../infrastructure/sqlite/unit-of-work/sqlite-unit-of-work"
 
+vi.mock("../../../infrastructure/sqlite/migration-runner", () => ({
+  applyMigrations: vi.fn(),
+}))
+
 describe("AppDependencies DI", () => {
   let originalWindow: unknown
 
@@ -138,11 +142,28 @@ describe("bootstrapDependencies", () => {
       () => new Promise((resolve) => { resolveBootstrap = resolve }),
     )
 
-    const p1 = bootstrapDependencies(openNative)
-    const p2 = bootstrapDependencies(openNative)
+    const p1 = bootstrapDependencies(openNative, () => true)
+    const p2 = bootstrapDependencies(openNative, () => true)
     expect(p1).toBe(p2)
 
     resolveBootstrap({ execute: vi.fn(), close: vi.fn() })
     await p1
+    expect(openNative).toHaveBeenCalledTimes(1)
+  })
+
+  it("Native fallback: when applyMigrations throws, falls back to MemoryUnitOfWork", async () => {
+    const mockConn = {
+      execute: vi.fn().mockResolvedValue({ changes: 1 }),
+      run: vi.fn().mockResolvedValue({ changes: 1 }),
+      query: vi.fn().mockResolvedValue({ values: [] }),
+      close: vi.fn().mockResolvedValue(undefined),
+    }
+    const openNative = vi.fn().mockResolvedValue(mockConn)
+
+    const { applyMigrations } = await import("../../../infrastructure/sqlite/migration-runner")
+    ;(applyMigrations as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error("migration failed"))
+
+    const deps = await bootstrapDependencies(openNative, () => true)
+    expect(deps.ports.unitOfWork).toBeInstanceOf(MemoryUnitOfWork)
   })
 })

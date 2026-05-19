@@ -47,9 +47,16 @@ async function doBootstrap(
   openNative: () => Promise<SqliteConnection>,
   isNativePlatform?: () => boolean,
 ): Promise<AppDependencies> {
-  const isNative = isNativePlatform
-    ? isNativePlatform()
-    : (await import("@capacitor/core")).Capacitor.isNativePlatform()
+  let isNative = false
+  if (isNativePlatform) {
+    isNative = isNativePlatform()
+  } else {
+    try {
+      isNative = (await import("@capacitor/core")).Capacitor.isNativePlatform()
+    } catch {
+      isNative = false
+    }
+  }
 
   let uow: SqliteUnitOfWork | MemoryUnitOfWork
 
