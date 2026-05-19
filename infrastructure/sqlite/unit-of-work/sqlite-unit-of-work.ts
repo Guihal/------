@@ -1,0 +1,29 @@
+import type { UnitOfWorkPort } from "../../../core/ports/unit-of-work.port"
+import type { SqliteConnection } from "../migration-runner.ts"
+import { SqliteTaskRepository } from "../repositories/task.repository.ts"
+import { SqliteProfileRepository } from "../repositories/profile.repository.ts"
+import { SqliteProgressionRepository } from "../repositories/progression.repository.ts"
+
+export class SqliteUnitOfWork implements UnitOfWorkPort {
+  readonly tasks: SqliteTaskRepository
+  readonly profiles: SqliteProfileRepository
+  readonly progressions: SqliteProgressionRepository
+
+  constructor(private readonly db: SqliteConnection) {
+    this.tasks = new SqliteTaskRepository(db)
+    this.profiles = new SqliteProfileRepository(db)
+    this.progressions = new SqliteProgressionRepository(db)
+  }
+
+  async run<T>(callback: () => Promise<T>): Promise<T> {
+    await this.db.execute("BEGIN TRANSACTION")
+    try {
+      const result = await callback()
+      await this.db.execute("COMMIT")
+      return result
+    } catch (err) {
+      await this.db.execute("ROLLBACK")
+      throw err
+    }
+  }
+}
