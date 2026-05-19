@@ -11,16 +11,12 @@ vi.mock("../../../infrastructure/sqlite/migration-runner", () => ({
 }))
 
 describe("AppDependencies DI", () => {
-  let originalWindow: unknown
-
   beforeEach(() => {
-    originalWindow = (globalThis as unknown as Record<string, unknown>).window
-    ;(globalThis as unknown as Record<string, unknown>).window = {}
+    delete (globalThis as unknown as Record<string, unknown>)["app-dependencies"]
   })
 
   afterEach(() => {
-    delete (globalThis as unknown as Record<string, unknown>).window["app-dependencies"]
-    ;(globalThis as unknown as Record<string, unknown>).window = originalWindow
+    delete (globalThis as unknown as Record<string, unknown>)["app-dependencies"]
   })
 
   it("provideAppDependencies stores deps on window", () => {
@@ -47,16 +43,12 @@ describe("AppDependencies DI", () => {
 })
 
 describe("provideAppDependencies cleanup", () => {
-  let originalWindow: unknown
-
   beforeEach(() => {
-    originalWindow = (globalThis as unknown as Record<string, unknown>).window
-    ;(globalThis as unknown as Record<string, unknown>).window = {}
+    delete (globalThis as unknown as Record<string, unknown>)["app-dependencies"]
   })
 
   afterEach(() => {
-    delete (globalThis as unknown as Record<string, unknown>).window["app-dependencies"]
-    ;(globalThis as unknown as Record<string, unknown>).window = originalWindow
+    delete (globalThis as unknown as Record<string, unknown>)["app-dependencies"]
   })
 
   it("calls close on previous unitOfWork when overwriting", () => {
@@ -90,16 +82,13 @@ describe("provideAppDependencies cleanup", () => {
 })
 
 describe("bootstrapDependencies", () => {
-  let originalWindow: unknown
-
   beforeEach(() => {
-    originalWindow = (globalThis as unknown as Record<string, unknown>).window
-    ;(globalThis as unknown as Record<string, unknown>).window = {}
+    delete (globalThis as unknown as Record<string, unknown>)["app-dependencies"]
     _resetBootstrapPromise()
   })
 
   afterEach(() => {
-    ;(globalThis as unknown as Record<string, unknown>).window = originalWindow
+    delete (globalThis as unknown as Record<string, unknown>)["app-dependencies"]
     vi.restoreAllMocks()
   })
 

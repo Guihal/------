@@ -22,6 +22,11 @@ async function openNativeConnection(): Promise<SqliteConnection> {
 
 let bootstrapPromise: Promise<AppDependencies> | null = null
 
+const existingDeps = (globalThis as unknown as Record<string, unknown>)["app-dependencies"]
+if (existingDeps) {
+  bootstrapPromise = Promise.resolve(existingDeps as AppDependencies)
+}
+
 export function _resetBootstrapPromise(): void {
   bootstrapPromise = null
 }
@@ -51,10 +56,19 @@ async function doBootstrap(
 ): Promise<AppDependencies> {
   let isNative = false
   if (isNativePlatform) {
-    isNative = isNativePlatform()
+    try {
+      isNative = isNativePlatform()
+    } catch {
+      isNative = false
+    }
   } else {
     try {
-      isNative = (await import("@capacitor/core")).Capacitor.isNativePlatform()
+      const cap = (await import("@capacitor/core")).Capacitor
+      try {
+        isNative = cap.isNativePlatform()
+      } catch {
+        isNative = false
+      }
     } catch {
       isNative = false
     }

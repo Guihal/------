@@ -11,20 +11,15 @@ function hasClose(uow: unknown): uow is { close: () => unknown } {
 }
 
 export function provideAppDependencies(deps: AppDependencies): void {
-  if (typeof window !== "undefined") {
-    const prev = (window as unknown as Record<string, unknown>)[APP_DEPS_KEY] as
-      | AppDependencies
-      | undefined
-    if (prev && "ports" in prev && hasClose(prev.ports.unitOfWork)) {
-      void prev.ports.unitOfWork.close()
-    }
-    ;(window as unknown as Record<string, unknown>)[APP_DEPS_KEY] = deps
+  const prev = (globalThis as unknown as Record<string, unknown>)[APP_DEPS_KEY] as
+    | AppDependencies
+    | undefined
+  if (prev && "ports" in prev && hasClose(prev.ports.unitOfWork)) {
+    void prev.ports.unitOfWork.close()
   }
+  ;(globalThis as unknown as Record<string, unknown>)[APP_DEPS_KEY] = deps
 }
 
 export function getAppDependencies(): AppDependencies | undefined {
-  if (typeof window !== "undefined") {
-    return (window as unknown as Record<string, unknown>)[APP_DEPS_KEY] as AppDependencies | undefined
-  }
-  return undefined
+  return (globalThis as unknown as Record<string, unknown>)[APP_DEPS_KEY] as AppDependencies | undefined
 }
