@@ -9,10 +9,10 @@ function makeUoW(initialTasks: Task[] = [], initialProgression?: Progression): U
   const progressions: Progression[] = initialProgression ? [initialProgression] : []
   return {
     tasks: {
-      async findById(id: string) { return tasks.find((t) => t.id === id) ?? null },
+      async findById(_profileId: string, id: string) { return tasks.find((t) => t.id === id) ?? null },
       async findAll(profileId: string) { return tasks.filter((t) => t.profileId === profileId) },
       async save(task: Task) { const idx = tasks.findIndex((t) => t.id === task.id); if (idx >= 0) tasks[idx] = task; else tasks.push(task) },
-      async delete(id: string) { const idx = tasks.findIndex((t) => t.id === id); if (idx >= 0) tasks.splice(idx, 1) },
+      async delete(_profileId: string, id: string) { const idx = tasks.findIndex((t) => t.id === id); if (idx >= 0) tasks.splice(idx, 1) },
     },
     profiles: { async findById() { return null }, async save() {} },
     progressions: {
@@ -56,7 +56,7 @@ describe("completeTask", () => {
     expect(result.newLevel).toBe(0)
     expect(result.didLevelUp).toBe(false)
     expect(result.xpToNextLevel).toBe(445)
-    expect((await uow.tasks.findById("t1"))?.status).toBe("completed")
+    expect((await uow.tasks.findById("p1", "t1"))?.status).toBe("completed")
     expect((await uow.progressions.findById("p1"))?.totalXp).toBe(555)
   })
 

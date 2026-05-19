@@ -7,7 +7,7 @@ function makeInMemoryTaskRepo(): TaskRepositoryPort & { readonly tasks: Task[] }
   const tasks: Task[] = []
   return {
     get tasks() { return tasks },
-    async findById(id: string) {
+    async findById(_profileId: string, id: string) {
       return tasks.find((t) => t.id === id) ?? null
     },
     async findAll(profileId: string) {
@@ -18,7 +18,7 @@ function makeInMemoryTaskRepo(): TaskRepositoryPort & { readonly tasks: Task[] }
       if (idx >= 0) tasks[idx] = task
       else tasks.push(task)
     },
-    async delete(id: string) {
+    async delete(_profileId: string, id: string) {
       const idx = tasks.findIndex((t) => t.id === id)
       if (idx >= 0) tasks.splice(idx, 1)
     },

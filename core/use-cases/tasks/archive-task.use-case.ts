@@ -16,7 +16,7 @@ export async function archiveTask(
   repo: TaskRepositoryPort,
   input: ArchiveTaskInput,
 ): Promise<ArchiveTaskResult> {
-  const task = await repo.findById(input.taskId)
+  const task = await repo.findById(input.profileId, input.taskId)
   if (task === null) {
     throw new Error(`task not found: ${input.taskId}`)
   }

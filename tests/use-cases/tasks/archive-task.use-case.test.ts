@@ -7,7 +7,7 @@ function makeInMemoryTaskRepo(): TaskRepositoryPort & { readonly tasks: Task[] }
   const tasks: Task[] = []
   return {
     get tasks() { return tasks },
-    async findById(id: string) {
+    async findById(_profileId: string, id: string) {
       return tasks.find((t) => t.id === id) ?? null
     },
     async findAll(profileId: string) {
@@ -18,7 +18,7 @@ function makeInMemoryTaskRepo(): TaskRepositoryPort & { readonly tasks: Task[] }
       if (idx >= 0) tasks[idx] = task
       else tasks.push(task)
     },
-    async delete(id: string) {
+    async delete(_profileId: string, id: string) {
       const idx = tasks.findIndex((t) => t.id === id)
       if (idx >= 0) tasks.splice(idx, 1)
     },
@@ -55,7 +55,7 @@ describe("archiveTask", () => {
     expect(result.task.archivedAt).toBe("2026-05-10T00:00:00Z")
     expect(result.task.updatedAt).toBe("2026-05-10T00:00:00Z")
 
-    const saved = await repo.findById("t1")
+    const saved = await repo.findById("p1", "t1")
     expect(saved?.status).toBe("archived")
     expect(saved?.archivedAt).toBe("2026-05-10T00:00:00Z")
   })
