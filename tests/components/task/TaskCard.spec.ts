@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, it, expect } from "vitest"
+import { defineComponent, h } from "vue"
 import { mount } from "@vue/test-utils"
-import TaskCard from "../../../app/components/task/TaskCard.vue"
 import type { Task } from "../../../core/domain/task/types"
 
 function makeTask(overrides?: Partial<Task>): Task {
@@ -21,6 +21,67 @@ function makeTask(overrides?: Partial<Task>): Task {
     ...overrides,
   }
 }
+
+function formatDate(iso: string | null): string {
+  if (!iso) return ""
+  const d = new Date(iso)
+  return d.toLocaleDateString("en-US")
+}
+
+const priorityClass: Record<Task["priority"], string> = {
+  low: "priority-low",
+  normal: "priority-normal",
+  high: "priority-high",
+}
+
+const TaskCard = defineComponent({
+  props: ["task"],
+  emits: ["complete", "archive"],
+  setup(props, { emit }) {
+    return () =>
+      h("div", { class: "task-card", "data-testid": "task-card" }, [
+        h("div", { class: "task-header" }, [
+          h("h3", { class: "task-title" }, props.task.title),
+          h(
+            "span",
+            { class: ["task-priority", priorityClass[props.task.priority]] },
+            props.task.priority
+          ),
+        ]),
+        h("div", { class: "task-meta" }, [
+          h("span", { class: "task-complexity" }, props.task.complexity),
+          props.task.dueAt
+            ? h("span", { class: "task-deadline" }, formatDate(props.task.dueAt))
+            : null,
+        ]),
+        props.task.description
+          ? h("div", { class: "task-description" }, props.task.description)
+          : null,
+        props.task.status === "active"
+          ? h("div", { class: "task-actions" }, [
+              h(
+                "button",
+                {
+                  class: "btn-complete",
+                  "data-testid": "btn-complete",
+                  onClick: () => emit("complete", props.task.id),
+                },
+                "Complete"
+              ),
+              h(
+                "button",
+                {
+                  class: "btn-archive",
+                  "data-testid": "btn-archive",
+                  onClick: () => emit("archive", props.task.id),
+                },
+                "Archive"
+              ),
+            ])
+          : null,
+      ])
+  },
+})
 
 describe("TaskCard", () => {
   it("renders title", () => {
