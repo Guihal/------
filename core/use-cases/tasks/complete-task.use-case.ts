@@ -1,6 +1,6 @@
 import { canTransitionTo } from "../../domain/task/invariants"
 import type { Task } from "../../domain/task/types"
-import { grantTaskXp } from "./grant-task-xp.use-case"
+import { grantTaskXpWithinTransaction } from "./grant-task-xp.use-case"
 import type { UnitOfWorkPort } from "../../ports/unit-of-work.port"
 
 export type CompleteTaskInput = {
@@ -64,7 +64,7 @@ export async function completeTask(
 
     await uow.tasks.save(completedTask)
 
-    const xpResult = await grantTaskXp(uow, {
+    const xpResult = await grantTaskXpWithinTransaction(uow, {
       profileId: input.profileId,
       complexity: task.complexity,
       priority: task.priority,

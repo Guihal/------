@@ -88,7 +88,8 @@ describe("createTask", () => {
         profileId: "p1",
         title: "Test",
         description: null,
-        priority: "urgent" as "high",
+        // @ts-expect-error testing invalid priority
+        priority: "urgent",
         complexity: "small",
         dueAt: null,
         now: "2026-05-01T00:00:00Z",
@@ -105,7 +106,8 @@ describe("createTask", () => {
         title: "Test",
         description: null,
         priority: "normal",
-        complexity: "huge" as "large",
+        // @ts-expect-error testing invalid complexity
+        complexity: "huge",
         dueAt: null,
         now: "2026-05-01T00:00:00Z",
       }),

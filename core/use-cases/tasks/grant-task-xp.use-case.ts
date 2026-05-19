@@ -18,28 +18,33 @@ export type GrantTaskXpResult = {
   readonly xpToNextLevel: number
 }
 
+export async function grantTaskXpWithinTransaction(
+  uow: Pick<UnitOfWorkPort, "progressions">,
+  input: GrantTaskXpInput,
+): Promise<GrantTaskXpResult> {
+  const progression = await uow.progressions.findById(input.profileId)
+  if (progression === null) {
+    throw new Error(`progression not found for profile: ${input.profileId}`)
+  }
+
+  const baseXp = computeBaseXp(input.complexity, input.priority)
+  const xpGranted = computeFinalXp(baseXp)
+
+  const levelResult = applyLevelProgress(progression, xpGranted, input.now)
+  await uow.progressions.save(levelResult.progression)
+
+  return {
+    xpGranted,
+    previousLevel: levelResult.previousLevel,
+    newLevel: levelResult.newLevel,
+    didLevelUp: levelResult.didLevelUp,
+    xpToNextLevel: levelResult.xpToNextLevel,
+  }
+}
+
 export async function grantTaskXp(
   uow: UnitOfWorkPort,
   input: GrantTaskXpInput,
 ): Promise<GrantTaskXpResult> {
-  return uow.run(async () => {
-    const progression = await uow.progressions.findById(input.profileId)
-    if (progression === null) {
-      throw new Error(`progression not found for profile: ${input.profileId}`)
-    }
-
-    const baseXp = computeBaseXp(input.complexity, input.priority)
-    const xpGranted = computeFinalXp(baseXp)
-
-    const levelResult = applyLevelProgress(progression, xpGranted, input.now)
-    await uow.progressions.save(levelResult.progression)
-
-    return {
-      xpGranted,
-      previousLevel: levelResult.previousLevel,
-      newLevel: levelResult.newLevel,
-      didLevelUp: levelResult.didLevelUp,
-      xpToNextLevel: levelResult.xpToNextLevel,
-    }
-  })
+  return uow.run(async () => grantTaskXpWithinTransaction(uow, input))
 }
