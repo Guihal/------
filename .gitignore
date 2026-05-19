@@ -42,3 +42,74 @@ coverage/
 *.tmp
 *.swp
 *~
+
+# === AI Assistant Safety Net ===
+# Never commit these — they contain auth tokens, session data, or temp files
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# AI assistant runtime directories
+.claude/
+.claude-code/
+.kimi/
+.kimi-active.*
+.openclaw/
+.openclaw-home/
+.openclaw-pilot/
+.openclaw-workspace/
+.continue/
+.continue.claude/
+
+# Session logs & temp files
+sessions/
+*.session
+*.log
+logs/
+_.log
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Packet/wave artifacts (operator loop state)
+.packet-context.*.json
+.operator-state.*.json
+.operator-state.*.json.bak*
+.operator-state.*.json.tmp
+.operator-state.*.lock
+.operator-tick.*
+.operator-loop-context.*
+
+# Playwright MCP temp files
+.playwright-mcp/
+test-results/
+playwright-report/
+
+# BAML generated client
+src/baml_client/
+
+# Node & build artifacts (standard)
+node_modules/
+dist/
+.out/
+.output/
+.nuxt/
+.nitro/
+.cache/
+*.tsbuildinfo
+
+# IDE & OS
+.idea/
+.DS_Store
+.fleet/
+
+# === End AI Safety Net ===
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/

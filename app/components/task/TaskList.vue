@@ -2,6 +2,7 @@
 import type { Task } from "../../../core/domain/task/types"
 import TaskCard from "./TaskCard.vue"
 import EmptyState from "../ui/EmptyState.vue"
+import { computed } from "vue"
 
 const props = defineProps<{
   title: string
@@ -15,13 +16,21 @@ const emit = defineEmits<{
   complete: [taskId: string]
   archive: [taskId: string]
 }>()
+
+const emptyStateProps = computed(() => {
+  const base: { title: string; description?: string } = { title: props.emptyText }
+  if (props.emptyDescription !== undefined) {
+    base.description = props.emptyDescription
+  }
+  return base
+})
 </script>
 
 <template>
   <section class="task-group" :data-testid="`group-${props.title.toLowerCase().replace(/\s+/g, '-')}`">
     <h2 class="group-title">{{ props.title }} ({{ props.tasks.length }})</h2>
     <div v-if="props.tasks.length === 0" class="group-empty">
-      <EmptyState :title="props.emptyText" :description="props.emptyDescription" />
+      <EmptyState v-bind="emptyStateProps" />
     </div>
     <div v-else class="group-list">
       <TaskCard
