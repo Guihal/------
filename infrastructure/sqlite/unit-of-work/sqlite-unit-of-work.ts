@@ -21,14 +21,16 @@ export class SqliteUnitOfWork implements UnitOfWorkPort {
     if (this.inTransaction) {
       throw new Error("Nested transactions are not supported")
     }
-    this.inTransaction = true
     await this.db.execute("BEGIN TRANSACTION")
+    this.inTransaction = true
     try {
       const result = await callback()
       await this.db.execute("COMMIT")
       return result
     } catch (err) {
-      await this.db.execute("ROLLBACK")
+      if (this.inTransaction) {
+        await this.db.execute("ROLLBACK")
+      }
       throw err
     } finally {
       this.inTransaction = false

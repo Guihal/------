@@ -121,5 +121,20 @@ if (typeof Bun === "undefined") {
       expect(await uow.profiles.findById("p1")).toBeNull()
       expect(await uow.tasks.findById("t1")).toBeNull()
     })
+
+    it("does not mask original error when BEGIN fails", async () => {
+      const brokenConn: SqliteConnection = {
+        execute: async () => { throw new Error("db locked") },
+        run: conn.run,
+        query: conn.query,
+      }
+      const brokenUow = new SqliteUnitOfWork(brokenConn)
+
+      await expect(
+        brokenUow.run(async () => {
+          await brokenUow.profiles.save(profile)
+        }),
+      ).rejects.toThrow("db locked")
+    })
   })
 }
