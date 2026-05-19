@@ -108,5 +108,10 @@ if (typeof Bun === 'undefined') {
       const fastMigration = { version: 1, name: 'fast', sql: 'SELECT 1;' }
       await expect(applyMigrations(slowConn, [fastMigration], 50)).rejects.toThrow(/migration timeout/)
     })
+
+    it('rejects migration with transaction control', async () => {
+      const bad = { version: 1, name: 'bad', sql: 'BEGIN; CREATE TABLE t(id INT); COMMIT;' }
+      await expect(applyMigrations(conn, [bad])).rejects.toThrow(/transaction control statements/)
+    })
   })
 }

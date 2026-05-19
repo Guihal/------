@@ -29,6 +29,8 @@ export async function applyMigrations(
     seen.add(m.version)
   }
 
+  // database.ts sets PRAGMA foreign_keys on open; repeat here defensively
+  // because connection pooling may hand us a fresh connection.
   await db.execute('PRAGMA foreign_keys = ON')
   await db.execute('PRAGMA journal_mode = WAL')
   await db.execute('PRAGMA synchronous = NORMAL')
@@ -95,6 +97,11 @@ async function applySingleMigration(
   m: Migration,
   timeoutMs = 5000,
 ): Promise<void> {
+  const txPattern = /\b(BEGIN|COMMIT|ROLLBACK)\b/i
+  if (txPattern.test(m.sql)) {
+    throw new Error(`migration ${m.version} contains transaction control statements — not allowed`)
+  }
+
   const cs = await sha256(m.sql)
 
   const runMigration = async (): Promise<void> => {
@@ -124,8 +131,8 @@ async function applySingleMigration(
     }
   }
 
-  // SQLite doesn't support query cancellation. The timeout rejects the Promise
-  // but the SQL statement continues executing in the background.
+  // Note: SQLite does not support query cancellation. The timeout rejects the Promise
+  // but the SQL statement may continue executing.
   let timerId: ReturnType<typeof setTimeout>
   const timeout = new Promise<never>((_, reject) => {
     timerId = setTimeout(() => reject(new Error(`migration timeout v${m.version}`)), timeoutMs)
