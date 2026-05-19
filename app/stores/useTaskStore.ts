@@ -14,28 +14,34 @@ export const useTaskStore = defineStore("task", () => {
     tasks.value = newTasks
   }
 
-  function _deps(): AppDependencies {
+  function _deps(): AppDependencies | undefined {
     return useAppDependencies()
   }
 
   async function createTask(input: Omit<CreateTaskInput, "now">): Promise<Task> {
+    const deps = _deps()
+    if (!deps) throw new Error("AppDependencies not ready")
     const now = new Date().toISOString()
-    const result = await _deps().useCases.createTask({ ...input, now })
+    const result = await deps.useCases.createTask({ ...input, now })
     tasks.value = [...tasks.value, result.task]
     return result.task
   }
 
   async function completeTask(input: Omit<CompleteTaskInput, "now">): Promise<void> {
+    const deps = _deps()
+    if (!deps) throw new Error("AppDependencies not ready")
     const now = new Date().toISOString()
-    const result = await _deps().useCases.completeTask({ ...input, now })
+    const result = await deps.useCases.completeTask({ ...input, now })
     tasks.value = tasks.value.map((t) =>
       t.id === result.task.id ? result.task : t,
     )
   }
 
   async function archiveTask(input: Omit<ArchiveTaskInput, "now">): Promise<void> {
+    const deps = _deps()
+    if (!deps) throw new Error("AppDependencies not ready")
     const now = new Date().toISOString()
-    const result = await _deps().useCases.archiveTask({ ...input, now })
+    const result = await deps.useCases.archiveTask({ ...input, now })
     tasks.value = tasks.value.map((t) =>
       t.id === result.task.id ? result.task : t,
     )
@@ -47,11 +53,15 @@ export const useTaskStore = defineStore("task", () => {
     priority: TaskPriority
     dueAt: string | null
   }): TaskComplexity {
-    return _deps().useCases.suggestTaskComplexity(params)
+    const deps = _deps()
+    if (!deps) throw new Error("AppDependencies not ready")
+    return deps.useCases.suggestTaskComplexity(params)
   }
 
   const groups = computed(() => {
-    return _deps().useCases.resolveTaskList(tasks.value)
+    const deps = _deps()
+    if (!deps) return { overdue: [], upcoming: [], noDeadline: [], completed: [] }
+    return deps.useCases.resolveTaskList(tasks.value)
   })
 
   return {
