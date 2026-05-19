@@ -12,6 +12,7 @@ describe("AppDependencies DI", () => {
   })
 
   afterEach(() => {
+    delete (globalThis as unknown as Record<string, unknown>).window["app-dependencies"]
     ;(globalThis as unknown as Record<string, unknown>).window = originalWindow
   })
 

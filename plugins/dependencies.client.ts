@@ -8,7 +8,6 @@ import { resolveTaskList } from "../core/use-cases/resolve-task-list.use-case"
 import { suggestTaskComplexity } from "../core/use-cases/suggest-task-complexity.use-case"
 import { SqliteUnitOfWork } from "../infrastructure/sqlite/unit-of-work/sqlite-unit-of-work"
 import { MemoryUnitOfWork } from "../infrastructure/memory/unit-of-work/memory-unit-of-work"
-import { Capacitor } from "@capacitor/core"
 import { applyMigrations } from "../infrastructure/sqlite/migration-runner"
 import { migrations } from "../infrastructure/sqlite/migrations"
 import type { SqliteConnection } from "../infrastructure/sqlite/migration-runner"
@@ -23,38 +22,55 @@ async function openNativeConnection(): Promise<SqliteConnection> {
   return conn as unknown as SqliteConnection
 }
 
+let bootstrapPromise: Promise<AppDependencies> | null = null
+
 export async function bootstrapDependencies(): Promise<AppDependencies> {
-  const isNative = Capacitor.isNativePlatform()
-
-  let uow: SqliteUnitOfWork | MemoryUnitOfWork
-
-  if (isNative) {
-    const conn = await openNativeConnection()
-    await applyMigrations(conn, migrations)
-    uow = new SqliteUnitOfWork(conn)
-  } else {
-    uow = new MemoryUnitOfWork()
+  if (bootstrapPromise) {
+    return bootstrapPromise
   }
 
-  const deps: AppDependencies = {
-    ports: {
+  bootstrapPromise = (async (): Promise<AppDependencies> => {
+    const { Capacitor } = await import("@capacitor/core")
+    const isNative = Capacitor.isNativePlatform()
+
+    let uow: SqliteUnitOfWork | MemoryUnitOfWork
+
+    if (isNative) {
+      try {
+        const conn = await openNativeConnection()
+        await applyMigrations(conn, migrations)
+        uow = new SqliteUnitOfWork(conn)
+      } catch {
+        uow = new MemoryUnitOfWork()
+      }
+    } else {
+      uow = new MemoryUnitOfWork()
+    }
+
+    const ports = {
       taskRepository: uow.tasks,
       profileRepository: uow.profiles,
       progressionRepository: uow.progressions,
       unitOfWork: uow,
-    },
-    useCases: {
-      createTask: (input) => createTask(deps.ports.taskRepository, input),
-      completeTask: (input) => completeTask(deps.ports.unitOfWork, input),
-      archiveTask: (input) => archiveTask(deps.ports.taskRepository, input),
-      grantTaskXp: (input) => grantTaskXpWithinTransaction(deps.ports.unitOfWork, input),
-      applyLevelProgress,
-      resolveTaskList,
-      suggestTaskComplexity,
-    },
-  }
+    }
 
-  return deps
+    const deps: AppDependencies = {
+      ports,
+      useCases: {
+        createTask: (input) => createTask(ports.taskRepository, input),
+        completeTask: (input) => completeTask(ports.unitOfWork, input),
+        archiveTask: (input) => archiveTask(ports.taskRepository, input),
+        grantTaskXp: (input) => grantTaskXpWithinTransaction(ports.unitOfWork, input),
+        applyLevelProgress,
+        resolveTaskList,
+        suggestTaskComplexity,
+      },
+    }
+
+    return Object.freeze(deps)
+  })()
+
+  return bootstrapPromise
 }
 
 export default defineNuxtPlugin(async () => {

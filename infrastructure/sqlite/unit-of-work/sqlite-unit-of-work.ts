@@ -57,4 +57,8 @@ export class SqliteUnitOfWork implements UnitOfWorkPort {
       release()
     }
   }
+
+  async close(): Promise<void> {
+    await this.db.close()
+  }
 }
