@@ -1,4 +1,4 @@
-import type { Task } from "../../../core/domain/task/types"
+import type { Task, TaskStatus, TaskPriority, TaskComplexity, TaskComplexitySource } from "../../../core/domain/task/types"
 
 export type TaskRow = {
   id: string
@@ -16,22 +16,54 @@ export type TaskRow = {
   archived_at: string | null
 }
 
+const TASK_STATUS_VALUES: readonly TaskStatus[] = ["active", "completed", "archived"]
+const TASK_PRIORITY_VALUES: readonly TaskPriority[] = ["low", "normal", "high"]
+const TASK_COMPLEXITY_VALUES: readonly TaskComplexity[] = ["tiny", "small", "medium", "large"]
+const TASK_COMPLEXITY_SOURCE_VALUES: readonly TaskComplexitySource[] = ["suggested", "manual"]
+
+function assertString(value: unknown, field: string): string {
+  if (typeof value !== "string") {
+    throw new TypeError(`Expected ${field} to be string, got ${typeof value}`)
+  }
+  return value
+}
+
+function assertStringOrNull(value: unknown, field: string): string | null {
+  if (value === null || value === undefined) return null
+  if (typeof value !== "string") {
+    throw new TypeError(`Expected ${field} to be string or null, got ${typeof value}`)
+  }
+  return value
+}
+
+function assertEnum<T extends string>(value: unknown, field: string, allowed: readonly T[]): T {
+  const s = assertString(value, field)
+  if (!allowed.includes(s as T)) {
+    throw new TypeError(`Invalid ${field}: "${s}". Allowed: ${allowed.join(", ")}`)
+  }
+  return s as T
+}
+
 export function toDomain(row: unknown): Task {
-  const r = row as TaskRow
+  if (row === null || typeof row !== "object") {
+    throw new TypeError("Expected row to be an object, got " + typeof row)
+  }
+  const r = row as Record<string, unknown>
+
   return {
-    id: r.id,
-    profileId: r.profile_id,
-    title: r.title,
-    description: r.description,
-    status: r.status as Task["status"],
-    priority: r.priority as Task["priority"],
-    complexity: r.complexity as Task["complexity"],
-    complexitySource: r.complexity_source as Task["complexitySource"],
-    dueAt: r.due_at,
-    createdAt: r.created_at,
-    updatedAt: r.updated_at,
-    completedAt: r.completed_at,
-    archivedAt: r.archived_at,
+    id: assertString(r.id, "id"),
+    profileId: assertString(r.profile_id, "profile_id"),
+    title: assertString(r.title, "title"),
+    description: assertStringOrNull(r.description, "description"),
+    status: assertEnum(r.status, "status", TASK_STATUS_VALUES),
+    priority: assertEnum(r.priority, "priority", TASK_PRIORITY_VALUES),
+    complexity: assertEnum(r.complexity, "complexity", TASK_COMPLEXITY_VALUES),
+    complexitySource: assertEnum(r.complexity_source, "complexity_source", TASK_COMPLEXITY_SOURCE_VALUES),
+    dueAt: assertStringOrNull(r.due_at, "due_at"),
+    createdAt: assertString(r.created_at, "created_at"),
+    updatedAt: assertString(r.updated_at, "updated_at"),
+    completedAt: assertStringOrNull(r.completed_at, "completed_at"),
+    archivedAt: assertStringOrNull(r.archived_at, "archived_at"),
   }
 }
 

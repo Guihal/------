@@ -7,13 +7,24 @@ export type ProfileRow = {
   updated_at: string
 }
 
+function assertString(value: unknown, field: string): string {
+  if (typeof value !== "string") {
+    throw new TypeError(`Expected ${field} to be string, got ${typeof value}`)
+  }
+  return value
+}
+
 export function toDomain(row: unknown): Profile {
-  const r = row as ProfileRow
+  if (row === null || typeof row !== "object") {
+    throw new TypeError("Expected row to be an object, got " + typeof row)
+  }
+  const r = row as Record<string, unknown>
+
   return {
-    id: r.id,
-    name: r.display_name,
-    createdAt: r.created_at,
-    updatedAt: r.updated_at,
+    id: assertString(r.id, "id"),
+    name: assertString(r.display_name, "display_name"),
+    createdAt: assertString(r.created_at, "created_at"),
+    updatedAt: assertString(r.updated_at, "updated_at"),
   }
 }
 

@@ -107,5 +107,19 @@ if (typeof Bun === "undefined") {
       expect((await uow.tasks.findById("t1"))!.status).toBe("active")
       expect((await uow.progressions.findById("p1"))!.totalXp).toBe(0)
     })
+
+    it("rejects nested run() calls", async () => {
+      await expect(
+        uow.run(async () => {
+          await uow.profiles.save(profile)
+          await uow.run(async () => {
+            await uow.tasks.save(task)
+          })
+        }),
+      ).rejects.toThrow("Nested transactions are not supported")
+
+      expect(await uow.profiles.findById("p1")).toBeNull()
+      expect(await uow.tasks.findById("t1")).toBeNull()
+    })
   })
 }

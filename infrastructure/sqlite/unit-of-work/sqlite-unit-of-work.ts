@@ -9,6 +9,8 @@ export class SqliteUnitOfWork implements UnitOfWorkPort {
   readonly profiles: SqliteProfileRepository
   readonly progressions: SqliteProgressionRepository
 
+  private inTransaction = false
+
   constructor(private readonly db: SqliteConnection) {
     this.tasks = new SqliteTaskRepository(db)
     this.profiles = new SqliteProfileRepository(db)
@@ -16,6 +18,10 @@ export class SqliteUnitOfWork implements UnitOfWorkPort {
   }
 
   async run<T>(callback: () => Promise<T>): Promise<T> {
+    if (this.inTransaction) {
+      throw new Error("Nested transactions are not supported")
+    }
+    this.inTransaction = true
     await this.db.execute("BEGIN TRANSACTION")
     try {
       const result = await callback()
@@ -24,6 +30,8 @@ export class SqliteUnitOfWork implements UnitOfWorkPort {
     } catch (err) {
       await this.db.execute("ROLLBACK")
       throw err
+    } finally {
+      this.inTransaction = false
     }
   }
 }
