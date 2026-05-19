@@ -2,8 +2,9 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest"
 import type { AppDependencies } from "../../../infrastructure/di/app-dependencies"
 import { provideAppDependencies, getAppDependencies } from "../../../infrastructure/di/provide-app-dependencies"
 import { useAppDependencies } from "../../../app/composables/useAppDependencies"
-import { bootstrapDependencies, _resetBootstrapPromise } from "../../../plugins/dependencies.client"
+import { bootstrapDependencies, _resetBootstrapPromise } from "../../../infrastructure/di/bootstrap-app"
 import { MemoryUnitOfWork } from "../../../infrastructure/memory/unit-of-work/memory-unit-of-work"
+import { SqliteUnitOfWork } from "../../../infrastructure/sqlite/unit-of-work/sqlite-unit-of-work"
 
 describe("AppDependencies DI", () => {
   let originalWindow: unknown
@@ -41,6 +42,49 @@ describe("AppDependencies DI", () => {
   })
 })
 
+describe("provideAppDependencies cleanup", () => {
+  let originalWindow: unknown
+
+  beforeEach(() => {
+    originalWindow = (globalThis as unknown as Record<string, unknown>).window
+    ;(globalThis as unknown as Record<string, unknown>).window = {}
+  })
+
+  afterEach(() => {
+    delete (globalThis as unknown as Record<string, unknown>).window["app-dependencies"]
+    ;(globalThis as unknown as Record<string, unknown>).window = originalWindow
+  })
+
+  it("calls close on previous unitOfWork when overwriting", () => {
+    const closeSpy = vi.fn()
+    const prevDeps = {
+      ports: {
+        unitOfWork: { close: closeSpy },
+      },
+    } as unknown as AppDependencies
+    provideAppDependencies(prevDeps)
+
+    const nextDeps = { ports: {} } as unknown as AppDependencies
+    provideAppDependencies(nextDeps)
+
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(getAppDependencies()).toBe(nextDeps)
+  })
+
+  it("does not throw when previous unitOfWork has no close method", () => {
+    const prevDeps = {
+      ports: {
+        unitOfWork: {},
+      },
+    } as unknown as AppDependencies
+    provideAppDependencies(prevDeps)
+
+    const nextDeps = { ports: {} } as unknown as AppDependencies
+    expect(() => provideAppDependencies(nextDeps)).not.toThrow()
+    expect(getAppDependencies()).toBe(nextDeps)
+  })
+})
+
 describe("bootstrapDependencies", () => {
   let originalWindow: unknown
 
@@ -73,5 +117,32 @@ describe("bootstrapDependencies", () => {
     const openNative = vi.fn().mockRejectedValue(new Error("no native"))
     const deps = await bootstrapDependencies(openNative)
     expect(deps.ports.unitOfWork).toBeInstanceOf(MemoryUnitOfWork)
+  })
+
+  it("Native success: when isNativePlatform=true and openNative resolves, uses SqliteUnitOfWork", async () => {
+    const mockConn = {
+      execute: vi.fn().mockResolvedValue({ changes: 1 }),
+      run: vi.fn().mockResolvedValue({ changes: 1 }),
+      query: vi.fn().mockResolvedValue({ values: [] }),
+      close: vi.fn().mockResolvedValue(undefined),
+    }
+    const openNative = vi.fn().mockResolvedValue(mockConn)
+
+    const deps = await bootstrapDependencies(openNative, () => true)
+    expect(deps.ports.unitOfWork).toBeInstanceOf(SqliteUnitOfWork)
+  })
+
+  it("Concurrent race: two calls during async gap return same promise", async () => {
+    let resolveBootstrap: (value: unknown) => void = () => {}
+    const openNative = vi.fn().mockImplementation(
+      () => new Promise((resolve) => { resolveBootstrap = resolve }),
+    )
+
+    const p1 = bootstrapDependencies(openNative)
+    const p2 = bootstrapDependencies(openNative)
+    expect(p1).toBe(p2)
+
+    resolveBootstrap({ execute: vi.fn(), close: vi.fn() })
+    await p1
   })
 })
