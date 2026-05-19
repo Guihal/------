@@ -4,6 +4,7 @@ import type { TaskRepositoryPort } from "../../ports/task-repository.port"
 
 export type ArchiveTaskInput = {
   readonly taskId: string
+  readonly profileId: string
   readonly now: string
 }
 
@@ -18,6 +19,10 @@ export async function archiveTask(
   const task = await repo.findById(input.taskId)
   if (task === null) {
     throw new Error(`task not found: ${input.taskId}`)
+  }
+
+  if (task.profileId !== input.profileId) {
+    throw new Error("task does not belong to profile")
   }
 
   const transition = canTransitionTo(task, "archived")

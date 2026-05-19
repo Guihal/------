@@ -1,7 +1,6 @@
 import { canTransitionTo } from "../../domain/task/invariants"
 import type { Task } from "../../domain/task/types"
-import { computeBaseXp, computeFinalXp } from "../../domain/xp/task-xp"
-import { applyLevelProgress } from "../apply-level-progress.use-case"
+import { grantTaskXp } from "./grant-task-xp.use-case"
 import type { UnitOfWorkPort } from "../../ports/unit-of-work.port"
 
 export type CompleteTaskInput = {
@@ -35,7 +34,7 @@ export async function completeTask(
 
     // Idempotency guard: already completed → no-op
     if (task.status === "completed") {
-      const progression = await uow.profiles.findById(input.profileId)
+      const progression = await uow.progressions.findById(input.profileId)
       const currentLevel = progression?.totalXp
         ? Math.floor(progression.totalXp / 1000)
         : 0
@@ -65,24 +64,20 @@ export async function completeTask(
 
     await uow.tasks.save(completedTask)
 
-    const baseXp = computeBaseXp(task.complexity, task.priority)
-    const xpGranted = computeFinalXp(baseXp)
-
-    const progression = await uow.profiles.findById(input.profileId)
-    if (progression === null) {
-      throw new Error(`progression not found for profile: ${input.profileId}`)
-    }
-
-    const levelResult = applyLevelProgress(progression, xpGranted, input.now)
-    await uow.profiles.save(levelResult.progression)
+    const xpResult = await grantTaskXp(uow, {
+      profileId: input.profileId,
+      complexity: task.complexity,
+      priority: task.priority,
+      now: input.now,
+    })
 
     return {
       task: completedTask,
-      xpGranted,
-      previousLevel: levelResult.previousLevel,
-      newLevel: levelResult.newLevel,
-      didLevelUp: levelResult.didLevelUp,
-      xpToNextLevel: levelResult.xpToNextLevel,
+      xpGranted: xpResult.xpGranted,
+      previousLevel: xpResult.previousLevel,
+      newLevel: xpResult.newLevel,
+      didLevelUp: xpResult.didLevelUp,
+      xpToNextLevel: xpResult.xpToNextLevel,
     }
   })
 }

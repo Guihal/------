@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { TaskRepositoryPort } from "../../../core/ports/task-repository.port"
 import type { ProfileRepositoryPort } from "../../../core/ports/profile-repository.port"
+import type { ProgressionRepositoryPort } from "../../../core/ports/progression-repository.port"
 import type { UnitOfWorkPort } from "../../../core/ports/unit-of-work.port"
 import type { Task } from "../../../core/domain/task/types"
 import type { Profile } from "../../../core/domain/profile/types"
@@ -31,6 +32,15 @@ function makeInMemoryUoW(initialTasks: Task[] = [], initialProgression?: Progres
 
   const profileRepo: ProfileRepositoryPort = {
     async findById(id: string) {
+      return null
+    },
+    async save(profile: Profile) {
+      /* no-op */
+    },
+  }
+
+  const progressionRepo: ProgressionRepositoryPort = {
+    async findById(id: string) {
       return progressions.find((p) => p.profileId === id) ?? null
     },
     async save(progression: Progression) {
@@ -43,7 +53,8 @@ function makeInMemoryUoW(initialTasks: Task[] = [], initialProgression?: Progres
   return {
     tasks: taskRepo,
     profiles: profileRepo,
-    async run<T>(callback: () => T): Promise<T> {
+    progressions: progressionRepo,
+    async run<T>(callback: () => Promise<T>): Promise<T> {
       return callback()
     },
   }
@@ -86,7 +97,7 @@ describe("completeTask", () => {
     const savedTask = await uow.tasks.findById("t1")
     expect(savedTask?.status).toBe("completed")
 
-    const savedProgression = await uow.profiles.findById("p1")
+    const savedProgression = await uow.progressions.findById("p1")
     expect(savedProgression?.totalXp).toBe(555)
   })
 
@@ -129,7 +140,7 @@ describe("completeTask", () => {
     expect(second.newLevel).toBe(0)
     expect(second.didLevelUp).toBe(false)
 
-    const savedProgression = await uow.profiles.findById("p1")
+    const savedProgression = await uow.progressions.findById("p1")
     expect(savedProgression?.totalXp).toBe(128)
   })
 
@@ -172,10 +183,14 @@ describe("completeTask", () => {
         async delete() { /* no-op */ },
       },
       profiles: {
+        async findById() { return null },
+        async save() { /* no-op */ },
+      },
+      progressions: {
         async findById() { return progression },
         async save() { throw new Error("db failure") },
       },
-      async run<T>(callback: () => T): Promise<T> {
+      async run<T>(callback: () => Promise<T>): Promise<T> {
         return callback()
       },
     }

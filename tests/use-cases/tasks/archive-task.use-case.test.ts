@@ -49,7 +49,7 @@ describe("archiveTask", () => {
     const task = makeTask({ id: "t1", status: "active" })
     await repo.save(task)
 
-    const result = await archiveTask(repo, { taskId: "t1", now: "2026-05-10T00:00:00Z" })
+    const result = await archiveTask(repo, { taskId: "t1", profileId: "p1", now: "2026-05-10T00:00:00Z" })
 
     expect(result.task.status).toBe("archived")
     expect(result.task.archivedAt).toBe("2026-05-10T00:00:00Z")
@@ -66,7 +66,7 @@ describe("archiveTask", () => {
     await repo.save(task)
 
     await expect(
-      archiveTask(repo, { taskId: "t1", now: "2026-05-10T00:00:00Z" }),
+      archiveTask(repo, { taskId: "t1", profileId: "p1", now: "2026-05-10T00:00:00Z" }),
     ).rejects.toThrow("invalid transition: already_archived")
   })
 
@@ -76,7 +76,7 @@ describe("archiveTask", () => {
     await repo.save(task)
 
     await expect(
-      archiveTask(repo, { taskId: "t1", now: "2026-05-10T00:00:00Z" }),
+      archiveTask(repo, { taskId: "t1", profileId: "p1", now: "2026-05-10T00:00:00Z" }),
     ).rejects.toThrow("invalid transition: already_completed")
   })
 
@@ -84,7 +84,17 @@ describe("archiveTask", () => {
     const repo = makeInMemoryTaskRepo()
 
     await expect(
-      archiveTask(repo, { taskId: "missing", now: "2026-05-10T00:00:00Z" }),
+      archiveTask(repo, { taskId: "missing", profileId: "p1", now: "2026-05-10T00:00:00Z" }),
     ).rejects.toThrow("task not found: missing")
+  })
+
+  it("throws when task belongs to different profile", async () => {
+    const repo = makeInMemoryTaskRepo()
+    const task = makeTask({ id: "t1", status: "active", profileId: "p1" })
+    await repo.save(task)
+
+    await expect(
+      archiveTask(repo, { taskId: "t1", profileId: "p2", now: "2026-05-10T00:00:00Z" }),
+    ).rejects.toThrow("task does not belong to profile")
   })
 })

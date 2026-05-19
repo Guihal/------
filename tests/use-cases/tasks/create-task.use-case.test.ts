@@ -79,4 +79,36 @@ describe("createTask", () => {
       }),
     ).rejects.toThrow("title must not be empty")
   })
+
+  it("rejects invalid priority", async () => {
+    const repo = makeInMemoryTaskRepo()
+    await expect(
+      createTask(repo, {
+        id: "t1",
+        profileId: "p1",
+        title: "Test",
+        description: null,
+        priority: "urgent" as "high",
+        complexity: "small",
+        dueAt: null,
+        now: "2026-05-01T00:00:00Z",
+      }),
+    ).rejects.toThrow("invalid priority: urgent")
+  })
+
+  it("rejects invalid complexity", async () => {
+    const repo = makeInMemoryTaskRepo()
+    await expect(
+      createTask(repo, {
+        id: "t1",
+        profileId: "p1",
+        title: "Test",
+        description: null,
+        priority: "normal",
+        complexity: "huge" as "large",
+        dueAt: null,
+        now: "2026-05-01T00:00:00Z",
+      }),
+    ).rejects.toThrow("invalid complexity: huge")
+  })
 })
