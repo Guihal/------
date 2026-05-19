@@ -29,7 +29,11 @@ export class SqliteUnitOfWork implements UnitOfWorkPort {
       return result
     } catch (err) {
       if (this.inTransaction) {
-        await this.db.execute("ROLLBACK")
+        try {
+          await this.db.execute("ROLLBACK")
+        } catch {
+          // ignore rollback error, preserve original
+        }
       }
       throw err
     } finally {

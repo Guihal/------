@@ -136,5 +136,33 @@ if (typeof Bun === "undefined") {
         }),
       ).rejects.toThrow("db locked")
     })
+
+    it("preserves original error when ROLLBACK fails", async () => {
+      let callCount = 0
+      const rollbackFailingConn: SqliteConnection = {
+        execute: async (sql: string) => {
+          callCount++
+          if (sql === "BEGIN TRANSACTION") {
+            db.exec(sql)
+            return { changes: db.changes }
+          }
+          if (sql === "ROLLBACK") {
+            throw new Error("rollback failed")
+          }
+          db.exec(sql)
+          return { changes: db.changes }
+        },
+        run: conn.run,
+        query: conn.query,
+      }
+      const uow = new SqliteUnitOfWork(rollbackFailingConn)
+
+      await expect(
+        uow.run(async () => {
+          await uow.profiles.save(profile)
+          throw new Error("original boom")
+        }),
+      ).rejects.toThrow("original boom")
+    })
   })
 }
