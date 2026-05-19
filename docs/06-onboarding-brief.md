@@ -5,22 +5,19 @@
 [../AGENTS.md](../AGENTS.md) — за 5 минут понятно, что строим, что готово,
 что делать первым.
 
-> **State** (обновлять после каждой смены этапа): дата 2026-05-19; docs/00-05
-> + 06-08 готовы; AGENTS.md готов; код = 0; scaffold = нет. После каждого
-> завершённого packet'а — обновить эту строчку (дата + sha + что готово).
+> **State** (обновлять после каждой смены этапа): дата 2026-05-20; MVP-0 завершён (15/15 пакетов); scaffold + domain + infra + task flow + polish готовы; код > 0; Android-сборка работает. После каждого завершённого packet'а — обновить эту строчку (дата + sha + что готово).
 
 ## 0. Bootstrap для fresh chat (копипаста)
 
 Скопируй блок ниже в новый CC chat первым сообщением:
 
 ```text
-Проект Task Companion (mobile offline-first task manager).
-1. Прочитай AGENTS.md → docs/README.md → docs/06-onboarding-brief.md → docs/07-task-packet-template.md.
-2. Возьми packet MVP0-T01-scaffold-base из docs/07-task-packet-template.md § 4.
-3. Подтверди со мной open decisions из AGENTS.md § 10 (package manager,
-   SQLite-плагин, Android SDK target) перед `bun init`.
+Проект Task Companion (mobile offline-first task manager). MVP-0 завершён.
+1. Прочитай AGENTS.md → README.md → docs/06-onboarding-brief.md.
+2. Уточни у юзера задачу: продолжить MVP-1, правка бага, или рефактор.
+3. Если MVP-1 → возьми packet из docs/07-task-packet-template.md § 5 (маскот/инвентарь).
 4. Реализуй packet строго по acceptance чеклисту.
-5. После DoD (AGENTS.md § 8) обнови docs/06-onboarding-brief.md § State.
+5. После DoD обнови docs/06-onboarding-brief.md § State.
 ```
 
 Следующие packet'ы (T02..) — взять из roadmap-этапа или попросить юзера
@@ -30,14 +27,14 @@
 
 Дипломный проект — мобильное offline-first приложение `Task Companion`
 (низкая когнитивная нагрузка, локальные задачи, лёгкая геймификация). Стек:
-Nuxt 4 + Vue 3 + TypeScript + Pinia + Capacitor + SQLite. Стадия: документация
-завершена (RLM critic pass 3, blockers нет), кода нет, scaffold нет. «Новый chat
-пришёл» → начать первый коммит со scaffold по [03-build-roadmap.md § Этап 1](03-build-roadmap.md).
+Nuxt 4 + Vue 3 + TypeScript + Pinia + Capacitor + SQLite. Стадия: **MVP-0 завершён**
+(15/15 пакетов). Код на месте, scaffold работает, Android-сборка собирается.
+«Новый chat пришёл» → уточнить у юзера цель: MVP-1, багфикс, или рефактор.
 
 ## 2. Что готово
 
-В `docs/` лежат 6 документов. Кода — 0 строк. Scaffold отсутствует. Никаких
-`package.json`, `nuxt.config.ts`, `tsconfig.json` ещё не создано.
+В `docs/` лежат 9 документов. MVP-0 код завершён и протестирован. `package.json`,
+`nuxt.config.ts`, `tsconfig.json` на месте. Android-проект Capacitor сконфигурирован.
 
 | Файл | Цель |
 |------|------|
@@ -51,62 +48,23 @@ Nuxt 4 + Vue 3 + TypeScript + Pinia + Capacitor + SQLite. Стадия: доку
 
 ## 3. Что делать первым
 
-Три первых шага. Не прыгать вперёд — порядок защищает от раздутого первого
-коммита.
+MVP-0 завершён. Три возможных входа:
 
-### Шаг 1 — Scaffold
+### Вход A — Продолжить MVP-1 (маскот, инвентарь)
 
-**Готовый packet** → [07-task-packet-template.md § 4 Worked example MVP-0 scaffold](07-task-packet-template.md#4-worked-example-mvp-0-scaffold).
-Этап в roadmap → [03-build-roadmap.md § Этап 1](03-build-roadmap.md#этап-1-scaffold-приложения).
+Взять packet из [07-task-packet-template.md § 5](07-task-packet-template.md#5-worked-example-mvp-0-domain-task)
+или запросить у юзера custom packet. Этапы roadmap → [03-build-roadmap.md § MVP-1](03-build-roadmap.md#3-mvp-1-маскот-инвентарь-и-xp-множители).
 
-Сделать: Nuxt 4 client-only ([ADR-001](04-technical-decisions.md#adr-001-nuxt-работает-как-клиентское-приложение)),
-TS strict, Pinia, Vitest, базовая папочная структура из [02-architecture.md § 5](02-architecture.md#5-предлагаемая-структура-проекта)
-(плоская, без `src/`), пустой app shell (минимум: `app/app.vue` + `app/pages/index.vue` заглушка).
+### Вход B — Правка бага / рефактор MVP-0
 
-**Готово** = acceptance criteria packet'а T01: `bun install` ok, `bunx nuxt dev`
-поднимает страницу, `bun test` зелёный на placeholder, `bunx tsc --noEmit` чистый,
-папки + .gitkeep на месте. Команды — [AGENTS.md § 7](../AGENTS.md#7-dev-workflow).
+1. Прочитать `AGENTS.md` § 9 (anti-patterns) + § 12 (cheat sheet).
+2. Найти соответствующий use case / domain файл.
+3. Тест → правка → тест. UI править последним.
 
-### Шаг 2 — Core domain без UI
+### Вход C — Новая фича вне роадмапа
 
-См. [03-build-roadmap.md § Этап 2](03-build-roadmap.md#этап-2-core-domain-без-ui)
-+ packet pattern → [07-task-packet-template.md § 5 MVP0-T05 domain+XP](07-task-packet-template.md#5-worked-example-mvp-0-domain-task).
-
-Сделать в `core/domain/` и `core/use-cases/`:
-
-- **Типы** ([02 § 7](02-architecture.md#7-доменная-модель)): `Task`, `TaskStatus`,
-  `TaskPriority`, `TaskComplexity`, `TaskComplexitySource`, `Profile`, `Progression`.
-- **Pure domain функции** ([02 § 8-9](02-architecture.md#8-операции-над-задачами)):
-  `suggestTaskComplexity` (ordered decision tree), `calculateTaskXp` (`baseXp` →
-  `finalXp = baseXp` в MVP-0), `applyLevelProgress` (level + xp delta),
-  `resolveTaskList` (группировка просроченные → ближайшие → без дедлайна → выполненные).
-- **Use cases** ([02 § 4.3](02-architecture.md#43-use-cases)): `createTask`,
-  `completeTask` (через UnitOfWork → `grantTaskXp` → `applyLevelProgress`),
-  `archiveTask`. MVP-1+: `equipItem` (с 5-шаговой валидацией — [AGENTS § 9 #27](../AGENTS.md#9-anti-patterns-hard)),
-  `grantLevelRewards`, `rollInventoryDrop`, `createTaskRewardRoll` (с rarity-match
-  проверкой — [AGENTS § 9 #26](../AGENTS.md#9-anti-patterns-hard)).
-
-Тесты Vitest параллельно — каждая pure функция + use case через memory repo + FakeClockPort/SeededRandomPort
-([AGENTS § 6 Tier 1-2](../AGENTS.md#6-test-strategy)).
-
-**Готово** = `bun test` зелёный, `tsc --noEmit` чистый, доменная логика
-работает без Nuxt/Vue/Pinia/SQLite, idempotency `completeTask` покрыта тестом.
-
-### Шаг 3 — Infrastructure MVP-0 (SQLite + memory + DI)
-
-См. [03-build-roadmap.md § Этап 3 Infrastructure MVP-0](03-build-roadmap.md#этап-3-infrastructure-mvp-0).
-
-Сделать: dependency container ([02-architecture.md § 6](02-architecture.md#6-dependency-container)),
-`useAppDependencies`, SQLite database wrapper, `UnitOfWorkPort`
-([02-architecture.md § 13 UnitOfWorkPort](02-architecture.md#unitofworkport)),
-migration runner ([02-architecture.md § 12](02-architecture.md#12-migration-runner-contract)),
-миграция `001_initial.sql` ([02-architecture.md § 11](02-architecture.md#11-sqlite-схема)),
-`Sqlite*Repository` для Task/Profile/Progression, memory-аналоги для browser
-dev ([ADR-004](04-technical-decisions.md#adr-004-browser-dev-использует-memory-repositories)),
-bootstrap профиля и progression.
-
-**Готово**, если: задача сохраняется локально в SQLite на Android **и** UI можно
-разрабатывать в браузере через memory repositories.
+Заполнить [07-task-packet-template.md § 3](07-task-packet-template.md#3-custom-task-packet) custom packet,
+согласовать scope с юзером, не прыгать в инфраструктуру раньше domain.
 
 ## 4. Где искать что
 
