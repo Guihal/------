@@ -1,0 +1,39 @@
+{
+  "id": "mvp-0-T09-sqlite-repositories",
+  "wave_id": "mvp-0",
+  "goal": "SqliteTaskRepository + SqliteProfileRepository + SqliteProgressionRepository + SqliteUnitOfWork (Capacitor SQLite)",
+  "risk_tier": "db_migration",
+  "file_count_max": 10,
+  "diff_budget_loc": 250,
+  "deps": ["mvp-0-T07-use-cases-tasks", "mvp-0-T08-sqlite-migration-runner"],
+  "allowed_write_paths": [
+    "infrastructure/sqlite/repositories/**",
+    "infrastructure/sqlite/unit-of-work/**",
+    "infrastructure/sqlite/mappers/**",
+    "tests/infrastructure/sqlite/repositories/**",
+    "tests/infrastructure/sqlite/unit-of-work/**"
+  ],
+  "read_first": [
+    "docs/specs/mvp-0-packets.md",
+    "docs/02-architecture.md",
+    "docs/04-technical-decisions.md",
+    "AGENTS.md",
+    "docs/05-critic-pass.md"
+  ],
+  "acceptance": [
+    "SqliteTaskRepository implements TaskRepositoryPort: findById, findAll, save, delete",
+    "SqliteProfileRepository, SqliteProgressionRepository аналогично",
+    "SqliteUnitOfWork implements UnitOfWorkPort: run(callback) с BEGIN/COMMIT/ROLLBACK",
+    "Composite same-profile ownership на WHERE clauses: (profile_id, id) пары везде",
+    "Mappers camelCase ↔ snake_case без потерь (round-trip test)",
+    "0 Math.random(), 0 new Date() в repository коде (DateProvider/IdProvider port для injection)",
+    "UoW atomicity test: completeTask chain в transaction → rollback на failure не оставляет partial XP",
+    "bun test проходит",
+    "tsc --noEmit чист"
+  ],
+  "architect_required": true,
+  "challenge_required": true,
+  "cso_required": true,
+  "model_dispatch": "opus",
+  "notes": "Db_migration tier: ВСЕ critics обязательны. Production-runtime persistence. Challenge target: same-profile ownership, UoW atomicity, mapper correctness, no Math.random/new Date."
+}

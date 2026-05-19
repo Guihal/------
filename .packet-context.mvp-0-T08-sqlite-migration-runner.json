@@ -1,0 +1,38 @@
+{
+  "id": "mvp-0-T08-sqlite-migration-runner",
+  "wave_id": "mvp-0",
+  "goal": "migration-runner + 001_initial.sql + schema_migrations + PRAGMA foreign_keys=ON + transaction-per-migration (single TX wrap: SQL + schema_migrations INSERT в одной BEGIN/COMMIT, rollback on error)",
+  "risk_tier": "db_migration",
+  "file_count_max": 6,
+  "diff_budget_loc": 200,
+  "deps": ["mvp-0-T01-scaffold-base", "mvp-0-T02-capacitor-android"],
+  "allowed_write_paths": [
+    "infrastructure/sqlite/migrations/**",
+    "infrastructure/sqlite/migration-runner.ts",
+    "tests/infrastructure/sqlite/migrations/**",
+    "tests/infrastructure/sqlite/migration-runner.test.ts"
+  ],
+  "read_first": [
+    "docs/specs/mvp-0-packets.md",
+    "docs/02-architecture.md",
+    "docs/04-technical-decisions.md",
+    "AGENTS.md",
+    "docs/05-critic-pass.md",
+    "docs/07-task-packet-template.md"
+  ],
+  "acceptance": [
+    "001_initial.sql содержит CHECK constraints дословно из docs/02-architecture.md § 11",
+    "PRAGMA foreign_keys=ON применяется на каждое соединение (не один раз глобально)",
+    "Single transaction wrap: SQL DDL + INSERT INTO schema_migrations в одной BEGIN/COMMIT",
+    "ROLLBACK при ошибке любой statement в transaction",
+    "Idempotent re-run: schema_migrations.id уникален, migration не applied дважды",
+    "Smoke test: миграция применяется на пустую БД, schema_migrations содержит запись",
+    "bun test проходит (в-memory SQLite через @capacitor-community/sqlite browser fallback)",
+    "tsc --noEmit чист"
+  ],
+  "architect_required": true,
+  "challenge_required": true,
+  "cso_required": true,
+  "model_dispatch": "opus",
+  "notes": "Db_migration tier: architect + critic + CSO + challenger ВСЕ обязательны. Worked example T08 в docs/07-task-packet-template.md § 6. CSO trigger automatic (migrations path)."
+}
