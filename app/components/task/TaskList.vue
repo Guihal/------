@@ -3,6 +3,7 @@ import type { Task } from "../../../core/domain/task/types"
 import TaskCard from "./TaskCard.vue"
 import EmptyState from "../ui/EmptyState.vue"
 import { computed } from "vue"
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
 
 const props = defineProps<{
   title: string
@@ -47,15 +48,15 @@ const emptyStateProps = computed(() => {
 
 <style scoped>
 .task-group {
-  margin-bottom: 24px;
+  margin-bottom: v-bind("t.spacing.xxl");
 }
 
 .group-title {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: v-bind("t.typography.size.sm");
+  font-weight: v-bind("t.typography.weight.bold");
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #a6adc8;
+  color: v-bind("t.color.textSecondary");
   margin: 0 0 12px 0;
   padding: 0 4px;
 }
