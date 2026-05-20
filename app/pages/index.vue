@@ -4,6 +4,7 @@ import { useTaskStore } from "../stores/useTaskStore"
 import { useProfileStore } from "../stores/useProfileStore"
 import { useTaskList } from "../composables/useTaskList"
 import { useIdGenerator } from "../composables/useIdGenerator"
+import { useClock } from "../composables/useClock"
 import AppHeader from "../components/ui/AppHeader.vue"
 import TaskList from "../components/task/TaskList.vue"
 import TaskCreateForm from "../components/task/TaskCreateForm.vue"
@@ -14,6 +15,7 @@ import { DARK_TOKENS as t } from "../../assets/tokens/dark"
 const taskStore = useTaskStore()
 const profileStore = useProfileStore()
 const { generateId } = useIdGenerator()
+const { nowIso } = useClock()
 const { overdue, upcoming, noDeadline, completed } = useTaskList()
 
 const showForm = ref(false)
@@ -74,7 +76,7 @@ async function handleCreate(data: {
       priority: data.priority,
       complexity: data.complexity,
       dueAt: data.dueAt,
-      now: new Date().toISOString(),
+      now: nowIso(),
     })
     showForm.value = false
     suggestedComplexity.value = null
@@ -88,7 +90,7 @@ async function handleComplete(taskId: string) {
   if (!profileId) return
   loadingTaskIds.value.add(taskId)
   try {
-    await taskStore.completeTask({ taskId, profileId, now: new Date().toISOString() })
+    await taskStore.completeTask({ taskId, profileId, now: nowIso() })
   } finally {
     loadingTaskIds.value.delete(taskId)
   }
@@ -99,7 +101,7 @@ async function handleArchive(taskId: string) {
   if (!profileId) return
   loadingTaskIds.value.add(taskId)
   try {
-    await taskStore.archiveTask({ taskId, profileId, now: new Date().toISOString() })
+    await taskStore.archiveTask({ taskId, profileId, now: nowIso() })
   } finally {
     loadingTaskIds.value.delete(taskId)
   }
