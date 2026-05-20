@@ -2,6 +2,8 @@
 import { computed } from "vue"
 import { computeLevel, computeProgress, XP_PER_LEVEL } from "../../../core/domain/progression/compute"
 import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
+import ProfileStats from "./ProfileStats.vue"
+import ProfileSettings from "./ProfileSettings.vue"
 
 const props = defineProps<{
   name: string
@@ -14,12 +16,6 @@ const props = defineProps<{
 const level = computed(() => computeLevel(props.xp))
 const progress = computed(() => computeProgress(props.xp))
 const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
-
-const stats = computed(() => [
-  { label: "Выполнено задач", value: props.tasksCompleted },
-  { label: "Серия дней", value: props.streak },
-  { label: "Всего опыта", value: props.xp },
-])
 </script>
 
 <template>
@@ -47,32 +43,13 @@ const stats = computed(() => [
       <span class="xp-text" data-testid="xp-text">{{ progress }} / {{ XP_PER_LEVEL }}</span>
     </div>
 
-    <!-- Stats -->
-    <div class="stats-grid" data-testid="profile-stats">
-      <div v-for="stat in stats" :key="stat.label" class="stat-item">
-        <span class="stat-value">{{ stat.value }}</span>
-        <span class="stat-label">{{ stat.label }}</span>
-      </div>
-    </div>
+    <ProfileStats
+      :tasks-completed="props.tasksCompleted"
+      :streak="props.streak"
+      :xp="props.xp"
+    />
 
-    <!-- Settings Placeholder -->
-    <div class="settings-section" data-testid="profile-settings">
-      <h2 class="settings-title">Настройки</h2>
-      <div class="settings-list">
-        <div class="settings-row">
-          <span class="settings-label">Уведомления</span>
-          <span class="settings-placeholder">Скоро...</span>
-        </div>
-        <div class="settings-row">
-          <span class="settings-label">Тема оформления</span>
-          <span class="settings-placeholder">Тёмная (по умолчанию)</span>
-        </div>
-        <div class="settings-row">
-          <span class="settings-label">Язык</span>
-          <span class="settings-placeholder">Русский</span>
-        </div>
-      </div>
-    </div>
+    <ProfileSettings />
   </div>
 </template>
 
@@ -153,83 +130,5 @@ const stats = computed(() => [
   font-size: v-bind("t.typography.size.sm");
   color: v-bind("t.color.textSecondary");
   text-align: right;
-}
-
-/* Stats */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: v-bind("t.spacing.md");
-}
-@media (max-width: 480px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .stat-item:last-child {
-    grid-column: span 2;
-  }
-}
-@media (max-width: 360px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  .stat-item:last-child {
-    grid-column: auto;
-  }
-}
-.stat-item {
-  background: v-bind("t.color.bgElevated");
-  border: 1px solid v-bind("t.color.borderSubtle");
-  border-radius: v-bind("t.radius.md");
-  padding: v-bind("t.spacing.lg");
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: v-bind("t.spacing.xs");
-}
-.stat-value {
-  font-size: v-bind("t.typography.size.xxl");
-  font-weight: v-bind("t.typography.weight.bold");
-  color: v-bind("t.color.accentGreen");
-}
-.stat-label {
-  font-size: v-bind("t.typography.size.sm");
-  color: v-bind("t.color.textSecondary");
-}
-
-/* Settings */
-.settings-section {
-  border-top: 1px solid v-bind("t.color.borderSubtle");
-  padding-top: v-bind("t.spacing.xl");
-}
-.settings-title {
-  margin: 0 0 v-bind("t.spacing.md");
-  font-size: v-bind("t.typography.size.lg");
-  font-weight: v-bind("t.typography.weight.semibold");
-  color: v-bind("t.color.textPrimary");
-}
-.settings-list {
-  display: flex;
-  flex-direction: column;
-  gap: v-bind("t.spacing.sm");
-}
-.settings-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: v-bind("t.spacing.sm");
-  padding: v-bind("t.spacing.md") v-bind("t.spacing.lg");
-  background: v-bind("t.color.bgElevated");
-  border: 1px solid v-bind("t.color.borderSubtle");
-  border-radius: v-bind("t.radius.md");
-}
-.settings-label {
-  font-size: v-bind("t.typography.size.md");
-  color: v-bind("t.color.textPrimary");
-}
-.settings-placeholder {
-  font-size: v-bind("t.typography.size.sm");
-  color: v-bind("t.color.textMuted");
 }
 </style>
