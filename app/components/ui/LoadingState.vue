@@ -34,6 +34,13 @@ const props = defineProps<{
   animation: spin 0.8s linear infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: none;
+    border-color: v-bind("t.color.accentBlue");
+  }
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

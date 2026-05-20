@@ -6,7 +6,7 @@ import '@fontsource-variable/inter'
 
 useHead({
   meta: [
-    { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
+    { name: "viewport", content: "width=device-width, initial-scale=1.0, viewport-fit=cover" },
     { name: "theme-color", content: "#0d0d12" },
     { name: "apple-mobile-web-app-capable", content: "yes" },
     { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
@@ -82,6 +82,12 @@ body.safe-area {
   border-radius: 50%;
   animation: spin 1s linear infinite;
   will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .boot-spinner {
+    animation: none;
+    border-color: #a6e3a1;
+  }
 }
 .boot-text {
   margin-top: 16px;

@@ -69,6 +69,9 @@ const priorityClasses: Record<Task["priority"], string> = {
 .task-actions { display: flex; gap: v-bind("t.spacing.sm"); }
 .btn-complete, .btn-archive { min-height: 44px; min-width: 80px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border: none; border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; flex: 1; touch-action: manipulation; -webkit-tap-highlight-color: transparent; will-change: transform; }
 .btn-complete:active, .btn-archive:active { transform: scale(0.98); }
+@media (prefers-reduced-motion: reduce) {
+  .btn-complete:active, .btn-archive:active { transform: none; }
+}
 .btn-complete:focus-visible, .btn-archive:focus-visible { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; }
 .btn-complete { background: v-bind("t.color.accentGreen"); color: v-bind("t.color.textInverse"); }
 .btn-complete:disabled { opacity: 0.5; cursor: not-allowed; }
