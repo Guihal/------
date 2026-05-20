@@ -18,11 +18,6 @@ export default defineNuxtPlugin({
 			};
 		}
 
-		const existing = getAppDependencies();
-		if (existing) {
-			return { provide: { appDependencies: existing } };
-		}
-
 		const deps = await bootstrapDependencies();
 		provideAppDependencies(deps);
 		return {
