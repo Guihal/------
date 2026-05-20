@@ -16,7 +16,7 @@ export const DARK_TOKENS = {
     // Text
     textPrimary: "#cdd6f4",
     textSecondary: "#a6adc8",
-    textMuted: "#6c7086",
+    textMuted: "#9399b2",
     textInverse: "#1e1e2e",
 
     // Accents

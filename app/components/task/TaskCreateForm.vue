@@ -108,8 +108,8 @@ function handleSubmit() {
 .create-form { background: #1e1e2e; border: 1px solid #313244; border-radius: 12px; padding: 16px; margin-bottom: 24px; color: #cdd6f4; }
 .form-title { margin: 0 0 16px 0; font-size: 16px; font-weight: 600; }
 .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-.field-row { display: flex; gap: 12px; }
-.field-row .field { flex: 1; }
+.field-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.field-row .field { flex: 1; min-width: 120px; }
 label { font-size: 13px; font-weight: 500; color: #a6adc8; }
 input, textarea, select { background: #181825; border: 1px solid #313244; border-radius: 8px; padding: 10px 12px; color: #cdd6f4; font-size: 14px; min-height: 44px; }
 input:focus, textarea:focus, select:focus { outline: none; border-color: #89b4fa; }

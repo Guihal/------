@@ -22,18 +22,30 @@ const props = defineProps<{
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: v-bind("t.spacing.md");
   margin-bottom: v-bind("t.spacing.xl");
   padding: v-bind("t.spacing.md") v-bind("t.spacing.lg");
   background: v-bind("t.color.bgElevated");
   border-radius: v-bind("t.radius.lg");
   border-bottom: 1px solid v-bind("t.color.borderSubtle");
   color: v-bind("t.color.textPrimary");
+  flex-wrap: wrap;
+  min-height: 44px;
 }
 .app-header h1 {
   margin: 0;
   font-size: v-bind("t.typography.size.xl");
   font-weight: v-bind("t.typography.weight.bold");
   color: v-bind("t.color.textPrimary");
+  line-height: v-bind("t.typography.lineHeight.tight");
+}
+@media (max-width: 400px) {
+  .app-header h1 {
+    font-size: v-bind("t.typography.size.lg");
+  }
+  .profile-name {
+    font-size: v-bind("t.typography.size.sm");
+  }
 }
 .profile-badge {
   display: flex;

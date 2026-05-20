@@ -57,9 +57,9 @@ const priorityClasses: Record<Task["priority"], string> = {
 
 <style scoped>
 .task-card { background: v-bind("t.color.bgCard"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.lg"); padding: v-bind("t.spacing.lg"); margin-bottom: v-bind("t.spacing.md"); color: v-bind("t.color.textPrimary"); }
-.task-header { display: flex; align-items: center; justify-content: space-between; gap: v-bind("t.spacing.md"); margin-bottom: v-bind("t.spacing.sm"); }
-.task-title { margin: 0; font-size: v-bind("t.typography.size.lg"); font-weight: v-bind("t.typography.weight.semibold"); color: v-bind("t.color.textPrimary"); word-break: break-word; }
-.task-priority { font-size: v-bind("t.typography.size.xs"); font-weight: v-bind("t.typography.weight.semibold"); text-transform: uppercase; padding: v-bind("t.spacing.xs") v-bind("t.spacing.sm"); border-radius: v-bind("t.radius.full"); white-space: nowrap; }
+.task-header { display: flex; align-items: flex-start; justify-content: space-between; gap: v-bind("t.spacing.md"); margin-bottom: v-bind("t.spacing.sm"); flex-wrap: wrap; }
+.task-title { margin: 0; font-size: v-bind("t.typography.size.lg"); font-weight: v-bind("t.typography.weight.semibold"); color: v-bind("t.color.textPrimary"); word-break: break-word; flex: 1; min-width: 0; }
+.task-priority { font-size: v-bind("t.typography.size.xs"); font-weight: v-bind("t.typography.weight.semibold"); text-transform: uppercase; padding: v-bind("t.spacing.xs") v-bind("t.spacing.sm"); border-radius: v-bind("t.radius.full"); white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
 .priority-low { background: v-bind("t.color.priorityLowBg"); color: v-bind("t.color.priorityLowText"); }
 .priority-normal { background: v-bind("t.color.priorityNormalBg"); color: v-bind("t.color.priorityNormalText"); }
 .priority-high { background: v-bind("t.color.priorityHighBg"); color: v-bind("t.color.priorityHighText"); }
@@ -67,7 +67,7 @@ const priorityClasses: Record<Task["priority"], string> = {
 .task-complexity { text-transform: capitalize; }
 .task-description { font-size: v-bind("t.typography.size.md"); color: v-bind("t.color.textSecondary"); margin-bottom: v-bind("t.spacing.md"); line-height: v-bind("t.typography.lineHeight.normal"); }
 .task-actions { display: flex; gap: v-bind("t.spacing.sm"); }
-.btn-complete, .btn-archive { min-height: 44px; min-width: 44px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border: none; border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; flex: 1; }
+.btn-complete, .btn-archive { min-height: 44px; min-width: 80px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border: none; border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; flex: 1; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .btn-complete { background: v-bind("t.color.accentGreen"); color: v-bind("t.color.textInverse"); }
 .btn-complete:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-archive { background: v-bind("t.color.priorityLowBg"); color: v-bind("t.color.textPrimary"); }
