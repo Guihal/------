@@ -8,7 +8,6 @@ import type {
 import type { ArchiveTaskInput } from "../../core/use-cases/tasks/archive-task.use-case";
 import type { CompleteTaskInput } from "../../core/use-cases/tasks/complete-task.use-case";
 import type { CreateTaskInput } from "../../core/use-cases/tasks/create-task.use-case";
-import type { AppDependencies } from "../../infrastructure/di/app-dependencies";
 import { useAppDependencies } from "../composables/useAppDependencies";
 
 export const useTaskStore = defineStore("task", () => {
@@ -18,7 +17,7 @@ export const useTaskStore = defineStore("task", () => {
 		tasks.value = newTasks;
 	}
 
-	function _deps(): AppDependencies | undefined {
+	function _deps(): ReturnType<typeof useAppDependencies> {
 		return useAppDependencies();
 	}
 

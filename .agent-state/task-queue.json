@@ -1,20 +1,5 @@
 {
-	"queue": [
-		{
-			"id": "polish-12",
-			"title": "Fix useTaskStore.ts layering violation (imports infrastructure type)",
-			"status": "in_progress",
-			"priority": 9,
-			"started_at": "2026-05-20T04:37:45Z",
-			"evidence_path": "docs/polish-cycles/cycle-20260520-042027/issues.md",
-			"code_ref": "app/stores/useTaskStore.ts:11",
-			"spec_refs": ["docs/02-architecture.md §4.2, §6, §18", "docs/04-technical-decisions.md ADR-007"],
-			"allowed_write_paths": ["app/stores/useTaskStore.ts", "app/composables/useAppDependencies.ts"],
-			"acceptance_commands": ["bun test tests/stores/useTaskStore.spec.ts", "bunx tsc --noEmit"],
-			"non_goals": ["Do not change runtime behavior", "Do not change AppDependencies interface"],
-			"max_diff_loc": 20
-		}
-	],
+	"queue": [],
 	"completed": [
 		{
 			"id": "polish-1",
@@ -88,6 +73,25 @@
 			"acceptance_commands": ["wc -l infrastructure/sqlite/migration-runner.ts", "wc -l infrastructure/sqlite/migration-helpers.ts", "bun test tests/infrastructure/sqlite/migration-runner.test.ts", "bun test tests/infrastructure/sqlite/migration-runner.transaction.test.ts"],
 			"non_goals": ["Do not change behavior of migrations", "Do not change test file imports", "Do not refactor unrelated files"],
 			"max_diff_loc": 160
+		},
+		{
+			"id": "polish-12",
+			"title": "Fix useTaskStore.ts layering violation (imports infrastructure type)",
+			"status": "done",
+			"priority": 9,
+			"started_at": "2026-05-20T07:42:00Z",
+			"completed_at": "2026-05-20T07:42:00Z",
+			"evidence_path": "docs/polish-cycles/cycle-20260520-074303/issues.md",
+			"code_ref": "app/stores/useTaskStore.ts:11",
+			"spec_refs": ["docs/02-architecture.md §4.2, §6, §18", "docs/04-technical-decisions.md ADR-007"],
+			"allowed_write_paths": ["app/stores/useTaskStore.ts", "app/composables/useAppDependencies.ts"],
+			"acceptance_commands": ["bun test tests/stores/useTaskStore.spec.ts", "bunx tsc --noEmit"],
+			"non_goals": ["Do not change runtime behavior", "Do not change AppDependencies interface"],
+			"max_diff_loc": 20,
+			"spec_gate": "PASS",
+			"loc_ok": true,
+			"verification": ["bun test tests/stores/useTaskStore.spec.ts -> 5 pass 0 fail", "bunx tsc --noEmit -> exit 0"],
+			"commit_sha": ""
 		}
 	]
 }

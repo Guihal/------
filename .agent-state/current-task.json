@@ -2,9 +2,10 @@
 	"current": {
 		"id": "polish-12",
 		"title": "Fix useTaskStore.ts layering violation (imports infrastructure type)",
-		"status": "in_progress",
+		"status": "done",
 		"priority": 9,
-		"started_at": "2026-05-20T04:37:45Z"
+		"started_at": "2026-05-20T07:42:00Z",
+		"completed_at": "2026-05-20T07:42:00Z"
 	},
 	"history": [
 		{
