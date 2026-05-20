@@ -113,6 +113,7 @@ async function handleArchive(taskId: string) {
     <main class="content">
       <button
         v-if="!showForm"
+        type="button"
         class="btn-add"
         data-testid="btn-add-task"
         :disabled="isCreating"
