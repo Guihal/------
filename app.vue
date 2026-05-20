@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
-import { getAppDependencies } from "./infrastructure/di/provide-app-dependencies"
+import { useAppDependencies } from "./app/composables/useAppDependencies"
 
 import '@fontsource-variable/inter'
 
@@ -22,7 +22,7 @@ const error = ref("")
 onMounted(async () => {
   // Wait for bootstrap plugin to complete (up to 5s)
   for (let i = 0; i < 50; i++) {
-    if (getAppDependencies()) {
+    if (useAppDependencies()) {
       ready.value = true
       return
     }
