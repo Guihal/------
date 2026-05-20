@@ -113,3 +113,9 @@ dist/
 test-results/
 playwright-report/
 playwright/.cache/
+
+# Agent state
+.agent-state/
+
+# Polish cycles
+/docs/polish-cycles/
