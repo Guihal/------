@@ -214,6 +214,8 @@ const stats = computed(() => [
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: v-bind("t.spacing.sm");
   padding: v-bind("t.spacing.md") v-bind("t.spacing.lg");
   background: v-bind("t.color.bgElevated");
   border: 1px solid v-bind("t.color.borderSubtle");
