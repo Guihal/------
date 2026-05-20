@@ -94,6 +94,7 @@ const stats = computed(() => [
   display: flex;
   align-items: center;
   gap: v-bind("t.spacing.lg");
+  flex-wrap: wrap;
 }
 .avatar {
   width: 64px;
@@ -115,11 +116,13 @@ const stats = computed(() => [
   display: flex;
   flex-direction: column;
   gap: v-bind("t.spacing.xs");
+  min-width: 0;
 }
 .profile-name {
   font-size: v-bind("t.typography.size.xl");
   font-weight: v-bind("t.typography.weight.semibold");
   color: v-bind("t.color.textPrimary");
+  word-break: break-word;
 }
 .profile-level-badge {
   font-size: v-bind("t.typography.size.md");
