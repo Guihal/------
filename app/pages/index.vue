@@ -74,6 +74,7 @@ async function handleCreate(data: {
       priority: data.priority,
       complexity: data.complexity,
       dueAt: data.dueAt,
+      now: new Date().toISOString(),
     })
     showForm.value = false
     suggestedComplexity.value = null
@@ -87,7 +88,7 @@ async function handleComplete(taskId: string) {
   if (!profileId) return
   loadingTaskIds.value.add(taskId)
   try {
-    await taskStore.completeTask({ taskId, profileId })
+    await taskStore.completeTask({ taskId, profileId, now: new Date().toISOString() })
   } finally {
     loadingTaskIds.value.delete(taskId)
   }
@@ -98,7 +99,7 @@ async function handleArchive(taskId: string) {
   if (!profileId) return
   loadingTaskIds.value.add(taskId)
   try {
-    await taskStore.archiveTask({ taskId, profileId })
+    await taskStore.archiveTask({ taskId, profileId, now: new Date().toISOString() })
   } finally {
     loadingTaskIds.value.delete(taskId)
   }

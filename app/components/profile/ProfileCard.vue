@@ -18,7 +18,7 @@ const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
 const stats = computed(() => [
   { label: "Выполнено задач", value: props.tasksCompleted },
   { label: "Серия дней", value: props.streak },
-  { label: "Всего XP", value: props.xp },
+  { label: "Всего опыта", value: props.xp },
 ])
 </script>
 
@@ -44,7 +44,7 @@ const stats = computed(() => [
           :style="{ width: `${Math.max(progressPercent, 2)}%` }"
         />
       </div>
-      <span class="xp-text" data-testid="xp-text">{{ progress }} / {{ XP_PER_LEVEL }} XP</span>
+      <span class="xp-text" data-testid="xp-text">{{ progress }} / {{ XP_PER_LEVEL }}</span>
     </div>
 
     <!-- Stats -->

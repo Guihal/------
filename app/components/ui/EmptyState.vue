@@ -15,15 +15,16 @@ const props = defineProps<{
       <source srcset="/img/mascot.webp" type="image/webp" />
       <img
         src="/img/mascot.png"
-        alt="Маскот"
+        alt=""
         class="mascot-img"
         width="120"
         height="120"
         loading="lazy"
         decoding="async"
+        aria-hidden="true"
       />
     </picture>
-    <div class="empty-icon">{{ props.icon ?? "📭" }}</div>
+    <div class="empty-icon" aria-hidden="true">{{ props.icon ?? "📭" }}</div>
     <h3 class="empty-title">{{ props.title }}</h3>
     <p v-if="props.description" class="empty-description">{{ props.description }}</p>
   </div>
