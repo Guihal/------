@@ -35,10 +35,8 @@ describe("AppDependencies DI", () => {
     expect(useAppDependencies()).toBe(fakeDeps)
   })
 
-  it("useAppDependencies throws when deps not bootstrapped", () => {
-    expect(() => useAppDependencies()).toThrow(
-      "AppDependencies not bootstrapped",
-    )
+  it("useAppDependencies returns undefined when deps not bootstrapped", () => {
+    expect(useAppDependencies()).toBeUndefined()
   })
 })
 
