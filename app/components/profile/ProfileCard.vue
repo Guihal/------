@@ -157,6 +157,14 @@ const stats = computed(() => [
   grid-template-columns: repeat(3, 1fr);
   gap: v-bind("t.spacing.md");
 }
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat-item:last-child {
+    grid-column: span 2;
+  }
+}
 .stat-item {
   background: v-bind("t.color.bgElevated");
   border: 1px solid v-bind("t.color.borderSubtle");

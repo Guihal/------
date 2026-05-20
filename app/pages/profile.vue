@@ -30,6 +30,12 @@ const initials = computed(() => {
 </template>
 
 <style scoped>
-.page { max-width: 640px; margin: 0 auto; padding: v-bind("t.spacing.lg"); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
+.page { max-width: 640px; margin: 0 auto; padding: v-bind("t.spacing.lg"); padding-left: max(v-bind("t.spacing.lg"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.lg"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.lg"), env(safe-area-inset-top)); padding-bottom: max(v-bind("t.spacing.lg"), env(safe-area-inset-bottom)); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
+@media (max-width: 360px) {
+  .page { padding: v-bind("t.spacing.md"); padding-left: max(v-bind("t.spacing.md"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.md"), env(safe-area-inset-right)); }
+}
 .page-title { margin: 0 0 v-bind("t.spacing.lg"); font-size: v-bind("t.typography.size.xl"); font-weight: v-bind("t.typography.weight.bold"); color: v-bind("t.color.textPrimary"); }
+@media (max-width: 360px) {
+  .page-title { font-size: v-bind("t.typography.size.lg"); }
+}
 </style>

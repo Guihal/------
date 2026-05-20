@@ -137,7 +137,10 @@ async function handleArchive(taskId: string) {
 </template>
 
 <style scoped>
-.page { max-width: 640px; margin: 0 auto; padding: v-bind("t.spacing.lg"); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
+.page { max-width: 640px; margin: 0 auto; padding: v-bind("t.spacing.lg"); padding-left: max(v-bind("t.spacing.lg"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.lg"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.lg"), env(safe-area-inset-top)); padding-bottom: max(v-bind("t.spacing.lg"), env(safe-area-inset-bottom)); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
+@media (max-width: 360px) {
+  .page { padding: v-bind("t.spacing.md"); padding-left: max(v-bind("t.spacing.md"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.md"), env(safe-area-inset-right)); }
+}
 .btn-add { width: 100%; min-height: 44px; padding: v-bind("t.spacing.md"); border: 2px dashed v-bind("t.color.borderDashed"); border-radius: v-bind("t.radius.lg"); background: transparent; color: v-bind("t.color.textSecondary"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; margin-bottom: v-bind("t.spacing.xxl"); }
 .btn-add:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-add:active { border-color: v-bind("t.color.accentBlue"); color: v-bind("t.color.accentBlue"); }

@@ -28,7 +28,7 @@ export const DARK_TOKENS = {
 
     // Priority backgrounds
     priorityLowBg: "#45475a",
-    priorityLowText: "#a6adc8",
+    priorityLowText: "#bac2de",
     priorityNormalBg: "#313244",
     priorityNormalText: "#89b4fa",
     priorityHighBg: "#452434",
