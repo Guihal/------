@@ -68,7 +68,7 @@ function handleSubmit() {
     <div class="field">
       <label for="task-title">Название *</label>
       <input id="task-title" v-model="title" type="text" placeholder="Что нужно сделать?" data-testid="input-title" maxlength="100" :disabled="isLoading" />
-      <span v-if="error" class="error">{{ error }}</span>
+      <span v-if="error" class="error" role="alert" aria-live="assertive">{{ error }}</span>
     </div>
     <div class="field">
       <label for="task-desc">Описание</label>

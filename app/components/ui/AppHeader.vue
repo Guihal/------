@@ -57,6 +57,8 @@ const props = defineProps<{
   font-size: v-bind("t.typography.size.md");
   font-weight: v-bind("t.typography.weight.semibold");
   color: v-bind("t.color.textPrimary");
+  word-break: break-word;
+  max-width: 100%;
 }
 .profile-xp {
   font-size: v-bind("t.typography.size.sm");

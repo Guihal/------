@@ -49,8 +49,8 @@ const priorityClasses: Record<Task["priority"], string> = {
     </div>
     <div v-if="props.task.description" class="task-description">{{ props.task.description }}</div>
     <div v-if="props.task.status === 'active'" class="task-actions">
-      <button class="btn-complete" data-testid="btn-complete" :disabled="props.isLoading" @click="emit('complete', props.task.id)">Выполнить</button>
-      <button class="btn-archive" data-testid="btn-archive" :disabled="props.isLoading" @click="emit('archive', props.task.id)">В архив</button>
+      <button class="btn-complete" data-testid="btn-complete" :disabled="props.isLoading" :aria-label="`Выполнить задачу: ${props.task.title}`" @click="emit('complete', props.task.id)">Выполнить</button>
+      <button class="btn-archive" data-testid="btn-archive" :disabled="props.isLoading" :aria-label="`Архивировать задачу: ${props.task.title}`" @click="emit('archive', props.task.id)">В архив</button>
     </div>
   </div>
 </template>
