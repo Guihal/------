@@ -28,7 +28,7 @@ const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
           :style="{ width: `${progressPercent}%` }"
         />
       </div>
-      <span class="xp-text" data-testid="xp-text">{{ progress }} / {{ XP_PER_LEVEL }} XP</span>
+      <span class="xp-text" data-testid="xp-text">{{ progress }} / {{ XP_PER_LEVEL }}</span>
     </div>
   </div>
 </template>

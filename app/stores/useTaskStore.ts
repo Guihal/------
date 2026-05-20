@@ -18,30 +18,27 @@ export const useTaskStore = defineStore("task", () => {
     return useAppDependencies()
   }
 
-  async function createTask(input: Omit<CreateTaskInput, "now">): Promise<Task> {
+  async function createTask(input: CreateTaskInput): Promise<Task> {
     const deps = _deps()
     if (!deps) throw new Error("AppDependencies not ready")
-    const now = new Date().toISOString()
-    const result = await deps.useCases.createTask({ ...input, now })
+    const result = await deps.useCases.createTask(input)
     tasks.value = [...tasks.value, result.task]
     return result.task
   }
 
-  async function completeTask(input: Omit<CompleteTaskInput, "now">): Promise<void> {
+  async function completeTask(input: CompleteTaskInput): Promise<void> {
     const deps = _deps()
     if (!deps) throw new Error("AppDependencies not ready")
-    const now = new Date().toISOString()
-    const result = await deps.useCases.completeTask({ ...input, now })
+    const result = await deps.useCases.completeTask(input)
     tasks.value = tasks.value.map((t) =>
       t.id === result.task.id ? result.task : t,
     )
   }
 
-  async function archiveTask(input: Omit<ArchiveTaskInput, "now">): Promise<void> {
+  async function archiveTask(input: ArchiveTaskInput): Promise<void> {
     const deps = _deps()
     if (!deps) throw new Error("AppDependencies not ready")
-    const now = new Date().toISOString()
-    const result = await deps.useCases.archiveTask({ ...input, now })
+    const result = await deps.useCases.archiveTask(input)
     tasks.value = tasks.value.map((t) =>
       t.id === result.task.id ? result.task : t,
     )

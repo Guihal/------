@@ -2,6 +2,7 @@
 import { ref, watch } from "vue"
 import { useTaskValidation } from "../../composables/useTaskValidation"
 import type { TaskPriority } from "../../../core/domain/task/types"
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
 
 const emit = defineEmits<{
   submit: [data: {
@@ -112,12 +113,13 @@ function handleSubmit() {
 .field-row .field { flex: 1; min-width: 120px; }
 label { font-size: 13px; font-weight: 500; color: #a6adc8; }
 input, textarea, select { background: #181825; border: 1px solid #313244; border-radius: 8px; padding: 10px 12px; color: #cdd6f4; font-size: 14px; min-height: 44px; }
-input:focus, textarea:focus, select:focus { outline: none; border-color: #89b4fa; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: #89b4fa; box-shadow: 0 0 0 2px rgba(137,180,250,0.25); }
 input:disabled, textarea:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
 .error { font-size: 12px; color: #f38ba8; }
 .badge-suggested { font-size: 11px; color: #a6e3a1; margin-top: 2px; }
 .form-actions { display: flex; gap: 8px; margin-top: 8px; }
 .btn-primary, .btn-secondary { min-height: 44px; min-width: 44px; padding: 8px 16px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; flex: 1; }
+.btn-primary:focus-visible, .btn-secondary:focus-visible { outline: 2px solid #89b4fa; outline-offset: 2px; }
 .btn-primary { background: #89b4fa; color: #1e1e2e; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-secondary { background: #45475a; color: #cdd6f4; }

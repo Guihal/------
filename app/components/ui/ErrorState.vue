@@ -79,6 +79,7 @@ const emit = defineEmits<{
   min-width: 44px;
 }
 
+.error-retry:focus-visible { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; }
 .error-retry:active {
   opacity: 0.85;
 }
