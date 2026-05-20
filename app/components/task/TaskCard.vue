@@ -29,13 +29,19 @@ const complexityLabels: Record<Task["complexity"], string> = {
   medium: "Средняя",
   large: "Большая",
 }
+
+const priorityClasses: Record<Task["priority"], string> = {
+  low: "priority-low",
+  normal: "priority-normal",
+  high: "priority-high",
+}
 </script>
 
 <template>
   <div class="task-card" data-testid="task-card">
     <div class="task-header">
       <h3 class="task-title">{{ props.task.title }}</h3>
-      <span class="task-priority" :class="pcls[props.task.priority]">{{ priorityLabels[props.task.priority] }}</span>
+      <span class="task-priority" :class="priorityClasses[props.task.priority]">{{ priorityLabels[props.task.priority] }}</span>
     </div>
     <div class="task-meta">
       <span class="task-complexity">{{ complexityLabels[props.task.complexity] }}</span>
