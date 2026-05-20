@@ -1,14 +1,5 @@
 {
-  "queue": [
-    {
-      "id": "polish-5",
-      "title": "UI Polish: Visual consistency",
-      "status": "in_progress",
-      "priority": 6,
-      "created_at": null,
-      "started_at": "2026-05-20T01:56:00.000Z"
-    }
-  ],
+  "queue": [],
   "completed": [
     {
       "id": "polish-1",
