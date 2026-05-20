@@ -2,6 +2,14 @@
 import { ref, onMounted } from "vue"
 import { getAppDependencies } from "./infrastructure/di/provide-app-dependencies"
 
+useHead({
+  meta: [
+    { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" },
+    { name: "theme-color", content: "#0d0d12" },
+  ],
+  htmlAttrs: { lang: "ru" },
+})
+
 const ready = ref(false)
 const error = ref("")
 
@@ -32,6 +40,13 @@ onMounted(async () => {
 
 html, body {
   font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
 .boot-screen {
