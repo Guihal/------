@@ -60,6 +60,9 @@ const props = defineProps<{
   border-radius: v-bind("t.radius.md");
   align-items: center;
 }
+.profile-link:hover {
+  background: v-bind("t.color.bgCard");
+}
 .profile-link:focus-visible {
   outline: 2px solid v-bind("t.color.accentBlue");
   outline-offset: 2px;
