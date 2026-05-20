@@ -4,7 +4,7 @@ import { useTaskStore } from "../stores/useTaskStore"
 export function useTaskList() {
   const store = useTaskStore()
 
-  const groups = computed(() => store.groups)
+  const groups = computed(() => store.resolveGroups(new Date()))
 
   return {
     overdue: computed(() => groups.value.overdue),

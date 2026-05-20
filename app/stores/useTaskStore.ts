@@ -1,5 +1,5 @@
 import { defineStore } from "pinia"
-import { ref, computed } from "vue"
+import { ref } from "vue"
 import type { Task, TaskComplexity, TaskPriority } from "../../core/domain/task/types"
 import type { CreateTaskInput } from "../../core/use-cases/tasks/create-task.use-case"
 import type { CompleteTaskInput } from "../../core/use-cases/tasks/complete-task.use-case"
@@ -55,11 +55,11 @@ export const useTaskStore = defineStore("task", () => {
     return deps.useCases.suggestTaskComplexity(params)
   }
 
-  const groups = computed(() => {
+  function resolveGroups(now: Date) {
     const deps = _deps()
     if (!deps) return { overdue: [], upcoming: [], noDeadline: [], completed: [] }
-    return deps.useCases.resolveTaskList(tasks.value, new Date())
-  })
+    return deps.useCases.resolveTaskList(tasks.value, now)
+  }
 
   return {
     tasks,
@@ -68,6 +68,6 @@ export const useTaskStore = defineStore("task", () => {
     completeTask,
     archiveTask,
     suggestComplexity,
-    groups,
+    resolveGroups,
   }
 })
