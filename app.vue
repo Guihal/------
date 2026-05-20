@@ -120,4 +120,27 @@ body.safe-area {
 .skip-link:focus {
   top: 0;
 }
+
+/* Cross-browser focus-visible fallback for keyboard navigation */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #89b4fa;
+  outline-offset: 2px;
+}
+
+@supports not selector(:focus-visible) {
+  button:focus,
+  a:focus,
+  input:focus,
+  textarea:focus,
+  select:focus,
+  [tabindex]:focus {
+    outline: 2px solid #89b4fa;
+    outline-offset: 2px;
+  }
+}
 </style>

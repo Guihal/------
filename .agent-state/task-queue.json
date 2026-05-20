@@ -1,18 +1,12 @@
 {
   "queue": [
     {
-      "id": "polish-4",
-      "title": "UI Polish: Cross-browser compatibility",
-      "status": "in_progress",
-      "priority": 7,
-      "created_at": null
-    },
-    {
       "id": "polish-5",
       "title": "UI Polish: Visual consistency",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 6,
-      "created_at": null
+      "created_at": null,
+      "started_at": "2026-05-20T01:56:00.000Z"
     }
   ],
   "completed": [
@@ -36,6 +30,14 @@
       "status": "done",
       "priority": 8,
       "completed_at": "2026-05-20T01:46:00.000Z"
+    },
+    {
+      "id": "polish-4",
+      "title": "UI Polish: Cross-browser compatibility",
+      "status": "done",
+      "priority": 7,
+      "completed_at": "2026-05-20T01:56:00.000Z",
+      "reason": "stale_lock_recovery: no commits found, lock stale >10min"
     }
   ]
 }
