@@ -63,43 +63,43 @@ function handleSubmit() {
 
 <template>
   <form class="create-form" data-testid="create-task-form" @submit.prevent="handleSubmit">
-    <h2 class="form-title">New Task</h2>
+    <h2 class="form-title">Новая задача</h2>
     <div class="field">
-      <label for="task-title">Title *</label>
-      <input id="task-title" v-model="title" type="text" placeholder="What needs to be done?" data-testid="input-title" maxlength="100" :disabled="isLoading" />
+      <label for="task-title">Название *</label>
+      <input id="task-title" v-model="title" type="text" placeholder="Что нужно сделать?" data-testid="input-title" maxlength="100" :disabled="isLoading" />
       <span v-if="error" class="error">{{ error }}</span>
     </div>
     <div class="field">
-      <label for="task-desc">Description</label>
-      <textarea id="task-desc" v-model="description" rows="3" placeholder="Optional details..." data-testid="input-description" maxlength="2000" :disabled="isLoading" />
+      <label for="task-desc">Описание</label>
+      <textarea id="task-desc" v-model="description" rows="3" placeholder="Дополнительные детали…" data-testid="input-description" maxlength="2000" :disabled="isLoading" />
     </div>
     <div class="field-row">
       <div class="field">
-        <label for="task-priority">Priority</label>
+        <label for="task-priority">Приоритет</label>
         <select id="task-priority" v-model="priority" data-testid="input-priority" :disabled="isLoading">
-          <option value="low">Low</option>
-          <option value="normal">Normal</option>
-          <option value="high">High</option>
+          <option value="low">Низкий</option>
+          <option value="normal">Обычный</option>
+          <option value="high">Высокий</option>
         </select>
       </div>
       <div class="field">
-        <label for="task-due">Due date</label>
+        <label for="task-due">Дедлайн</label>
         <input id="task-due" v-model="dueAt" type="date" data-testid="input-due" :disabled="isLoading" />
       </div>
     </div>
     <div class="field">
-      <label for="task-complexity">Complexity</label>
+      <label for="task-complexity">Сложность</label>
       <select id="task-complexity" v-model="complexity" data-testid="input-complexity" :disabled="isLoading">
-        <option value="tiny">Tiny</option>
-        <option value="small">Small</option>
-        <option value="medium">Medium</option>
-        <option value="large">Large</option>
+        <option value="tiny">Крошечная</option>
+        <option value="small">Маленькая</option>
+        <option value="medium">Средняя</option>
+        <option value="large">Большая</option>
       </select>
-      <span v-if="complexitySource === 'suggested'" class="badge-suggested">Suggested</span>
+      <span v-if="complexitySource === 'suggested'" class="badge-suggested">Подобрано автоматически</span>
     </div>
     <div class="form-actions">
-      <button type="submit" class="btn-primary" data-testid="btn-submit" :disabled="isLoading">Create</button>
-      <button type="button" class="btn-secondary" data-testid="btn-cancel" :disabled="isLoading" @click="emit('cancel')">Cancel</button>
+      <button type="submit" class="btn-primary" data-testid="btn-submit" :disabled="isLoading">Создать</button>
+      <button type="button" class="btn-secondary" data-testid="btn-cancel" :disabled="isLoading" @click="emit('cancel')">Отмена</button>
     </div>
   </form>
 </template>

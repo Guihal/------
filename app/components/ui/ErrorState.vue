@@ -15,7 +15,7 @@ const emit = defineEmits<{
 <template>
   <div class="error-state" data-testid="error-state">
     <div class="error-icon" aria-hidden="true">⚠️</div>
-    <h3 class="error-title">{{ props.title ?? "Something went wrong" }}</h3>
+    <h3 class="error-title">{{ props.title ?? "Что-то пошло не так" }}</h3>
     <p v-if="props.message" class="error-message">{{ props.message }}</p>
     <button
       v-if="props.retryLabel"

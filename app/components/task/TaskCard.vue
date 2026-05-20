@@ -14,13 +14,20 @@ const emit = defineEmits<{
 }>()
 
 function fmtDate(iso: string | null): string {
-  return iso ? new Date(iso).toLocaleDateString("en-US") : ""
+  return iso ? new Date(iso).toLocaleDateString("ru-RU") : ""
 }
 
-const pcls: Record<Task["priority"], string> = {
-  low: "priority-low",
-  normal: "priority-normal",
-  high: "priority-high",
+const priorityLabels: Record<Task["priority"], string> = {
+  low: "Низкий",
+  normal: "Обычный",
+  high: "Высокий",
+}
+
+const complexityLabels: Record<Task["complexity"], string> = {
+  tiny: "Крошечная",
+  small: "Маленькая",
+  medium: "Средняя",
+  large: "Большая",
 }
 </script>
 
@@ -28,16 +35,16 @@ const pcls: Record<Task["priority"], string> = {
   <div class="task-card" data-testid="task-card">
     <div class="task-header">
       <h3 class="task-title">{{ props.task.title }}</h3>
-      <span class="task-priority" :class="pcls[props.task.priority]">{{ props.task.priority }}</span>
+      <span class="task-priority" :class="pcls[props.task.priority]">{{ priorityLabels[props.task.priority] }}</span>
     </div>
     <div class="task-meta">
-      <span class="task-complexity">{{ props.task.complexity }}</span>
+      <span class="task-complexity">{{ complexityLabels[props.task.complexity] }}</span>
       <span v-if="props.task.dueAt" class="task-deadline">{{ fmtDate(props.task.dueAt) }}</span>
     </div>
     <div v-if="props.task.description" class="task-description">{{ props.task.description }}</div>
     <div v-if="props.task.status === 'active'" class="task-actions">
-      <button class="btn-complete" data-testid="btn-complete" :disabled="props.isLoading" @click="emit('complete', props.task.id)">Complete</button>
-      <button class="btn-archive" data-testid="btn-archive" :disabled="props.isLoading" @click="emit('archive', props.task.id)">Archive</button>
+      <button class="btn-complete" data-testid="btn-complete" :disabled="props.isLoading" @click="emit('complete', props.task.id)">Выполнить</button>
+      <button class="btn-archive" data-testid="btn-archive" :disabled="props.isLoading" @click="emit('archive', props.task.id)">В архив</button>
     </div>
   </div>
 </template>

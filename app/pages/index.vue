@@ -9,6 +9,8 @@ import TaskList from "../components/task/TaskList.vue"
 import TaskCreateForm from "../components/task/TaskCreateForm.vue"
 import type { TaskPriority } from "../../core/domain/task/types"
 
+import { DARK_TOKENS as t } from "../../assets/tokens/dark"
+
 const taskStore = useTaskStore()
 const profileStore = useProfileStore()
 const { generateId } = useIdGenerator()
@@ -115,7 +117,7 @@ async function handleArchive(taskId: string) {
         :disabled="isCreating"
         @click="showForm = true"
       >
-        + Add Task
+        + Добавить задачу
       </button>
 
       <TaskCreateForm
@@ -126,21 +128,17 @@ async function handleArchive(taskId: string) {
         @cancel="showForm = false"
       />
 
-      <TaskList title="Overdue" :tasks="overdue" :loading-task-id="isTaskLoading" empty-text="No overdue tasks" @complete="handleComplete" @archive="handleArchive" />
-      <TaskList title="Upcoming" :tasks="upcoming" :loading-task-id="isTaskLoading" empty-text="No upcoming tasks" @complete="handleComplete" @archive="handleArchive" />
-      <TaskList title="No Deadline" :tasks="noDeadline" :loading-task-id="isTaskLoading" empty-text="No tasks without deadline" @complete="handleComplete" @archive="handleArchive" />
-      <TaskList title="Completed" :tasks="completed" :loading-task-id="isTaskLoading" empty-text="No completed tasks" @complete="handleComplete" @archive="handleArchive" />
+      <TaskList title="Просроченные" :tasks="overdue" :loading-task-id="isTaskLoading" empty-text="Нет просроченных задач" @complete="handleComplete" @archive="handleArchive" />
+      <TaskList title="Предстоящие" :tasks="upcoming" :loading-task-id="isTaskLoading" empty-text="Нет предстоящих задач" @complete="handleComplete" @archive="handleArchive" />
+      <TaskList title="Без дедлайна" :tasks="noDeadline" :loading-task-id="isTaskLoading" empty-text="Нет задач без дедлайна" @complete="handleComplete" @archive="handleArchive" />
+      <TaskList title="Выполненные" :tasks="completed" :loading-task-id="isTaskLoading" empty-text="Нет выполненных задач" @complete="handleComplete" @archive="handleArchive" />
     </main>
   </div>
 </template>
 
-<style>
-html, body { margin: 0; padding: 0; background: #11111b; color: #cdd6f4; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-</style>
-
 <style scoped>
-.page { max-width: 640px; margin: 0 auto; padding: 16px; }
-.btn-add { width: 100%; min-height: 44px; padding: 12px; border: 2px dashed #45475a; border-radius: 12px; background: transparent; color: #a6adc8; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 24px; }
+.page { max-width: 640px; margin: 0 auto; padding: v-bind("t.spacing.lg"); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
+.btn-add { width: 100%; min-height: 44px; padding: v-bind("t.spacing.md"); border: 2px dashed v-bind("t.color.borderDashed"); border-radius: v-bind("t.radius.lg"); background: transparent; color: v-bind("t.color.textSecondary"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; margin-bottom: v-bind("t.spacing.xxl"); }
 .btn-add:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-add:active { border-color: #89b4fa; color: #89b4fa; }
+.btn-add:active { border-color: v-bind("t.color.accentBlue"); color: v-bind("t.color.accentBlue"); }
 </style>

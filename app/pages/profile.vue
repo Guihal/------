@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
+import { DARK_TOKENS as t } from "../../assets/tokens/dark"
 import { useProfileStore } from "../stores/useProfileStore"
 import ProfileLevel from "../components/profile/ProfileLevel.vue"
 
@@ -17,6 +18,6 @@ const xp = computed(() => profileStore.progression?.totalXp ?? 0)
 </template>
 
 <style scoped>
-.page { max-width: 640px; margin: 0 auto; padding: 16px; }
-.page-title { margin: 0 0 16px; font-size: 20px; font-weight: 700; color: #cdd6f4; }
+.page { max-width: 640px; margin: 0 auto; padding: v-bind("t.spacing.lg"); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
+.page-title { margin: 0 0 v-bind("t.spacing.lg"); font-size: v-bind("t.typography.size.xl"); font-weight: v-bind("t.typography.weight.bold"); color: v-bind("t.color.textPrimary"); }
 </style>

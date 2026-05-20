@@ -28,6 +28,12 @@ onMounted(async () => {
 </template>
 
 <style>
+@import '@fontsource-variable/inter';
+
+html, body {
+  font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
 .boot-screen {
   display: flex;
   flex-direction: column;

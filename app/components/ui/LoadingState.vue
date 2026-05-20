@@ -9,7 +9,7 @@ const props = defineProps<{
 <template>
   <div class="loading-state" data-testid="loading-state">
     <div class="loading-spinner" aria-hidden="true" />
-    <span class="loading-text">{{ props.message ?? "Loading…" }}</span>
+    <span class="loading-text">{{ props.message ?? "Загрузка…" }}</span>
   </div>
 </template>
 

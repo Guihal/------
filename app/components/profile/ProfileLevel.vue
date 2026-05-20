@@ -18,7 +18,7 @@ const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
   <div class="profile-level" data-testid="profile-level">
     <div class="profile-info">
       <span class="profile-name" data-testid="profile-name">{{ props.name }}</span>
-      <span class="profile-level-badge" data-testid="profile-level-badge">Lv. {{ level }}</span>
+      <span class="profile-level-badge" data-testid="profile-level-badge">Ур. {{ level }}</span>
     </div>
     <div class="xp-bar">
       <div class="xp-bar-track">

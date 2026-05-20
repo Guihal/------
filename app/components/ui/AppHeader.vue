@@ -9,7 +9,7 @@ const props = defineProps<{
 
 <template>
   <header class="app-header">
-    <h1>Task Companion</h1>
+    <h1>Таск Компаньон</h1>
     <div class="profile-badge">
       <span class="profile-name">{{ props.profileName }}</span>
       <span class="profile-xp">{{ props.totalXp }} XP</span>
@@ -23,9 +23,10 @@ const props = defineProps<{
   align-items: center;
   justify-content: space-between;
   margin-bottom: v-bind("t.spacing.xl");
-  padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg");
+  padding: v-bind("t.spacing.md") v-bind("t.spacing.lg");
   background: v-bind("t.color.bgElevated");
   border-radius: v-bind("t.radius.lg");
+  border-bottom: 1px solid v-bind("t.color.borderSubtle");
   color: v-bind("t.color.textPrimary");
 }
 .app-header h1 {
