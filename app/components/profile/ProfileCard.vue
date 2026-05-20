@@ -57,7 +57,7 @@ const stats = computed(() => [
 
     <!-- Settings Placeholder -->
     <div class="settings-section" data-testid="profile-settings">
-      <h3 class="settings-title">Настройки</h3>
+      <h2 class="settings-title">Настройки</h2>
       <div class="settings-list">
         <div class="settings-row">
           <span class="settings-label">Уведомления</span>
