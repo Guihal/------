@@ -2,7 +2,7 @@ import type { Profile } from "../../core/domain/profile/types";
 import type { Progression } from "../../core/domain/progression/types";
 import type { Task } from "../../core/domain/task/types";
 import type { AppDependencies } from "../../infrastructure/di/app-dependencies";
-import { bootstrapDependencies } from "../../infrastructure/di/bootstrap-app";
+import { bootstrapDependencies } from "../../../infrastructure/di/bootstrap-app";
 
 export type BootstrapState = {
 	readonly profile: Profile;

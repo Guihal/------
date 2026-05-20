@@ -1,7 +1,8 @@
 import { defineNuxtPlugin } from "nuxt/app";
 import { useProfileStore } from "../app/stores/useProfileStore";
 import { useTaskStore } from "../app/stores/useTaskStore";
-import { bootstrapApp } from "../src/bootstrap/bootstrap-app";
+import { bootstrapApp } from "../core/use-cases/app/bootstrap-app.use-case";
+
 
 export default defineNuxtPlugin({
 	name: "bootstrap",
