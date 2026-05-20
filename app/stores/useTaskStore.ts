@@ -58,7 +58,7 @@ export const useTaskStore = defineStore("task", () => {
 		return deps.useCases.suggestTaskComplexity(params);
 	}
 
-	function resolveGroups(now: Date) {
+	function resolveGroups(now: string) {
 		const deps = _deps();
 		if (!deps)
 			return { overdue: [], upcoming: [], noDeadline: [], completed: [] };

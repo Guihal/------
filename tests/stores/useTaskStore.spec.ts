@@ -146,8 +146,8 @@ describe("useTaskStore", () => {
     const store = useTaskStore()
     store.setTasks([mockTask])
 
-    const groups = store.resolveGroups(new Date("2026-05-20T00:00:00Z"))
+    const groups = store.resolveGroups("2026-05-20T00:00:00Z")
     expect(groups.noDeadline).toHaveLength(1)
-    expect(deps.useCases.resolveTaskList).toHaveBeenCalledWith([mockTask], expect.any(Date))
+    expect(deps.useCases.resolveTaskList).toHaveBeenCalledWith([mockTask], expect.any(String))
   })
 })

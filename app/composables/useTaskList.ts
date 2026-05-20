@@ -6,7 +6,7 @@ export function useTaskList() {
 	const store = useTaskStore();
 	const { nowIso } = useClock();
 
-	const groups = computed(() => store.resolveGroups(new Date(nowIso())));
+	const groups = computed(() => store.resolveGroups(nowIso()));
 
 	return {
 		overdue: computed(() => groups.value.overdue),

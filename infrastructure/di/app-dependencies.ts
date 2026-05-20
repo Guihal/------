@@ -55,7 +55,7 @@ export interface AppDependencies {
 		) => LevelProgressResult;
 		readonly resolveTaskList: (
 			tasks: readonly Task[],
-			now: Date,
+			now: string,
 		) => TaskListGroups;
 		readonly suggestTaskComplexity: (
 			input: SuggestTaskComplexityInput,

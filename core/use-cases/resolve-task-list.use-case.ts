@@ -7,9 +7,9 @@ export type TaskListGroups = {
 	readonly completed: readonly Task[];
 };
 
-function isOverdue(task: Task, now: Date): boolean {
+function isOverdue(task: Task, now: string): boolean {
 	if (task.status !== "active" || task.dueAt === null) return false;
-	return new Date(task.dueAt) < now;
+	return task.dueAt < now;
 }
 
 function isUpcoming(task: Task): boolean {
@@ -34,14 +34,14 @@ function compareTasks(a: Task, b: Task): number {
 	if (pDiff !== 0) return pDiff;
 
 	if (a.dueAt !== null && b.dueAt !== null) {
-		return new Date(a.dueAt).getTime() - new Date(b.dueAt).getTime();
+		return a.dueAt < b.dueAt ? -1 : 1;
 	}
 
 	if (a.dueAt !== null && b.dueAt === null) return -1;
 	if (a.dueAt === null && b.dueAt !== null) return 1;
 
 	if (a.dueAt === null && b.dueAt === null) {
-		return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+		return b.createdAt < a.createdAt ? -1 : 1;
 	}
 
 	return 0;
@@ -49,7 +49,7 @@ function compareTasks(a: Task, b: Task): number {
 
 export function resolveTaskList(
 	tasks: readonly Task[],
-	now: Date,
+	now: string,
 ): TaskListGroups {
 	const overdue: Task[] = [];
 	const upcoming: Task[] = [];
