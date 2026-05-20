@@ -28,7 +28,7 @@ const emptyStateProps = computed(() => {
 </script>
 
 <template>
-  <section class="task-group" :data-testid="`group-${props.title.toLowerCase().replace(/\s+/g, '-')}`">
+  <section class="task-group" :aria-label="props.title" :data-testid="`group-${props.title.toLowerCase().replace(/\s+/g, '-')}`">
     <h2 class="group-title">{{ props.title }} ({{ props.tasks.length }})</h2>
     <div v-if="props.tasks.length === 0" class="group-empty">
       <EmptyState v-bind="emptyStateProps" />
