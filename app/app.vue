@@ -13,6 +13,12 @@ html, body {
   padding: 0;
   background: v-bind("t.color.bgBase");
   color: v-bind("t.color.textPrimary");
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
 </style>
