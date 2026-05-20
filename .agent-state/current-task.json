@@ -1,10 +1,34 @@
 {
   "current": {
-    "id": "polish-1",
-    "title": "UI Polish: Mobile responsiveness",
+    "id": "polish-4",
+    "title": "UI Polish: Cross-browser compatibility",
     "status": "in_progress",
-    "priority": 10,
-    "created_at": null
+    "priority": 7,
+    "created_at": null,
+    "started_at": "2026-05-20T01:46:00.000Z",
+    "recovered_from_stale_lock": "polish-1-polish-2-polish-3-found-done-in-git"
   },
-  "history": []
+  "history": [
+    {
+      "id": "polish-1",
+      "title": "UI Polish: Mobile responsiveness",
+      "status": "done",
+      "completed_at": "2026-05-20T01:46:00.000Z",
+      "reason": "stale_lock_recovery: mobile commits found in git log"
+    },
+    {
+      "id": "polish-2",
+      "title": "UI Polish: Accessibility (a11y)",
+      "status": "done",
+      "completed_at": "2026-05-20T01:46:00.000Z",
+      "reason": "stale_lock_recovery: a11y commits found in git log"
+    },
+    {
+      "id": "polish-3",
+      "title": "UI Polish: Performance optimization",
+      "status": "done",
+      "completed_at": "2026-05-20T01:46:00.000Z",
+      "reason": "stale_lock_recovery: perf commits found in git log"
+    }
+  ]
 }
