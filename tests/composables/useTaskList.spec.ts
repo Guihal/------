@@ -24,7 +24,14 @@ const mockTask = (overrides?: Partial<Task>): Task => ({
 
 function makeDeps(): AppDependencies {
 	return {
-		ports: {} as unknown as AppDependencies["ports"],
+		ports: {
+			clock: { nowIso: vi.fn().mockReturnValue("2026-05-20T00:00:00Z") },
+			idGenerator: { generateId: vi.fn() },
+			taskRepository: {} as unknown as AppDependencies["ports"]["taskRepository"],
+			profileRepository: {} as unknown as AppDependencies["ports"]["profileRepository"],
+			progressionRepository: {} as unknown as AppDependencies["ports"]["progressionRepository"],
+			unitOfWork: {} as unknown as AppDependencies["ports"]["unitOfWork"],
+		},
 		useCases: {
 			createTask: vi.fn(),
 			completeTask: vi.fn(),

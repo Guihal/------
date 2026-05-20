@@ -1,4 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { ClockPort } from "../../core/ports/clock.port";
+import type { IdGeneratorPort } from "../../core/ports/id-generator.port";
+import type { RandomPort } from "../../core/ports/random.port";
 import type { Profile } from "../../core/domain/profile/types";
 import type { Progression } from "../../core/domain/progression/types";
 import type { Task } from "../../core/domain/task/types";
@@ -42,8 +45,23 @@ function makeDeps(overrides?: {
 		run: vi.fn(async (cb) => cb()),
 	};
 
+	const clock: ClockPort = {
+		nowIso: vi.fn().mockReturnValue("2026-05-20T00:00:00Z"),
+	};
+
+	const idGenerator: IdGeneratorPort = {
+		generateId: vi.fn().mockReturnValue("test-id"),
+	};
+
+	const random: RandomPort = {
+		random: vi.fn().mockReturnValue(0.5),
+	};
+
 	return {
 		ports: {
+			clock,
+			idGenerator,
+			random,
 			taskRepository: taskRepo,
 			profileRepository: profileRepo,
 			progressionRepository: progressionRepo,
