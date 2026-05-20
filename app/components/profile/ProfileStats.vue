@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from "vue"
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
 
 const props = defineProps<{
-	tasksCompleted: number;
-	streak: number;
-	xp: number;
-}>();
+  tasksCompleted: number
+  streak: number
+  xp: number
+}>()
 
-const _stats = computed(() => [
-	{ label: "Выполнено задач", value: props.tasksCompleted },
-	{ label: "Серия дней", value: props.streak },
-	{ label: "Всего опыта", value: props.xp },
-]);
+const stats = computed(() => [
+  { label: "Выполнено задач", value: props.tasksCompleted },
+  { label: "Серия дней", value: props.streak },
+  { label: "Всего опыта", value: props.xp },
+])
 </script>
 
 <template>

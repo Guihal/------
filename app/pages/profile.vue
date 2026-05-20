@@ -1,25 +1,19 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { useProfileStore } from "../stores/useProfileStore";
+import { computed } from "vue"
+import { DARK_TOKENS as t } from "../../assets/tokens/dark"
+import { useProfileStore } from "../stores/useProfileStore"
+import ProfileCard from "../components/profile/ProfileCard.vue"
 
-const profileStore = useProfileStore();
+const profileStore = useProfileStore()
 
-const name = computed(() => profileStore.profile?.name ?? "Пользователь");
-const _xp = computed(() => profileStore.progression?.totalXp ?? 0);
-const _tasksCompleted = computed(
-	() => profileStore.progression?.tasksCompleted ?? 0,
-);
-const _streak = computed(() => profileStore.progression?.streak ?? 0);
-const _initials = computed(() => {
-	const n = name.value;
-	return (
-		n
-			.split(/\s+/)
-			.slice(0, 2)
-			.map((s) => s[0]?.toUpperCase() ?? "")
-			.join("") || "?"
-	);
-});
+const name = computed(() => profileStore.profile?.name ?? "Пользователь")
+const xp = computed(() => profileStore.progression?.totalXp ?? 0)
+const tasksCompleted = computed(() => profileStore.progression?.tasksCompleted ?? 0)
+const streak = computed(() => profileStore.progression?.streak ?? 0)
+const initials = computed(() => {
+  const n = name.value
+  return n.split(/\s+/).slice(0, 2).map(s => s[0]?.toUpperCase() ?? "").join("") || "?"
+})
 </script>
 
 <template>

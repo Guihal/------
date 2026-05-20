@@ -1,74 +1,64 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import type { TaskPriority } from "../../../core/domain/task/types";
-import { useTaskValidation } from "../../composables/useTaskValidation";
+import { ref, watch } from "vue"
+import { useTaskValidation } from "../../composables/useTaskValidation"
+import type { TaskPriority } from "../../../core/domain/task/types"
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
 
 const emit = defineEmits<{
-	submit: [
-		data: {
-			title: string;
-			description: string | null;
-			priority: TaskPriority;
-			dueAt: string | null;
-			complexity: "tiny" | "small" | "medium" | "large";
-			complexitySource: "suggested" | "manual";
-		},
-	];
-	cancel: [];
-}>();
+  submit: [data: {
+    title: string
+    description: string | null
+    priority: TaskPriority
+    dueAt: string | null
+    complexity: "tiny" | "small" | "medium" | "large"
+    complexitySource: "suggested" | "manual"
+  }]
+  cancel: []
+}>()
 
 const props = defineProps<{
-	suggestedComplexity?: "tiny" | "small" | "medium" | "large" | null;
-	isLoading?: boolean;
-}>();
+  suggestedComplexity?: "tiny" | "small" | "medium" | "large" | null
+  isLoading?: boolean
+}>()
 
-const title = ref("");
-const description = ref("");
-const priority = ref<TaskPriority>("normal");
-const dueAt = ref("");
-const complexity = ref<"tiny" | "small" | "medium" | "large">("small");
-const complexitySource = ref<"suggested" | "manual">("manual");
-const error = ref("");
+const title = ref("")
+const description = ref("")
+const priority = ref<TaskPriority>("normal")
+const dueAt = ref("")
+const complexity = ref<"tiny" | "small" | "medium" | "large">("small")
+const complexitySource = ref<"suggested" | "manual">("manual")
+const error = ref("")
 
-const { validateTitle, validateDescription } = useTaskValidation();
+const { validateTitle, validateDescription } = useTaskValidation()
 
-watch(
-	() => props.suggestedComplexity,
-	(val) => {
-		if (val) {
-			complexity.value = val;
-			complexitySource.value = "suggested";
-		}
-	},
-);
+watch(() => props.suggestedComplexity, (val) => {
+  if (val) {
+    complexity.value = val
+    complexitySource.value = "suggested"
+  }
+})
 
-function _handleSubmit() {
-	error.value = "";
-	const titleRes = validateTitle(title.value);
-	if (!titleRes.ok) {
-		error.value = titleRes.error;
-		return;
-	}
-	const descRes = validateDescription(description.value || null);
-	if (!descRes.ok) {
-		error.value = descRes.error;
-		return;
-	}
+function handleSubmit() {
+  error.value = ""
+  const titleRes = validateTitle(title.value)
+  if (!titleRes.ok) { error.value = titleRes.error; return }
+  const descRes = validateDescription(description.value || null)
+  if (!descRes.ok) { error.value = descRes.error; return }
 
-	emit("submit", {
-		title: title.value.trim(),
-		description: description.value.trim() || null,
-		priority: priority.value,
-		dueAt: dueAt.value || null,
-		complexity: complexity.value,
-		complexitySource: complexitySource.value,
-	});
-	title.value = "";
-	description.value = "";
-	priority.value = "normal";
-	dueAt.value = "";
-	complexity.value = "small";
-	complexitySource.value = "manual";
+  emit("submit", {
+    title: title.value.trim(),
+    description: description.value.trim() || null,
+    priority: priority.value,
+    dueAt: dueAt.value || null,
+    complexity: complexity.value,
+    complexitySource: complexitySource.value,
+  })
+  title.value = ""
+  description.value = ""
+  priority.value = "normal"
+  dueAt.value = ""
+  complexity.value = "small"
+  complexitySource.value = "manual"
 }
 </script>
 

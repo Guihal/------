@@ -1,13 +1,15 @@
 <script setup lang="ts">
-const _props = defineProps<{
-	title?: string;
-	message?: string;
-	retryLabel?: string;
-}>();
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
 
-const _emit = defineEmits<{
-	retry: [];
-}>();
+const props = defineProps<{
+  title?: string
+  message?: string
+  retryLabel?: string
+}>()
+
+const emit = defineEmits<{
+  retry: []
+}>()
 </script>
 
 <template>

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-const _props = defineProps<{
-	profileName: string;
-	totalXp: number;
-}>();
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
+
+const props = defineProps<{
+  profileName: string
+  totalXp: number
+}>()
 </script>
 
 <template>

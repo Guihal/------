@@ -1,38 +1,40 @@
 <script setup lang="ts">
-import type { Task } from "../../../core/domain/task/types";
+import type { Task } from "../../../core/domain/task/types"
 
-const _props = defineProps<{
-	task: Task;
-	isLoading?: boolean;
-}>();
+import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
 
-const _emit = defineEmits<{
-	complete: [taskId: string];
-	archive: [taskId: string];
-}>();
+const props = defineProps<{
+  task: Task
+  isLoading?: boolean
+}>()
 
-function _fmtDate(iso: string | null): string {
-	return iso ? new Date(iso).toLocaleDateString("ru-RU") : "";
+const emit = defineEmits<{
+  complete: [taskId: string]
+  archive: [taskId: string]
+}>()
+
+function fmtDate(iso: string | null): string {
+  return iso ? new Date(iso).toLocaleDateString("ru-RU") : ""
 }
 
-const _priorityLabels: Record<Task["priority"], string> = {
-	low: "Низкий",
-	normal: "Обычный",
-	high: "Высокий",
-};
+const priorityLabels: Record<Task["priority"], string> = {
+  low: "Низкий",
+  normal: "Обычный",
+  high: "Высокий",
+}
 
-const _complexityLabels: Record<Task["complexity"], string> = {
-	tiny: "Крошечная",
-	small: "Маленькая",
-	medium: "Средняя",
-	large: "Большая",
-};
+const complexityLabels: Record<Task["complexity"], string> = {
+  tiny: "Крошечная",
+  small: "Маленькая",
+  medium: "Средняя",
+  large: "Большая",
+}
 
-const _priorityClasses: Record<Task["priority"], string> = {
-	low: "priority-low",
-	normal: "priority-normal",
-	high: "priority-high",
-};
+const priorityClasses: Record<Task["priority"], string> = {
+  low: "priority-low",
+  normal: "priority-normal",
+  high: "priority-high",
+}
 </script>
 
 <template>
