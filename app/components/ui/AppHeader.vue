@@ -12,7 +12,7 @@ const props = defineProps<{
     <h1>Таск Компаньон</h1>
     <div class="profile-badge">
       <span class="profile-name">{{ props.profileName }}</span>
-      <span class="profile-xp">{{ props.totalXp }} XP</span>
+      <span class="profile-xp">{{ props.totalXp }}</span>
     </div>
   </header>
 </template>
