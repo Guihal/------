@@ -118,7 +118,7 @@ function handleSubmit() {
 }
 label { font-size: v-bind("t.typography.size.sm"); font-weight: v-bind("t.typography.weight.medium"); color: v-bind("t.color.textSecondary"); }
 input, textarea, select { background: v-bind("t.color.bgOverlay"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.md"); padding: v-bind("t.spacing.sm") v-bind("t.spacing.md"); color: v-bind("t.color.textPrimary"); font-size: v-bind("t.typography.size.md"); min-height: 44px; }
-input:focus, textarea:focus, select:focus { outline: none; border-color: v-bind("t.color.accentBlue"); box-shadow: 0 0 0 2px rgba(137,180,250,0.25); }
+input:focus, textarea:focus, select:focus { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; border-color: v-bind("t.color.accentBlue"); }
 input:disabled, textarea:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
 .error { font-size: v-bind("t.typography.size.xs"); color: v-bind("t.color.statusError"); }
 .badge-suggested { font-size: v-bind("t.typography.size.xs"); color: v-bind("t.color.statusSuccess"); margin-top: 2px; }

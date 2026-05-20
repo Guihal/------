@@ -23,6 +23,9 @@ const props = defineProps<{
   padding: v-bind("t.spacing.xxl") v-bind("t.spacing.lg");
   color: v-bind("t.color.textSecondary");
   min-height: 160px;
+  background: v-bind("t.color.bgElevated");
+  border: 1px solid v-bind("t.color.borderSubtle");
+  border-radius: v-bind("t.radius.lg");
 }
 
 .loading-spinner {
