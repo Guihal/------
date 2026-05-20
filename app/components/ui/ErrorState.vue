@@ -19,6 +19,7 @@ const emit = defineEmits<{
     <p v-if="props.message" class="error-message">{{ props.message }}</p>
     <button
       v-if="props.retryLabel"
+      type="button"
       class="error-retry"
       data-testid="error-retry"
       @click="emit('retry')"
