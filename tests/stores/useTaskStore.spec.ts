@@ -147,6 +147,6 @@ describe("useTaskStore", () => {
     store.setTasks([mockTask])
 
     expect(store.groups.noDeadline).toHaveLength(1)
-    expect(deps.useCases.resolveTaskList).toHaveBeenCalledWith([mockTask])
+    expect(deps.useCases.resolveTaskList).toHaveBeenCalledWith([mockTask], expect.any(Date))
   })
 })

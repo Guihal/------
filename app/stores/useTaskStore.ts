@@ -58,7 +58,7 @@ export const useTaskStore = defineStore("task", () => {
   const groups = computed(() => {
     const deps = _deps()
     if (!deps) return { overdue: [], upcoming: [], noDeadline: [], completed: [] }
-    return deps.useCases.resolveTaskList(tasks.value)
+    return deps.useCases.resolveTaskList(tasks.value, new Date())
   })
 
   return {

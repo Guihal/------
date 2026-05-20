@@ -26,7 +26,7 @@ export type AppDependencies = {
     readonly archiveTask: (input: ArchiveTaskInput) => Promise<ArchiveTaskResult>
     readonly grantTaskXp: (input: GrantTaskXpInput) => Promise<GrantTaskXpResult>
     readonly applyLevelProgress: (current: Progression, xpDelta: number, now: string) => LevelProgressResult
-    readonly resolveTaskList: (tasks: readonly Task[], now?: Date) => TaskListGroups
+    readonly resolveTaskList: (tasks: readonly Task[], now: Date) => TaskListGroups
     readonly suggestTaskComplexity: (input: SuggestTaskComplexityInput) => TaskComplexity
   }
 }

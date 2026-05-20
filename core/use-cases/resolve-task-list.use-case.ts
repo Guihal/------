@@ -45,7 +45,7 @@ function compareTasks(a: Task, b: Task): number {
 
 export function resolveTaskList(
   tasks: readonly Task[],
-  now: Date = new Date(),
+  now: Date,
 ): TaskListGroups {
   const overdue: Task[] = []
   const upcoming: Task[] = []
