@@ -1,29 +1,18 @@
 {
 	"queue": [
 		{
-			"id": "polish-7",
-			"title": "Split index.vue (153 lines >150 cap)",
+			"id": "polish-12",
+			"title": "Fix useTaskStore.ts layering violation (imports infrastructure type)",
 			"status": "in_progress",
 			"priority": 9,
-			"started_at": "2026-05-20T03:18:11Z"
-		},
-		{
-			"id": "polish-8",
-			"title": "Deep bug hunt: manual review all components for logic errors",
-			"status": "pending",
-			"priority": 10
-		},
-		{
-			"id": "polish-9",
-			"title": "Biome + lint full check and fix",
-			"status": "pending",
-			"priority": 8
-		},
-		{
-			"id": "polish-10",
-			"title": "Architecture guard: verify no domain violations, store logic, any types",
-			"status": "pending",
-			"priority": 10
+			"started_at": "2026-05-20T04:37:45Z",
+			"evidence_path": "docs/polish-cycles/cycle-20260520-042027/issues.md",
+			"code_ref": "app/stores/useTaskStore.ts:11",
+			"spec_refs": ["docs/02-architecture.md §4.2, §6, §18", "docs/04-technical-decisions.md ADR-007"],
+			"allowed_write_paths": ["app/stores/useTaskStore.ts", "app/composables/useAppDependencies.ts"],
+			"acceptance_commands": ["bun test tests/stores/useTaskStore.spec.ts", "bunx tsc --noEmit"],
+			"non_goals": ["Do not change runtime behavior", "Do not change AppDependencies interface"],
+			"max_diff_loc": 20
 		}
 	],
 	"completed": [
@@ -60,8 +49,6 @@
 			"title": "UI Polish: Visual consistency",
 			"status": "done",
 			"priority": 6,
-			"created_at": null,
-			"started_at": "2026-05-20T01:56:00.000Z",
 			"completed_at": "2026-05-20T02:04:00.000Z"
 		},
 		{
@@ -70,6 +57,37 @@
 			"status": "done",
 			"priority": 10,
 			"completed_at": "2026-05-20T03:17:49Z"
+		},
+		{
+			"id": "polish-7",
+			"title": "Split index.vue (153 lines >150 cap)",
+			"status": "done",
+			"priority": 9,
+			"completed_at": "2026-05-20T04:22:00Z",
+			"reason": "index.vue already 129 lines, objective achieved"
+		},
+		{
+			"id": "polish-9",
+			"title": "Biome + lint full check and fix",
+			"status": "done",
+			"priority": 8,
+			"completed_at": "2026-05-20T04:22:00Z",
+			"reason": "biome check passes clean (exit 0)"
+		},
+		{
+			"id": "polish-11",
+			"title": "Split migration-runner.ts (154 lines >150 cap)",
+			"status": "done",
+			"priority": 10,
+			"started_at": "2026-05-20T04:22:00Z",
+			"completed_at": "2026-05-20T04:37:45Z",
+			"evidence_path": "docs/polish-cycles/cycle-20260520-042027/issues.md",
+			"code_ref": "infrastructure/sqlite/migration-runner.ts:154",
+			"spec_refs": ["docs/02-architecture.md §12", "docs/04-technical-decisions.md ADR-018"],
+			"allowed_write_paths": ["infrastructure/sqlite/migration-runner.ts", "infrastructure/sqlite/migration-helpers.ts"],
+			"acceptance_commands": ["wc -l infrastructure/sqlite/migration-runner.ts", "wc -l infrastructure/sqlite/migration-helpers.ts", "bun test tests/infrastructure/sqlite/migration-runner.test.ts", "bun test tests/infrastructure/sqlite/migration-runner.transaction.test.ts"],
+			"non_goals": ["Do not change behavior of migrations", "Do not change test file imports", "Do not refactor unrelated files"],
+			"max_diff_loc": 160
 		}
 	]
 }

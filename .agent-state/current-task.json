@@ -1,10 +1,10 @@
 {
 	"current": {
-		"id": "polish-7",
-		"title": "Split index.vue (153 lines >150 cap)",
+		"id": "polish-12",
+		"title": "Fix useTaskStore.ts layering violation (imports infrastructure type)",
 		"status": "in_progress",
 		"priority": 9,
-		"started_at": "2026-05-20T03:18:11Z"
+		"started_at": "2026-05-20T04:37:45Z"
 	},
 	"history": [
 		{
@@ -40,8 +40,6 @@
 			"title": "UI Polish: Visual consistency",
 			"status": "done",
 			"priority": 6,
-			"created_at": null,
-			"started_at": "2026-05-20T01:56:00.000Z",
 			"completed_at": "2026-05-20T02:04:00.000Z",
 			"reason": "stale_lock_recovery: no commits found, lock stale >8min, user declared dead"
 		},
@@ -53,6 +51,24 @@
 			"started_at": "2026-05-20T02:57:00Z",
 			"completed_at": "2026-05-20T03:17:49Z",
 			"reason": "stale_lock_recovery: auto-reset after 15min"
+		},
+		{
+			"id": "polish-7",
+			"title": "Split index.vue (153 lines >150 cap)",
+			"status": "done",
+			"priority": 9,
+			"started_at": "2026-05-20T03:18:11Z",
+			"completed_at": "2026-05-20T04:22:00Z",
+			"reason": "stale_lock_recovery: index.vue already 129 lines, objective achieved"
+		},
+		{
+			"id": "polish-11",
+			"title": "Split migration-runner.ts (154 lines >150 cap)",
+			"status": "done",
+			"priority": 10,
+			"started_at": "2026-05-20T04:22:00Z",
+			"completed_at": "2026-05-20T04:37:45Z",
+			"reason": "stale_lock_recovery: split complete, tests pass, committed"
 		}
 	]
 }
