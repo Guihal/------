@@ -1,5 +1,19 @@
 {
-	"queue": [],
+	"queue": [
+		{
+			"id": "polish-13",
+			"title": "Fix SQLite test environment (bun:sqlite externalized) + exclude e2e from vitest",
+			"status": "pending",
+			"priority": 10,
+			"evidence_path": "docs/polish-cycles/cycle-20260520-075241/issues.md",
+			"code_ref": "vitest.config.ts, 6 SQLite test files, 3 e2e test files",
+			"spec_refs": ["AGENTS.md §6 Test strategy", "docs/02-architecture.md §17", "ADR-008"],
+			"allowed_write_paths": ["vitest.config.ts", "tests/infrastructure/sqlite/migration-runner.test.ts", "tests/infrastructure/sqlite/migration-runner.transaction.test.ts", "tests/infrastructure/sqlite/repositories/repositories.test.ts", "tests/infrastructure/sqlite/unit-of-work/sqlite-unit-of-work.edge.test.ts", "tests/infrastructure/sqlite/unit-of-work/sqlite-unit-of-work.transaction.test.ts", "tests/use-cases/tasks/complete-task.use-case.paritet.test.ts"],
+			"acceptance_commands": ["bun run test", "bunx tsc --noEmit"],
+			"non_goals": ["Do not change test logic or assertions", "Do not modify source code", "Do not add/remove dependencies"],
+			"max_diff_loc": 20
+		}
+	],
 	"completed": [
 		{
 			"id": "polish-1",

@@ -1,0 +1,31 @@
+=== TS/VUE/CSS line counts ===
+find: ‘components’: Нет такого файла или каталога
+find: ‘composables’: Нет такого файла или каталога
+find: ‘stores’: Нет такого файла или каталога
+find: ‘pages’: Нет такого файла или каталога
+  7083 итого
+=== Top 20 by lines ===
+find: ‘components’: Нет такого файла или каталога
+find: ‘composables’: Нет такого файла или каталога
+find: ‘stores’: Нет такого файла или каталога
+find: ‘pages’: Нет такого файла или каталога
+  7083 итого
+   238 tests/components/task/TaskCreateForm.spec.ts
+   224 tests/use-cases/tasks/complete-task.use-case.test.ts
+   215 tests/domain/task/invariants.test.ts
+   191 tests/bootstrap/bootstrap-app.test.ts
+   181 tests/infrastructure/di/app-dependencies.test.ts
+   156 tests/use-cases/tasks/grant-task-xp.use-case.test.ts
+   153 tests/stores/useTaskStore.spec.ts
+   149 tests/infrastructure/sqlite/repositories/repositories.test.ts
+   146 tests/components/task/TaskCard.spec.ts
+   145 tests/use-cases/tasks/complete-task.use-case.paritet.bun.test.ts
+   137 infrastructure/di/bootstrap-app.ts
+   135 tests/use-cases/resolve-task-list.use-case.test.ts
+   134 tests/use-cases/tasks/archive-task.use-case.test.ts
+   134 app/components/task/TaskCreateForm.vue
+   134 app/components/profile/ProfileCard.vue
+   132 tests/infrastructure/memory/unit-of-work/memory-unit-of-work.test.ts
+   131 tests/infrastructure/sqlite/migration-runner.test.ts
+   129 app/pages/index.vue
+   122 infrastructure/sqlite/migration-helpers.ts

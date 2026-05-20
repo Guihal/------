@@ -1,0 +1,32 @@
+=== Date.now|Math.random|crypto.randomUUID in core/use-cases ===
+NONE
+=== infrastructure imports from app/pages/components/stores ===
+app/composables/useAppDependencies.ts:1:import type { AppDependencies } from "../../infrastructure/di/app-dependencies";
+app/composables/useAppDependencies.ts:2:import { getAppDependencies } from "../../infrastructure/di/provide-app-dependencies";
+NONE
+=== any|@ts-ignore|@ts-nocheck|console.log|debugger in app/core/infrastructure ===
+NONE
+=== English UI strings in Vue templates ===
+app/components/task/TaskCard.vue:43:      <h3 class="task-title">{{ props.task.title }}</h3>
+app/components/task/TaskCard.vue:44:      <span class="task-priority" :class="priorityClasses[props.task.priority]">{{ priorityLabels[props.task.priority] }}</span>
+app/components/task/TaskCard.vue:47:      <span class="task-complexity">{{ complexityLabels[props.task.complexity] }}</span>
+app/components/task/TaskCard.vue:48:      <span v-if="props.task.dueAt" class="task-deadline">{{ fmtDate(props.task.dueAt) }}</span>
+app/components/task/TaskCard.vue:50:    <div v-if="props.task.description" class="task-description">{{ props.task.description }}</div>
+app/components/task/TaskCreateForm.vue:71:      <span v-if="error" class="error" role="alert" aria-live="assertive">{{ error }}</span>
+app/components/task/TaskList.vue:32:    <h2 class="group-title">{{ props.title }} ({{ props.tasks.length }})</h2>
+app/components/ui/ErrorState.vue:18:    <h3 class="error-title">{{ props.title ?? "Что-то пошло не так" }}</h3>
+app/components/ui/ErrorState.vue:19:    <p v-if="props.message" class="error-message">{{ props.message }}</p>
+app/components/ui/AppHeader.vue:15:        <span class="profile-name">{{ props.profileName }}</span>
+app/components/ui/AppHeader.vue:16:        <span class="profile-xp">{{ props.totalXp }}</span>
+app/components/ui/EmptyState.vue:27:    <div class="empty-icon" aria-hidden="true">{{ props.icon ?? "📭" }}</div>
+app/components/ui/EmptyState.vue:28:    <h3 class="empty-title">{{ props.title }}</h3>
+app/components/ui/EmptyState.vue:29:    <p v-if="props.description" class="empty-description">{{ props.description }}</p>
+app/components/ui/LoadingState.vue:12:    <span class="loading-text">{{ props.message ?? "Загрузка…" }}</span>
+app/components/profile/ProfileCard.vue:26:        <span class="avatar-text">{{ props.initials }}</span>
+app/components/profile/ProfileCard.vue:29:        <span class="profile-name" data-testid="profile-name">{{ props.name }}</span>
+app/components/profile/ProfileCard.vue:43:      <span class="xp-text" data-testid="xp-text">{{ progress }} / {{ XP_PER_LEVEL }}</span>
+app/components/profile/ProfileLevel.vue:20:      <span class="profile-name" data-testid="profile-name">{{ props.name }}</span>
+app/components/profile/ProfileLevel.vue:31:      <span class="xp-text" data-testid="xp-text">{{ progress }} / {{ XP_PER_LEVEL }}</span>
+app/components/profile/ProfileStats.vue:21:      <span class="stat-value">{{ stat.value }}</span>
+app/components/profile/ProfileStats.vue:22:      <span class="stat-label">{{ stat.label }}</span>
+=== onMounted without cleanup ===

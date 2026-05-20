@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "../test-compat.ts";
 import type { Profile } from "../../../../core/domain/profile/types";
 import type { Progression } from "../../../../core/domain/progression/types";
 import type { Task } from "../../../../core/domain/task/types";

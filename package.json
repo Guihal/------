@@ -9,6 +9,7 @@
 		"preview": "nuxt preview",
 		"postinstall": "nuxt prepare",
 		"test": "vitest run",
+		"test:sqlite": "bun test tests/infrastructure/sqlite/ tests/use-cases/tasks/complete-task.use-case.paritet.bun.test.ts",
 		"test:watch": "vitest",
 		"typecheck": "nuxt typecheck",
 		"cap:init": "cap init",

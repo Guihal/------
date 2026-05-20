@@ -1,11 +1,37 @@
-// @vitest-environment happy-dom
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "bun:test";
+import { Database } from "bun:sqlite";
 import type { Profile } from "../../../core/domain/profile/types";
 import type { Progression } from "../../../core/domain/progression/types";
 import type { Task } from "../../../core/domain/task/types";
 import type { UnitOfWorkPort } from "../../../core/ports/unit-of-work.port";
 import { completeTask } from "../../../core/use-cases/tasks/complete-task.use-case";
-import { MemoryUnitOfWork } from "../../../infrastructure/memory/unit-of-work/memory-unit-of-work";
+import {
+	applyMigrations,
+	type SqliteConnection,
+} from "../../../infrastructure/sqlite/migration-runner.ts";
+import { migrations } from "../../../infrastructure/sqlite/migrations/index.ts";
+import { SqliteUnitOfWork } from "../../../infrastructure/sqlite/unit-of-work/sqlite-unit-of-work.ts";
+
+function createConn(db: Database): SqliteConnection {
+	return {
+		execute: async (s: string) => {
+			db.exec(s);
+			return { changes: db.changes };
+		},
+		run: async (s: string, v?: unknown[]) => {
+			const stmt = db.prepare(s);
+			const info = stmt.run(...(v ?? []));
+			stmt.finalize();
+			return { changes: Number(info.changes) };
+		},
+		query: async (s: string, v?: unknown[]) => {
+			const stmt = db.prepare(s);
+			const rows = stmt.all(...(v ?? [])) as unknown[];
+			stmt.finalize();
+			return { values: rows };
+		},
+	};
+}
 
 function makeTask(
 	overrides: Partial<Task> & Pick<Task, "id" | "status">,
@@ -53,9 +79,16 @@ function expectHappy(result: Awaited<ReturnType<typeof completeTask>>) {
 	expect(result.xpToNextLevel).toBe(445);
 }
 
-describe("completeTask parity — memory vs sqlite", () => {
-	it("memory: happy path", async () => {
-		const uow = new MemoryUnitOfWork();
+describe("completeTask parity — sqlite", () => {
+	let db: Database, conn: SqliteConnection, uow: SqliteUnitOfWork;
+	beforeEach(async () => {
+		db = new Database(":memory:");
+		conn = createConn(db);
+		await applyMigrations(conn, migrations);
+		uow = new SqliteUnitOfWork(conn);
+	});
+
+	it("sqlite: happy path", async () => {
 		const task = makeTask({
 			id: "t1",
 			status: "active",
@@ -77,8 +110,7 @@ describe("completeTask parity — memory vs sqlite", () => {
 		expect((await uow.progressions.findById("p1"))?.totalXp).toBe(555);
 	});
 
-	it("memory: rollback on error", async () => {
-		const uow = new MemoryUnitOfWork();
+	it("sqlite: rollback on error", async () => {
 		const task = makeTask({ id: "t1", status: "active" });
 		await seed(uow, task, {
 			profileId: "p1",
