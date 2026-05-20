@@ -6,13 +6,13 @@ import ProfileLevel from "../components/profile/ProfileLevel.vue"
 
 const profileStore = useProfileStore()
 
-const name = computed(() => profileStore.profile?.name ?? "User")
+const name = computed(() => profileStore.profile?.name ?? "Пользователь")
 const xp = computed(() => profileStore.progression?.totalXp ?? 0)
 </script>
 
 <template>
   <div class="page">
-    <h1 class="page-title">Profile</h1>
+    <h1 class="page-title">Профиль</h1>
     <ProfileLevel :name="name" :xp="xp" />
   </div>
 </template>
