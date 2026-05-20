@@ -62,7 +62,8 @@ const emptyStateProps = computed(() => {
 }
 
 .group-empty {
-  /* wrapper keeps padding/radius from EmptyState; minimal override */
+  display: flex;
+  flex-direction: column;
 }
 
 .group-list {

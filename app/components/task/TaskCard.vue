@@ -56,7 +56,7 @@ const priorityClasses: Record<Task["priority"], string> = {
 </template>
 
 <style scoped>
-.task-card { background: v-bind("t.color.bgCard"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.lg"); padding: v-bind("t.spacing.lg"); margin-bottom: v-bind("t.spacing.md"); color: v-bind("t.color.textPrimary"); contain: layout paint style; }
+.task-card { background: v-bind("t.color.bgCard"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.lg"); padding: v-bind("t.spacing.lg"); margin-bottom: v-bind("t.spacing.md"); color: v-bind("t.color.textPrimary"); contain: layout paint style; min-height: 120px; }
 .task-header { display: flex; align-items: flex-start; justify-content: space-between; gap: v-bind("t.spacing.md"); margin-bottom: v-bind("t.spacing.sm"); flex-wrap: wrap; }
 .task-title { margin: 0; font-size: v-bind("t.typography.size.lg"); font-weight: v-bind("t.typography.weight.semibold"); color: v-bind("t.color.textPrimary"); word-break: break-word; flex: 1; min-width: 0; }
 .task-priority { font-size: v-bind("t.typography.size.xs"); font-weight: v-bind("t.typography.weight.semibold"); text-transform: uppercase; padding: v-bind("t.spacing.xs") v-bind("t.spacing.sm"); border-radius: v-bind("t.radius.full"); white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
