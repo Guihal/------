@@ -63,7 +63,7 @@ const priorityClasses: Record<Task["priority"], string> = {
 .priority-low { background: v-bind("t.color.priorityLowBg"); color: v-bind("t.color.priorityLowText"); }
 .priority-normal { background: v-bind("t.color.priorityNormalBg"); color: v-bind("t.color.priorityNormalText"); }
 .priority-high { background: v-bind("t.color.priorityHighBg"); color: v-bind("t.color.priorityHighText"); }
-.task-meta { display: flex; gap: v-bind("t.spacing.md"); font-size: v-bind("t.typography.size.sm"); color: v-bind("t.color.textSecondary"); margin-bottom: v-bind("t.spacing.sm"); }
+.task-meta { display: flex; flex-wrap: wrap; gap: v-bind("t.spacing.md"); font-size: v-bind("t.typography.size.sm"); color: v-bind("t.color.textSecondary"); margin-bottom: v-bind("t.spacing.sm"); }
 .task-complexity { text-transform: capitalize; }
 .task-description { font-size: v-bind("t.typography.size.md"); color: v-bind("t.color.textSecondary"); margin-bottom: v-bind("t.spacing.md"); line-height: v-bind("t.typography.lineHeight.normal"); }
 .task-actions { display: flex; gap: v-bind("t.spacing.sm"); }
