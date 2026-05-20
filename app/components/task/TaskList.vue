@@ -57,8 +57,8 @@ const emptyStateProps = computed(() => {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: v-bind("t.color.textSecondary");
-  margin: 0 0 12px 0;
-  padding: 0 4px;
+  margin: 0 0 v-bind("t.spacing.md") 0;
+  padding: 0 v-bind("t.spacing.xs");
 }
 
 .group-empty {
