@@ -1,0 +1,40 @@
+{
+  "queue": [
+    {
+      "id": "polish-1",
+      "title": "UI Polish: Mobile responsiveness",
+      "status": "pending",
+      "priority": 10,
+      "created_at": null
+    },
+    {
+      "id": "polish-2",
+      "title": "UI Polish: Accessibility (a11y)",
+      "status": "pending",
+      "priority": 9,
+      "created_at": null
+    },
+    {
+      "id": "polish-3",
+      "title": "UI Polish: Performance optimization",
+      "status": "pending",
+      "priority": 8,
+      "created_at": null
+    },
+    {
+      "id": "polish-4",
+      "title": "UI Polish: Cross-browser compatibility",
+      "status": "pending",
+      "priority": 7,
+      "created_at": null
+    },
+    {
+      "id": "polish-5",
+      "title": "UI Polish: Visual consistency",
+      "status": "pending",
+      "priority": 6,
+      "created_at": null
+    }
+  ],
+  "completed": []
+}
