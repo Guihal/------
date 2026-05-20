@@ -1,5 +1,65 @@
 {
-	"queue": [],
+	"queue": [
+		{
+			"id": "polish-15",
+			"title": "Add onUnmounted cleanup for app.vue bootstrap polling loop",
+			"status": "done",
+			"priority": 7,
+			"completed_at": "2026-05-20T09:44:00Z",
+			"reason": "Bootstrap polling loop removed from app.vue in earlier refactor; no cleanup needed",
+			"evidence_path": "docs/polish-cycles/cycle-20260520-064623/issues.md",
+			"code_ref": "app.vue:28",
+			"spec_refs": ["AGENTS.md §9 anti-pattern #11"],
+			"allowed_write_paths": ["app.vue", "app/composables/useBootstrap.ts"],
+			"acceptance_commands": ["bunx tsc --noEmit", "bun run test"],
+			"non_goals": ["Do not change bootstrap logic", "Do not change timing or retry count", "Do not refactor unrelated files"],
+			"max_diff_loc": 15
+		},
+		{
+			"id": "polish-16",
+			"title": "Move src/bootstrap/bootstrap-app.ts to core/use-cases/app/ and split tests",
+			"status": "done",
+			"priority": 8,
+			"completed_at": "2026-05-20T09:44:00Z",
+			"evidence_path": "docs/polish-cycles/cycle-20260520-1224/issues.md",
+			"code_ref": "src/bootstrap/bootstrap-app.ts",
+			"spec_refs": ["docs/02-architecture.md §3, §5", "AGENTS.md §3 Folder layout"],
+			"allowed_write_paths": ["src/bootstrap/bootstrap-app.ts", "core/use-cases/app/bootstrap-app.use-case.ts", "plugins/bootstrap.ts", "tests/bootstrap/bootstrap-app.test.ts"],
+			"acceptance_commands": ["bunx tsc --noEmit", "bun run test"],
+			"non_goals": ["Do not change behavior of bootstrapApp", "Do not rename the function", "Do not refactor unrelated files"],
+			"max_diff_loc": 200,
+			"spec_gate": "PASS",
+			"loc_ok": true,
+			"verification": ["bunx tsc --noEmit -> exit 0", "bun run test -> 31 pass 184 tests"],
+			"commit_sha": "2d9fe73"
+		},
+		{
+			"id": "polish-17",
+			"title": "Enforce diploma-evidence-scan.sh wrapper in polish cron",
+			"status": "pending",
+			"priority": 10,
+			"evidence_path": "docs/polish-cycles/cycle-20260520-1224/",
+			"code_ref": "scripts/polish-cron.sh or .agent-state/config.json",
+			"spec_refs": ["watchdog CHECK 3B", "AGENTS.md §8 Definition of Done"],
+			"allowed_write_paths": ["scripts/polish-cron.sh", ".agent-state/config.json", "docs/polish-cycles/"],
+			"acceptance_commands": ["grep 'diploma-evidence-scan.sh' scripts/polish-cron.sh || grep 'diploma-evidence-scan.sh' .agent-state/config.json", "ls docs/polish-cycles/cycle-latest/server.log docs/polish-cycles/cycle-latest/server_port.log docs/polish-cycles/cycle-latest/curl_index.html"],
+			"non_goals": ["Do not change app source code", "Do not change build logic", "Do not skip evidence scan"],
+			"max_diff_loc": 30
+		},
+		{
+			"id": "polish-18",
+			"title": "Fix layering violation: core/use-cases/app/bootstrap-app.use-case.ts imports infrastructure",
+			"status": "pending",
+			"priority": 9,
+			"evidence_path": "core/use-cases/app/bootstrap-app.use-case.ts:7",
+			"code_ref": "core/use-cases/app/bootstrap-app.use-case.ts:7, plugins/bootstrap.ts:6",
+			"spec_refs": ["docs/02-architecture.md §2 Layering rule", "AGENTS.md §2", "ADR-007"],
+			"allowed_write_paths": ["core/use-cases/app/bootstrap-app.use-case.ts", "plugins/bootstrap.ts"],
+			"acceptance_commands": ["rg 'from.*infrastructure' core/use-cases/app/bootstrap-app.use-case.ts || echo 'clean'", "bunx tsc --noEmit", "bun run test"],
+			"non_goals": ["Do not change behavior of bootstrapApp", "Do not rename the function", "Do not refactor unrelated files"],
+			"max_diff_loc": 15
+		}
+	],
 	"completed": [
 		{
 			"id": "polish-1",
@@ -104,6 +164,44 @@
 			"loc_ok": true,
 			"verification": ["bun run test -> 30 pass 0 fail", "bun run test:sqlite -> 34 pass 0 fail", "bunx tsc --noEmit -> exit 0"],
 			"commit_sha": "78a2cd8"
+		},
+		{
+			"id": "polish-14",
+			"title": "Fix new Date() usage in resolve-task-list.use-case.ts and callers/tests",
+			"status": "done",
+			"priority": 9,
+			"completed_at": "2026-05-20T06:44:00Z",
+			"evidence_path": "docs/polish-cycles/cycle-20260520-090427/issues.md",
+			"code_ref": "core/use-cases/resolve-task-list.use-case.ts:12,37,44",
+			"spec_refs": ["AGENTS.md §9 anti-pattern #11", "docs/02-architecture.md §4.3"],
+			"allowed_write_paths": [
+				"core/use-cases/resolve-task-list.use-case.ts",
+				"app/stores/useTaskStore.ts",
+				"app/composables/useTaskList.ts",
+				"tests/use-cases/resolve-task-list.use-case.test.ts",
+				"tests/stores/useTaskStore.spec.ts"
+			],
+			"acceptance_commands": [
+				"bun test tests/use-cases/resolve-task-list.use-case.test.ts",
+				"bun test tests/stores/useTaskStore.spec.ts",
+				"bun test tests/composables/useTaskList.spec.ts",
+				"bunx tsc --noEmit"
+			],
+			"non_goals": [
+				"Do not change behavior of task grouping or sorting",
+				"Do not introduce new Date() wrappers elsewhere",
+				"Do not refactor unrelated files"
+			],
+			"max_diff_loc": 30,
+			"spec_gate": "PASS",
+			"loc_ok": true,
+			"verification": [
+				"bun test tests/use-cases/resolve-task-list.use-case.test.ts -> 8 pass 0 fail",
+				"bun test tests/stores/useTaskStore.spec.ts -> 5 pass 0 fail",
+				"bun test tests/composables/useTaskList.spec.ts -> 1 pass 0 fail",
+				"bunx tsc --noEmit -> exit 0"
+			],
+			"commit_sha": "5c36d28"
 		}
 	]
 }

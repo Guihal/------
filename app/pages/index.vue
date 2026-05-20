@@ -117,7 +117,10 @@ async function handleArchive(taskId: string) {
 </template>
 
 <style scoped>
-.page { max-width: 640px; margin: 0 auto; padding: v-bind("t.spacing.lg"); padding-left: max(v-bind("t.spacing.lg"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.lg"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.lg"), env(safe-area-inset-top)); padding-bottom: calc(v-bind("t.spacing.xxl") + env(safe-area-inset-bottom)); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
+.page { max-width: 800px; margin: 0 auto; padding: v-bind("t.spacing.lg"); padding-left: max(v-bind("t.spacing.lg"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.lg"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.lg"), env(safe-area-inset-top)); padding-bottom: calc(v-bind("t.spacing.xxl") + env(safe-area-inset-bottom)); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
+@media (min-width: 768px) {
+  .page { padding: v-bind("t.spacing.xxl"); padding-left: max(v-bind("t.spacing.xxl"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.xxl"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.xxl"), env(safe-area-inset-top)); padding-bottom: calc(v-bind("t.spacing.xxxl") + env(safe-area-inset-bottom)); }
+}
 @media (max-width: 360px) {
   .page { padding: v-bind("t.spacing.md"); padding-left: max(v-bind("t.spacing.md"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.md"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.md"), env(safe-area-inset-top)); padding-bottom: calc(v-bind("t.spacing.xl") + env(safe-area-inset-bottom)); }
 }

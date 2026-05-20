@@ -107,28 +107,26 @@ function handleSubmit() {
 
 <style scoped>
 .create-form { background: v-bind("t.color.bgCard"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.lg"); padding: v-bind("t.spacing.lg"); margin-bottom: v-bind("t.spacing.xxl"); color: v-bind("t.color.textPrimary"); }
-.form-title { margin: 0 0 v-bind("t.spacing.lg") 0; font-size: v-bind("t.typography.size.lg"); font-weight: v-bind("t.typography.weight.semibold"); }
-.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: v-bind("t.spacing.md"); }
-.field-row { display: flex; gap: v-bind("t.spacing.md"); flex-wrap: wrap; }
-.field-row .field { flex: 1; min-width: 140px; }
+.form-title { margin: 0 0 v-bind("t.spacing.lg") 0; font-size: v-bind("t.typography.size.xl"); font-weight: v-bind("t.typography.weight.bold"); color: v-bind("t.color.textPrimary"); }
+.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: v-bind("t.spacing.lg"); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: v-bind("t.spacing.md"); align-items: start; }
 @media (max-width: 480px) {
-  .field-row { flex-direction: column; gap: v-bind("t.spacing.sm"); }
-  .field-row .field { min-width: auto; }
+  .field-row { grid-template-columns: 1fr; gap: v-bind("t.spacing.sm"); }
   .form-actions { flex-direction: column; }
 }
 label { font-size: v-bind("t.typography.size.sm"); font-weight: v-bind("t.typography.weight.medium"); color: v-bind("t.color.textSecondary"); }
-input, textarea, select { background: v-bind("t.color.bgOverlay"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.md"); padding: v-bind("t.spacing.sm") v-bind("t.spacing.md"); color: v-bind("t.color.textPrimary"); font-size: v-bind("t.typography.size.md"); min-height: 44px; }
+input, textarea, select { width: 100%; background: v-bind("t.color.bgOverlay"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.md"); padding: v-bind("t.spacing.sm") v-bind("t.spacing.md"); color: v-bind("t.color.textPrimary"); font-size: v-bind("t.typography.size.md"); min-height: 44px; }
 input:focus, textarea:focus, select:focus { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; border-color: v-bind("t.color.accentBlue"); }
 input:disabled, textarea:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
 .error { font-size: v-bind("t.typography.size.xs"); color: v-bind("t.color.statusError"); }
 .badge-suggested { font-size: v-bind("t.typography.size.xs"); color: v-bind("t.color.statusSuccess"); margin-top: 2px; }
-.form-actions { display: flex; gap: v-bind("t.spacing.sm"); margin-top: v-bind("t.spacing.sm"); }
-.btn-primary, .btn-secondary { min-height: 44px; min-width: 44px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border: none; border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; flex: 1; }
+.form-actions { display: flex; gap: v-bind("t.spacing.sm"); margin-top: v-bind("t.spacing.lg"); }
+.btn-primary, .btn-secondary { min-height: 44px; min-width: 44px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; flex: 1; }
 .btn-primary:focus-visible, .btn-secondary:focus-visible { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; }
-.btn-primary { background: v-bind("t.color.accentBlue"); color: v-bind("t.color.textInverse"); }
-.btn-primary:hover:not(:disabled) { opacity: 0.9; }
+.btn-primary { background: v-bind("t.color.accentBlue"); color: v-bind("t.color.textInverse"); border: none; }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-secondary { background: v-bind("t.color.priorityLowBg"); color: v-bind("t.color.textPrimary"); }
-.btn-secondary:hover:not(:disabled) { opacity: 0.9; }
+.btn-secondary { background: transparent; color: v-bind("t.color.textSecondary"); border: 1px solid v-bind("t.color.borderSubtle"); }
+.btn-secondary:hover:not(:disabled) { background: v-bind("t.color.bgOverlay"); color: v-bind("t.color.textPrimary"); }
 .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>

@@ -52,10 +52,8 @@ const emptyStateProps = computed(() => {
 }
 
 .group-title {
-  font-size: v-bind("t.typography.size.sm");
-  font-weight: v-bind("t.typography.weight.bold");
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: v-bind("t.typography.size.md");
+  font-weight: v-bind("t.typography.weight.semibold");
   color: v-bind("t.color.textSecondary");
   margin: 0 0 v-bind("t.spacing.md") 0;
   padding: 0 v-bind("t.spacing.xs");

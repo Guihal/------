@@ -68,22 +68,27 @@
 			"completed_at": "2026-05-20T07:42:00Z"
 		},
 		{
-			"id": "polish-13",
-			"title": "Fix SQLite test environment (bun:sqlite externalized) + exclude e2e from vitest",
+			"id": "polish-14",
+			"title": "Fix new Date() usage in resolve-task-list.use-case.ts and callers/tests",
 			"status": "done",
-			"priority": 10,
-			"completed_at": "2026-05-20T08:42:00Z",
-			"evidence_path": "docs/polish-cycles/cycle-20260520-084200/issues.md",
-			"code_ref": "vitest.config.ts, 6 SQLite test files, 3 e2e test files",
-			"spec_refs": ["AGENTS.md §6 Test strategy", "docs/02-architecture.md §17", "ADR-008"],
-			"allowed_write_paths": ["vitest.config.ts", "tests/infrastructure/sqlite/", "tests/use-cases/tasks/complete-task.use-case.paritet.test.ts", "package.json"],
-			"acceptance_commands": ["bun run test", "bun run test:sqlite", "bunx tsc --noEmit"],
-			"non_goals": ["Do not change test logic or assertions", "Do not modify source code", "Do not add/remove dependencies"],
-			"max_diff_loc": 20,
-			"spec_gate": "PASS",
-			"loc_ok": true,
-			"verification": ["bun run test -> 30 pass 0 fail", "bun run test:sqlite -> 34 pass 0 fail", "bunx tsc --noEmit -> exit 0"],
-			"commit_sha": "78a2cd8"
+			"priority": 9,
+			"completed_at": "2026-05-20T06:44:00Z"
+		},
+		{
+			"id": "polish-15",
+			"title": "Add onUnmounted cleanup for app.vue bootstrap polling loop",
+			"status": "done",
+			"priority": 7,
+			"completed_at": "2026-05-20T09:44:00Z",
+			"reason": "Bootstrap polling loop removed from app.vue in earlier refactor; no cleanup needed"
+		},
+		{
+			"id": "polish-16",
+			"title": "Move src/bootstrap/bootstrap-app.ts to core/use-cases/app/ and split tests",
+			"status": "done",
+			"priority": 8,
+			"completed_at": "2026-05-20T09:44:00Z",
+			"commit_sha": "2d9fe73"
 		}
 	]
 }
