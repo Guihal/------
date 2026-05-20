@@ -81,11 +81,11 @@ const stats = computed(() => [
   background: v-bind("t.color.bgCard");
   border: 1px solid v-bind("t.color.borderSubtle");
   border-radius: v-bind("t.radius.lg");
-  padding: v-bind("t.spacing.xxl");
+  padding: v-bind("t.spacing.lg");
   color: v-bind("t.color.textPrimary");
   display: flex;
   flex-direction: column;
-  gap: v-bind("t.spacing.xxl");
+  gap: v-bind("t.spacing.lg");
   contain: layout paint style;
 }
 
@@ -200,7 +200,7 @@ const stats = computed(() => [
 /* Settings */
 .settings-section {
   border-top: 1px solid v-bind("t.color.borderSubtle");
-  padding-top: v-bind("t.spacing.lg");
+  padding-top: v-bind("t.spacing.xl");
 }
 .settings-title {
   margin: 0 0 v-bind("t.spacing.md");
