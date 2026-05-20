@@ -25,7 +25,7 @@ function isTaskLoading(taskId: string): boolean {
   return loadingTaskIds.value.has(taskId)
 }
 
-const profileName = computed(() => profileStore.profile?.name ?? "User")
+const profileName = computed(() => profileStore.profile?.name ?? "Пользователь")
 const totalXp = computed(() => profileStore.progression?.totalXp ?? 0)
 
 const formDraft = ref({

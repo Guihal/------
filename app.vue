@@ -2,12 +2,18 @@
 import { ref, onMounted } from "vue"
 import { getAppDependencies } from "./infrastructure/di/provide-app-dependencies"
 
+import '@fontsource-variable/inter'
+
 useHead({
   meta: [
-    { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" },
+    { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
     { name: "theme-color", content: "#0d0d12" },
+    { name: "apple-mobile-web-app-capable", content: "yes" },
+    { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+    { name: "format-detection", content: "telephone=no" },
   ],
   htmlAttrs: { lang: "ru" },
+  bodyAttrs: { class: "safe-area" },
 })
 
 const ready = ref(false)
@@ -36,14 +42,21 @@ onMounted(async () => {
 </template>
 
 <style>
-@import '@fontsource-variable/inter';
-
 html, body {
-  font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   box-sizing: border-box;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+}
+body.safe-area {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 *, *::before, *::after {
   box-sizing: inherit;
@@ -54,9 +67,12 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 100dvh;
   min-height: 100vh;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   background: #0d0d12;
   color: #cdd6f4;
+  contain: strict;
 }
 .boot-spinner {
   width: 40px;
@@ -65,6 +81,7 @@ html, body {
   border-top-color: #a6e3a1;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  will-change: transform;
 }
 .boot-text {
   margin-top: 16px;
