@@ -25,6 +25,8 @@ export function applyLevelProgress(
     progression: {
       profileId: current.profileId,
       totalXp: newTotalXp,
+      tasksCompleted: current.tasksCompleted,
+      streak: current.streak,
       updatedAt: now,
     },
     previousLevel,

@@ -1,4 +1,10 @@
 {
-  "current": null,
+  "current": {
+    "id": "polish-1",
+    "title": "UI Polish: Mobile responsiveness",
+    "status": "in_progress",
+    "priority": 10,
+    "created_at": null
+  },
   "history": []
 }
