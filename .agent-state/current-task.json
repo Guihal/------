@@ -1,5 +1,11 @@
 {
-  "current": null,
+  "current": {
+    "id": "polish-6",
+    "title": "Split ProfileCard.vue (235 lines >150 cap)",
+    "status": "in_progress",
+    "priority": 10,
+    "started_at": "2026-05-20T02:57:00Z"
+  },
   "history": [
     {
       "id": "polish-1",

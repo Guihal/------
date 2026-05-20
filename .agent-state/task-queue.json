@@ -3,7 +3,7 @@
     {
       "id": "polish-6",
       "title": "Split ProfileCard.vue (235 lines >150 cap)",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 10
     },
     {
