@@ -74,7 +74,9 @@ const priorityClasses: Record<Task["priority"], string> = {
 }
 .btn-complete:focus-visible, .btn-archive:focus-visible { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; }
 .btn-complete { background: v-bind("t.color.accentGreen"); color: v-bind("t.color.textInverse"); }
+.btn-complete:hover:not(:disabled) { opacity: 0.9; }
 .btn-complete:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-archive { background: v-bind("t.color.priorityLowBg"); color: v-bind("t.color.textPrimary"); }
+.btn-archive:hover:not(:disabled) { opacity: 0.9; }
 .btn-archive:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
