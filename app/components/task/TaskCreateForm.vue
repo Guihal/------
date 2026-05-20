@@ -126,7 +126,9 @@ input:disabled, textarea:disabled, select:disabled { opacity: 0.5; cursor: not-a
 .btn-primary, .btn-secondary { min-height: 44px; min-width: 44px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border: none; border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; flex: 1; }
 .btn-primary:focus-visible, .btn-secondary:focus-visible { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; }
 .btn-primary { background: v-bind("t.color.accentBlue"); color: v-bind("t.color.textInverse"); }
+.btn-primary:hover:not(:disabled) { opacity: 0.9; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-secondary { background: v-bind("t.color.priorityLowBg"); color: v-bind("t.color.textPrimary"); }
+.btn-secondary:hover:not(:disabled) { opacity: 0.9; }
 .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
