@@ -119,3 +119,4 @@ playwright/.cache/
 
 # Polish cycles
 /docs/polish-cycles/
+.gstack/

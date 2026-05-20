@@ -107,21 +107,26 @@ function handleSubmit() {
 
 <style scoped>
 .create-form { background: v-bind("t.color.bgCard"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.lg"); padding: v-bind("t.spacing.lg"); margin-bottom: v-bind("t.spacing.xxl"); color: v-bind("t.color.textPrimary"); }
-.form-title { margin: 0 0 v-bind("t.spacing.lg") 0; font-size: v-bind("t.typography.size.xl"); font-weight: v-bind("t.typography.weight.bold"); color: v-bind("t.color.textPrimary"); }
-.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: v-bind("t.spacing.lg"); }
+.form-title { margin: 0 0 v-bind("t.spacing.lg") 0; font-size: v-bind("t.typography.size.xxl"); font-weight: v-bind("t.typography.weight.bold"); color: v-bind("t.color.textPrimary"); letter-spacing: -0.02em; line-height: 1.2; text-wrap: balance; }
+.field { display: flex; flex-direction: column; gap: v-bind("t.spacing.xs"); margin-bottom: v-bind("t.spacing.lg"); }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: v-bind("t.spacing.md"); align-items: start; }
 @media (max-width: 480px) {
   .field-row { grid-template-columns: 1fr; gap: v-bind("t.spacing.sm"); }
   .form-actions { flex-direction: column; }
+  .btn-primary, .btn-secondary { width: 100%; }
 }
 label { font-size: v-bind("t.typography.size.sm"); font-weight: v-bind("t.typography.weight.medium"); color: v-bind("t.color.textSecondary"); }
-input, textarea, select { width: 100%; background: v-bind("t.color.bgOverlay"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.md"); padding: v-bind("t.spacing.sm") v-bind("t.spacing.md"); color: v-bind("t.color.textPrimary"); font-size: v-bind("t.typography.size.md"); min-height: 44px; }
+input, textarea, select { width: 100%; background: v-bind("t.color.bgOverlay"); border: 1px solid v-bind("t.color.borderSubtle"); border-radius: v-bind("t.radius.md"); padding: v-bind("t.spacing.sm") v-bind("t.spacing.md"); color: v-bind("t.color.textPrimary"); font-size: v-bind("t.typography.size.md"); min-height: 44px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 input:focus, textarea:focus, select:focus { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; border-color: v-bind("t.color.accentBlue"); }
 input:disabled, textarea:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
 .error { font-size: v-bind("t.typography.size.xs"); color: v-bind("t.color.statusError"); }
-.badge-suggested { font-size: v-bind("t.typography.size.xs"); color: v-bind("t.color.statusSuccess"); margin-top: 2px; }
+.badge-suggested { font-size: v-bind("t.typography.size.xs"); color: v-bind("t.color.statusSuccess"); margin-top: v-bind("t.spacing.xs"); }
 .form-actions { display: flex; gap: v-bind("t.spacing.sm"); margin-top: v-bind("t.spacing.lg"); }
-.btn-primary, .btn-secondary { min-height: 44px; min-width: 44px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; flex: 1; }
+.btn-primary, .btn-secondary { min-height: 44px; min-width: 44px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); letter-spacing: 0.01em; cursor: pointer; flex: 1; touch-action: manipulation; -webkit-tap-highlight-color: transparent; will-change: transform; transition: all 0.15s ease; }
+.btn-primary:active, .btn-secondary:active { transform: scale(0.98); }
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary:active, .btn-secondary:active { transform: none; }
+}
 .btn-primary:focus-visible, .btn-secondary:focus-visible { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; }
 .btn-primary { background: v-bind("t.color.accentBlue"); color: v-bind("t.color.textInverse"); border: none; }
 .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }

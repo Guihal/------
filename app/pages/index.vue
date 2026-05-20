@@ -117,14 +117,14 @@ async function handleArchive(taskId: string) {
 </template>
 
 <style scoped>
-.page { max-width: 800px; margin: 0 auto; padding: v-bind("t.spacing.lg"); padding-left: max(v-bind("t.spacing.lg"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.lg"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.lg"), env(safe-area-inset-top)); padding-bottom: calc(v-bind("t.spacing.xxl") + env(safe-area-inset-bottom)); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
+.page { margin: 0 auto; padding: v-bind("t.spacing.lg"); padding-left: max(v-bind("t.spacing.lg"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.lg"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.lg"), env(safe-area-inset-top)); padding-bottom: calc(v-bind("t.spacing.xxl") + env(safe-area-inset-bottom)); background: v-bind("t.color.bgBase"); min-height: 100dvh; }
 @media (min-width: 768px) {
   .page { padding: v-bind("t.spacing.xxl"); padding-left: max(v-bind("t.spacing.xxl"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.xxl"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.xxl"), env(safe-area-inset-top)); padding-bottom: calc(v-bind("t.spacing.xxxl") + env(safe-area-inset-bottom)); }
 }
 @media (max-width: 360px) {
   .page { padding: v-bind("t.spacing.md"); padding-left: max(v-bind("t.spacing.md"), env(safe-area-inset-left)); padding-right: max(v-bind("t.spacing.md"), env(safe-area-inset-right)); padding-top: max(v-bind("t.spacing.md"), env(safe-area-inset-top)); padding-bottom: calc(v-bind("t.spacing.xl") + env(safe-area-inset-bottom)); }
 }
-.btn-add { width: 100%; min-height: 44px; min-width: 44px; padding: v-bind("t.spacing.md"); border: 2px dashed rgba(255, 255, 255, 0.3); border-radius: v-bind("t.radius.lg"); background: rgba(255, 255, 255, 0.04); color: v-bind("t.color.textSecondary"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; margin-bottom: v-bind("t.spacing.xxl"); touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.btn-add { width: 100%; min-height: 44px; min-width: 44px; padding: v-bind("t.spacing.md"); border: 2px dashed rgba(255, 255, 255, 0.3); border-radius: v-bind("t.radius.lg"); background: rgba(255, 255, 255, 0.04); color: v-bind("t.color.textSecondary"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); letter-spacing: 0.01em; cursor: pointer; margin-bottom: v-bind("t.spacing.xxl"); touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .btn-add:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-add:focus-visible { outline: 2px solid v-bind("t.color.accentBlue"); outline-offset: 2px; }
 .btn-add:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); }

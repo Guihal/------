@@ -43,6 +43,7 @@ const props = defineProps<{
   border-radius: v-bind("t.radius.lg");
   color: v-bind("t.color.textSecondary");
   min-height: 160px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .mascot-img {
@@ -51,7 +52,7 @@ const props = defineProps<{
   width: auto;
   height: auto;
   margin-bottom: v-bind("t.spacing.md");
-  filter: brightness(0.95);
+  opacity: 0.85;
 }
 
 .empty-icon {
@@ -65,13 +66,16 @@ const props = defineProps<{
   font-size: v-bind("t.typography.size.md");
   font-weight: v-bind("t.typography.weight.semibold");
   color: v-bind("t.color.textPrimary");
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
 }
 
 .empty-description {
   margin: 0;
   font-size: v-bind("t.typography.size.sm");
   color: v-bind("t.color.textMuted");
-  line-height: v-bind("t.typography.lineHeight.normal");
+  line-height: 1.6;
   max-width: 280px;
 }
 </style>

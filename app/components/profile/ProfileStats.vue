@@ -60,9 +60,12 @@ const stats = computed(() => [
   font-size: v-bind("t.typography.size.xxl");
   font-weight: v-bind("t.typography.weight.bold");
   color: v-bind("t.color.accentGreen");
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 .stat-label {
   font-size: v-bind("t.typography.size.sm");
   color: v-bind("t.color.textSecondary");
+  letter-spacing: 0.01em;
 }
 </style>

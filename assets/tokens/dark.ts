@@ -1,44 +1,44 @@
-// Dark baseline design tokens — MVP-0 static only.
-// No light mode, no theme switching, no visual random. MVP-2 territory.
+// Dark baseline design tokens — refined, desaturated dark theme
+// No light mode, no theme switching. MVP-2 territory.
 
 export const DARK_TOKENS = {
 	color: {
-		// Base surfaces
-		bgBase: "#0d0d12",
-		bgElevated: "#181825",
-		bgCard: "#1e1e2e",
-		bgOverlay: "#11111b",
+		// Base surfaces — deep, layered elevation
+		bgBase: "#0a0a0f",
+		bgElevated: "#13131a",
+		bgCard: "#1a1a24",
+		bgOverlay: "#111118",
 
 		// Borders
-		borderSubtle: "#313244",
-		borderDashed: "#313244",
+		borderSubtle: "#2a2a35",
+		borderDashed: "#2a2a35",
 
-		// Text
-		textPrimary: "#cdd6f4",
-		textSecondary: "#a6adc8",
-		textMuted: "#9399b2",
-		textInverse: "#1e1e2e",
+		// Text — off-white hierarchy
+		textPrimary: "#e8e8ec",
+		textSecondary: "#8b8b96",
+		textMuted: "#5a5a66",
+		textInverse: "#0a0a0f",
 
-		// Accents
-		accentGreen: "#a6e3a1",
-		accentBlue: "#89b4fa",
-		accentYellow: "#f9e2af",
-		accentRed: "#f38ba8",
-		accentOrange: "#fab387",
+		// Accents — desaturated for dark mode comfort
+		accentGreen: "#7eb89a",
+		accentBlue: "#7a9cc6",
+		accentYellow: "#d4b87a",
+		accentRed: "#c47a7a",
+		accentOrange: "#c49a7a",
 
-		// Priority backgrounds
-		priorityLowBg: "#45475a",
-		priorityLowText: "#bac2de",
-		priorityNormalBg: "#313244",
-		priorityNormalText: "#89b4fa",
-		priorityHighBg: "#452434",
-		priorityHighText: "#f38ba8",
+		// Priority backgrounds — subtle, readable
+		priorityLowBg: "#1e2e28",
+		priorityLowText: "#7eb89a",
+		priorityNormalBg: "#1e2230",
+		priorityNormalText: "#7a9cc6",
+		priorityHighBg: "#2e2020",
+		priorityHighText: "#c49a7a",
 
 		// Status
-		statusSuccess: "#a6e3a1",
-		statusWarning: "#f9e2af",
-		statusError: "#f38ba8",
-		statusInfo: "#89b4fa",
+		statusSuccess: "#7eb89a",
+		statusWarning: "#d4b87a",
+		statusError: "#c47a7a",
+		statusInfo: "#7a9cc6",
 	},
 
 	spacing: {

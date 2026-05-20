@@ -64,6 +64,7 @@ const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
   flex-direction: column;
   gap: v-bind("t.spacing.lg");
   contain: layout paint style;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 /* Header */
@@ -74,8 +75,8 @@ const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
   flex-wrap: wrap;
 }
 .avatar {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   border-radius: v-bind("t.radius.full");
   background: v-bind("t.color.bgElevated");
   border: 2px solid v-bind("t.color.accentBlue");
@@ -96,15 +97,18 @@ const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
   min-width: 0;
 }
 .profile-name {
-  font-size: v-bind("t.typography.size.xl");
+  font-size: v-bind("t.typography.size.xxl");
   font-weight: v-bind("t.typography.weight.semibold");
   color: v-bind("t.color.textPrimary");
   word-break: break-word;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 .profile-level-badge {
   font-size: v-bind("t.typography.size.md");
   font-weight: v-bind("t.typography.weight.bold");
   color: v-bind("t.color.accentYellow");
+  letter-spacing: 0.01em;
 }
 
 /* XP Bar */
@@ -114,10 +118,11 @@ const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
   gap: v-bind("t.spacing.sm");
 }
 .xp-bar-track {
-  height: 10px;
+  height: 12px;
   background: v-bind("t.color.borderSubtle");
   border-radius: v-bind("t.radius.full");
   overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
 }
 .xp-bar-fill {
   height: 100%;
@@ -130,5 +135,6 @@ const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
   font-size: v-bind("t.typography.size.sm");
   color: v-bind("t.color.textSecondary");
   text-align: right;
+  letter-spacing: 0.01em;
 }
 </style>

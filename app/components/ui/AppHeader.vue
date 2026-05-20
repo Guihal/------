@@ -39,14 +39,23 @@ const props = defineProps<{
   font-size: v-bind("t.typography.size.xl");
   font-weight: v-bind("t.typography.weight.bold");
   color: v-bind("t.color.textPrimary");
-  line-height: v-bind("t.typography.lineHeight.tight");
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 @media (max-width: 400px) {
   .app-header h1 {
     font-size: v-bind("t.typography.size.lg");
   }
+  .profile-badge {
+    gap: v-bind("t.spacing.xs");
+    align-items: flex-start;
+  }
   .profile-name {
     font-size: v-bind("t.typography.size.sm");
+  }
+  .profile-xp {
+    font-size: v-bind("t.typography.size.xs");
   }
 }
 .profile-link {
@@ -62,6 +71,12 @@ const props = defineProps<{
 }
 .profile-link:hover {
   background: v-bind("t.color.bgCard");
+}
+.profile-link:active {
+  transform: scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile-link:active { transform: none; }
 }
 .profile-link:focus-visible {
   outline: 2px solid v-bind("t.color.accentBlue");
@@ -81,9 +96,11 @@ const props = defineProps<{
   color: v-bind("t.color.textPrimary");
   word-break: break-word;
   max-width: 100%;
+  letter-spacing: 0.01em;
 }
 .profile-xp {
   font-size: v-bind("t.typography.size.sm");
   color: v-bind("t.color.textSecondary");
+  letter-spacing: 0.01em;
 }
 </style>

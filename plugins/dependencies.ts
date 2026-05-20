@@ -1,6 +1,6 @@
 import { defineNuxtPlugin } from "nuxt/app";
 import type { AppDependencies } from "../infrastructure/di/app-dependencies";
-import { bootstrapDependencies } from "../infrastructure/di/bootstrap-app";
+import { bootstrapDependenciesSync } from "../infrastructure/di/bootstrap-app";
 import {
 	getAppDependencies,
 	provideAppDependencies,
@@ -9,16 +9,13 @@ import {
 export default defineNuxtPlugin({
 	name: "dependencies",
 	enforce: "pre",
-	async setup() {
-		if (typeof process !== "undefined" && process.server) {
-			return {
-				provide: {
-					appDependencies: null as AppDependencies | null,
-				},
-			};
+	setup() {
+		const existing = getAppDependencies();
+		if (existing) {
+			return { provide: { appDependencies: existing } };
 		}
 
-		const deps = await bootstrapDependencies();
+		const deps = bootstrapDependenciesSync();
 		provideAppDependencies(deps);
 		return {
 			provide: {

@@ -32,6 +32,9 @@ import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
   font-size: v-bind("t.typography.size.lg");
   font-weight: v-bind("t.typography.weight.semibold");
   color: v-bind("t.color.textPrimary");
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
 }
 .settings-list {
   display: flex;
@@ -48,13 +51,23 @@ import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
   background: v-bind("t.color.bgElevated");
   border: 1px solid v-bind("t.color.borderSubtle");
   border-radius: v-bind("t.radius.md");
+  min-height: 44px;
+  transition: background 0.15s ease;
+}
+.settings-row:hover {
+  background: v-bind("t.color.bgOverlay");
+}
+.settings-row:last-child {
+  border-bottom: 1px solid v-bind("t.color.borderSubtle");
 }
 .settings-label {
   font-size: v-bind("t.typography.size.md");
   color: v-bind("t.color.textPrimary");
+  letter-spacing: 0.01em;
 }
 .settings-placeholder {
   font-size: v-bind("t.typography.size.sm");
   color: v-bind("t.color.textMuted");
+  letter-spacing: 0.01em;
 }
 </style>

@@ -57,6 +57,8 @@ const emptyStateProps = computed(() => {
   color: v-bind("t.color.textSecondary");
   margin: 0 0 v-bind("t.spacing.md") 0;
   padding: 0 v-bind("t.spacing.xs");
+  letter-spacing: 0.01em;
+  line-height: 1.25;
 }
 
 .group-empty {

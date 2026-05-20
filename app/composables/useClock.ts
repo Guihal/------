@@ -2,8 +2,8 @@ import { useAppDependencies } from "./useAppDependencies";
 
 export function useClock() {
 	const deps = useAppDependencies();
-	if (!deps?.ports.clock) {
-		throw new Error("ClockPort not available");
+	if (deps?.ports.clock) {
+		return { nowIso: deps.ports.clock.nowIso };
 	}
-	return { nowIso: deps.ports.clock.nowIso };
+	return { nowIso: () => new Date().toISOString() };
 }
