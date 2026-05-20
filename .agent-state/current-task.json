@@ -1,14 +1,5 @@
 {
-  "current": {
-    "id": "polish-5",
-    "title": "UI Polish: Visual consistency",
-    "status": "done",
-    "priority": 6,
-    "created_at": null,
-    "started_at": "2026-05-20T01:56:00.000Z",
-    "completed_at": "2026-05-20T02:04:00.000Z",
-    "reason": "stale_lock_recovery: no commits found, lock stale >8min, user declared dead"
-  },
+  "current": null,
   "history": [
     {
       "id": "polish-1",
@@ -37,6 +28,16 @@
       "status": "done",
       "completed_at": "2026-05-20T01:56:00.000Z",
       "reason": "stale_lock_recovery: no commits found, lock stale >10min"
+    },
+    {
+      "id": "polish-5",
+      "title": "UI Polish: Visual consistency",
+      "status": "done",
+      "priority": 6,
+      "created_at": null,
+      "started_at": "2026-05-20T01:56:00.000Z",
+      "completed_at": "2026-05-20T02:04:00.000Z",
+      "reason": "stale_lock_recovery: no commits found, lock stale >8min, user declared dead"
     }
   ]
 }
