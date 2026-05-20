@@ -68,5 +68,6 @@ const emptyStateProps = computed(() => {
 .group-list {
   display: flex;
   flex-direction: column;
+  contain: layout;
 }
 </style>

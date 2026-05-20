@@ -86,6 +86,7 @@ const stats = computed(() => [
   display: flex;
   flex-direction: column;
   gap: v-bind("t.spacing.xxl");
+  contain: layout paint style;
 }
 
 /* Header */
@@ -163,6 +164,14 @@ const stats = computed(() => [
   }
   .stat-item:last-child {
     grid-column: span 2;
+  }
+}
+@media (max-width: 360px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .stat-item:last-child {
+    grid-column: auto;
   }
 }
 .stat-item {
