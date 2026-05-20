@@ -112,7 +112,7 @@ function handleSubmit() {
 .field-row { display: flex; gap: v-bind("t.spacing.md"); flex-wrap: wrap; }
 .field-row .field { flex: 1; min-width: 140px; }
 @media (max-width: 480px) {
-  .field-row { flex-direction: column; gap: 0; }
+  .field-row { flex-direction: column; gap: v-bind("t.spacing.sm"); }
   .field-row .field { min-width: auto; }
   .form-actions { flex-direction: column; }
 }
