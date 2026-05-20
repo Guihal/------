@@ -1,49 +1,58 @@
 {
-  "current": {
-    "id": "polish-6",
-    "title": "Split ProfileCard.vue (235 lines >150 cap)",
-    "status": "in_progress",
-    "priority": 10,
-    "started_at": "2026-05-20T02:57:00Z"
-  },
-  "history": [
-    {
-      "id": "polish-1",
-      "title": "UI Polish: Mobile responsiveness",
-      "status": "done",
-      "completed_at": "2026-05-20T01:46:00.000Z",
-      "reason": "stale_lock_recovery: mobile commits found in git log"
-    },
-    {
-      "id": "polish-2",
-      "title": "UI Polish: Accessibility (a11y)",
-      "status": "done",
-      "completed_at": "2026-05-20T01:46:00.000Z",
-      "reason": "stale_lock_recovery: a11y commits found in git log"
-    },
-    {
-      "id": "polish-3",
-      "title": "UI Polish: Performance optimization",
-      "status": "done",
-      "completed_at": "2026-05-20T01:46:00.000Z",
-      "reason": "stale_lock_recovery: perf commits found in git log"
-    },
-    {
-      "id": "polish-4",
-      "title": "UI Polish: Cross-browser compatibility",
-      "status": "done",
-      "completed_at": "2026-05-20T01:56:00.000Z",
-      "reason": "stale_lock_recovery: no commits found, lock stale >10min"
-    },
-    {
-      "id": "polish-5",
-      "title": "UI Polish: Visual consistency",
-      "status": "done",
-      "priority": 6,
-      "created_at": null,
-      "started_at": "2026-05-20T01:56:00.000Z",
-      "completed_at": "2026-05-20T02:04:00.000Z",
-      "reason": "stale_lock_recovery: no commits found, lock stale >8min, user declared dead"
-    }
-  ]
+	"current": {
+		"id": "polish-7",
+		"title": "Split index.vue (153 lines >150 cap)",
+		"status": "in_progress",
+		"priority": 9,
+		"started_at": "2026-05-20T03:18:11Z"
+	},
+	"history": [
+		{
+			"id": "polish-1",
+			"title": "UI Polish: Mobile responsiveness",
+			"status": "done",
+			"completed_at": "2026-05-20T01:46:00.000Z",
+			"reason": "stale_lock_recovery: mobile commits found in git log"
+		},
+		{
+			"id": "polish-2",
+			"title": "UI Polish: Accessibility (a11y)",
+			"status": "done",
+			"completed_at": "2026-05-20T01:46:00.000Z",
+			"reason": "stale_lock_recovery: a11y commits found in git log"
+		},
+		{
+			"id": "polish-3",
+			"title": "UI Polish: Performance optimization",
+			"status": "done",
+			"completed_at": "2026-05-20T01:46:00.000Z",
+			"reason": "stale_lock_recovery: perf commits found in git log"
+		},
+		{
+			"id": "polish-4",
+			"title": "UI Polish: Cross-browser compatibility",
+			"status": "done",
+			"completed_at": "2026-05-20T01:56:00.000Z",
+			"reason": "stale_lock_recovery: no commits found, lock stale >10min"
+		},
+		{
+			"id": "polish-5",
+			"title": "UI Polish: Visual consistency",
+			"status": "done",
+			"priority": 6,
+			"created_at": null,
+			"started_at": "2026-05-20T01:56:00.000Z",
+			"completed_at": "2026-05-20T02:04:00.000Z",
+			"reason": "stale_lock_recovery: no commits found, lock stale >8min, user declared dead"
+		},
+		{
+			"id": "polish-6",
+			"title": "Split ProfileCard.vue (235 lines >150 cap)",
+			"status": "done",
+			"priority": 10,
+			"started_at": "2026-05-20T02:57:00Z",
+			"completed_at": "2026-05-20T03:17:49Z",
+			"reason": "stale_lock_recovery: auto-reset after 15min"
+		}
+	]
 }

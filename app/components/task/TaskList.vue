@@ -1,30 +1,29 @@
 <script setup lang="ts">
-import type { Task } from "../../../core/domain/task/types"
-import TaskCard from "./TaskCard.vue"
-import EmptyState from "../ui/EmptyState.vue"
-import { computed } from "vue"
-import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
+import { computed } from "vue";
+import type { Task } from "../../../core/domain/task/types";
 
 const props = defineProps<{
-  title: string
-  tasks: readonly Task[]
-  emptyText: string
-  emptyDescription?: string
-  loadingTaskId?: (taskId: string) => boolean
-}>()
+	title: string;
+	tasks: readonly Task[];
+	emptyText: string;
+	emptyDescription?: string;
+	loadingTaskId?: (taskId: string) => boolean;
+}>();
 
-const emit = defineEmits<{
-  complete: [taskId: string]
-  archive: [taskId: string]
-}>()
+const _emit = defineEmits<{
+	complete: [taskId: string];
+	archive: [taskId: string];
+}>();
 
-const emptyStateProps = computed(() => {
-  const base: { title: string; description?: string } = { title: props.emptyText }
-  if (props.emptyDescription !== undefined) {
-    base.description = props.emptyDescription
-  }
-  return base
-})
+const _emptyStateProps = computed(() => {
+	const base: { title: string; description?: string } = {
+		title: props.emptyText,
+	};
+	if (props.emptyDescription !== undefined) {
+		base.description = props.emptyDescription;
+	}
+	return base;
+});
 </script>
 
 <template>

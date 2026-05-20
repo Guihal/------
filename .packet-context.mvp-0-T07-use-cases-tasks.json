@@ -1,38 +1,38 @@
 {
-  "id": "mvp-0-T07-use-cases-tasks",
-  "wave_id": "mvp-0",
-  "goal": "createTask + completeTask (через UoW → grantTaskXp → applyLevelProgress) + archiveTask",
-  "risk_tier": "strong_gate",
-  "file_count_max": 10,
-  "diff_budget_loc": 180,
-  "deps": ["mvp-0-T05-domain-xp-rules", "mvp-0-T06-use-cases-task-operations"],
-  "allowed_write_paths": [
-    "core/use-cases/tasks/**",
-    "core/ports/**",
-    "tests/use-cases/tasks/**"
-  ],
-  "read_first": [
-    "docs/specs/mvp-0-packets.md",
-    "docs/02-architecture.md",
-    "docs/04-technical-decisions.md",
-    "AGENTS.md",
-    "docs/05-critic-pass.md"
-  ],
-  "acceptance": [
-    "create-task.use-case.ts: validate + persist через TaskRepositoryPort",
-    "complete-task.use-case.ts: UoW transaction → mark done → grant XP → apply level progress (атомарно)",
-    "archive-task.use-case.ts: soft delete (status→archived, не hard DELETE)",
-    "Idempotent completeTask: повторный call на done task НЕ начисляет XP второй раз (status guard)",
-    "Ports (TaskRepositoryPort, ProfileRepositoryPort, UnitOfWorkPort) определены в core/ports/",
-    "0 nested unitOfWork.run() (anti-pattern №14 в AGENTS § 9)",
-    "0 импортов из infrastructure/",
-    "Tests покрывают: happy path completeTask, idempotency, UoW rollback на failure",
-    "bun test проходит",
-    "tsc --noEmit чист"
-  ],
-  "architect_required": true,
-  "challenge_required": true,
-  "cso_required": false,
-  "model_dispatch": "opus",
-  "notes": "Challenge-gate: Codex challenger проверяет nested UoW запрет, idempotency completeTask, no infrastructure imports. file_count_max=10 > 5 → challenge trigger."
+	"id": "mvp-0-T07-use-cases-tasks",
+	"wave_id": "mvp-0",
+	"goal": "createTask + completeTask (через UoW → grantTaskXp → applyLevelProgress) + archiveTask",
+	"risk_tier": "strong_gate",
+	"file_count_max": 10,
+	"diff_budget_loc": 180,
+	"deps": ["mvp-0-T05-domain-xp-rules", "mvp-0-T06-use-cases-task-operations"],
+	"allowed_write_paths": [
+		"core/use-cases/tasks/**",
+		"core/ports/**",
+		"tests/use-cases/tasks/**"
+	],
+	"read_first": [
+		"docs/specs/mvp-0-packets.md",
+		"docs/02-architecture.md",
+		"docs/04-technical-decisions.md",
+		"AGENTS.md",
+		"docs/05-critic-pass.md"
+	],
+	"acceptance": [
+		"create-task.use-case.ts: validate + persist через TaskRepositoryPort",
+		"complete-task.use-case.ts: UoW transaction → mark done → grant XP → apply level progress (атомарно)",
+		"archive-task.use-case.ts: soft delete (status→archived, не hard DELETE)",
+		"Idempotent completeTask: повторный call на done task НЕ начисляет XP второй раз (status guard)",
+		"Ports (TaskRepositoryPort, ProfileRepositoryPort, UnitOfWorkPort) определены в core/ports/",
+		"0 nested unitOfWork.run() (anti-pattern №14 в AGENTS § 9)",
+		"0 импортов из infrastructure/",
+		"Tests покрывают: happy path completeTask, idempotency, UoW rollback на failure",
+		"bun test проходит",
+		"tsc --noEmit чист"
+	],
+	"architect_required": true,
+	"challenge_required": true,
+	"cso_required": false,
+	"model_dispatch": "opus",
+	"notes": "Challenge-gate: Codex challenger проверяет nested UoW запрет, idempotency completeTask, no infrastructure imports. file_count_max=10 > 5 → challenge trigger."
 }

@@ -1,50 +1,50 @@
-import { computeBaseXp, computeFinalXp } from "../../domain/xp/task-xp"
-import { applyLevelProgress } from "../apply-level-progress.use-case"
-import type { UnitOfWorkPort } from "../../ports/unit-of-work.port"
-import type { TaskComplexity, TaskPriority } from "../../domain/task/types"
+import type { TaskComplexity, TaskPriority } from "../../domain/task/types";
+import { computeBaseXp, computeFinalXp } from "../../domain/xp/task-xp";
+import type { UnitOfWorkPort } from "../../ports/unit-of-work.port";
+import { applyLevelProgress } from "../apply-level-progress.use-case";
 
 export type GrantTaskXpInput = {
-  readonly profileId: string
-  readonly complexity: TaskComplexity
-  readonly priority: TaskPriority
-  readonly now: string
-}
+	readonly profileId: string;
+	readonly complexity: TaskComplexity;
+	readonly priority: TaskPriority;
+	readonly now: string;
+};
 
 export type GrantTaskXpResult = {
-  readonly xpGranted: number
-  readonly previousLevel: number
-  readonly newLevel: number
-  readonly didLevelUp: boolean
-  readonly xpToNextLevel: number
-}
+	readonly xpGranted: number;
+	readonly previousLevel: number;
+	readonly newLevel: number;
+	readonly didLevelUp: boolean;
+	readonly xpToNextLevel: number;
+};
 
 export async function grantTaskXpWithinTransaction(
-  uow: Pick<UnitOfWorkPort, "progressions">,
-  input: GrantTaskXpInput,
+	uow: Pick<UnitOfWorkPort, "progressions">,
+	input: GrantTaskXpInput,
 ): Promise<GrantTaskXpResult> {
-  const progression = await uow.progressions.findById(input.profileId)
-  if (progression === null) {
-    throw new Error(`progression not found for profile: ${input.profileId}`)
-  }
+	const progression = await uow.progressions.findById(input.profileId);
+	if (progression === null) {
+		throw new Error(`progression not found for profile: ${input.profileId}`);
+	}
 
-  const baseXp = computeBaseXp(input.complexity, input.priority)
-  const xpGranted = computeFinalXp(baseXp)
+	const baseXp = computeBaseXp(input.complexity, input.priority);
+	const xpGranted = computeFinalXp(baseXp);
 
-  const levelResult = applyLevelProgress(progression, xpGranted, input.now)
-  await uow.progressions.save(levelResult.progression)
+	const levelResult = applyLevelProgress(progression, xpGranted, input.now);
+	await uow.progressions.save(levelResult.progression);
 
-  return {
-    xpGranted,
-    previousLevel: levelResult.previousLevel,
-    newLevel: levelResult.newLevel,
-    didLevelUp: levelResult.didLevelUp,
-    xpToNextLevel: levelResult.xpToNextLevel,
-  }
+	return {
+		xpGranted,
+		previousLevel: levelResult.previousLevel,
+		newLevel: levelResult.newLevel,
+		didLevelUp: levelResult.didLevelUp,
+		xpToNextLevel: levelResult.xpToNextLevel,
+	};
 }
 
 export async function grantTaskXp(
-  uow: UnitOfWorkPort,
-  input: GrantTaskXpInput,
+	uow: UnitOfWorkPort,
+	input: GrantTaskXpInput,
 ): Promise<GrantTaskXpResult> {
-  return uow.run(async () => grantTaskXpWithinTransaction(uow, input))
+	return uow.run(async () => grantTaskXpWithinTransaction(uow, input));
 }

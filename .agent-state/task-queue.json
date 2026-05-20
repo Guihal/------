@@ -1,73 +1,75 @@
 {
-  "queue": [
-    {
-      "id": "polish-6",
-      "title": "Split ProfileCard.vue (235 lines >150 cap)",
-      "status": "in_progress",
-      "priority": 10
-    },
-    {
-      "id": "polish-7",
-      "title": "Split index.vue (153 lines >150 cap)",
-      "status": "pending",
-      "priority": 9
-    },
-    {
-      "id": "polish-8",
-      "title": "Deep bug hunt: manual review all components for logic errors",
-      "status": "pending",
-      "priority": 10
-    },
-    {
-      "id": "polish-9",
-      "title": "Biome + lint full check and fix",
-      "status": "pending",
-      "priority": 8
-    },
-    {
-      "id": "polish-10",
-      "title": "Architecture guard: verify no domain violations, store logic, any types",
-      "status": "pending",
-      "priority": 10
-    }
-  ],
-  "completed": [
-    {
-      "id": "polish-1",
-      "title": "UI Polish: Mobile responsiveness",
-      "status": "done",
-      "priority": 10,
-      "completed_at": "2026-05-20T01:46:00.000Z"
-    },
-    {
-      "id": "polish-2",
-      "title": "UI Polish: Accessibility (a11y)",
-      "status": "done",
-      "priority": 9,
-      "completed_at": "2026-05-20T01:46:00.000Z"
-    },
-    {
-      "id": "polish-3",
-      "title": "UI Polish: Performance optimization",
-      "status": "done",
-      "priority": 8,
-      "completed_at": "2026-05-20T01:46:00.000Z"
-    },
-    {
-      "id": "polish-4",
-      "title": "UI Polish: Cross-browser compatibility",
-      "status": "done",
-      "priority": 7,
-      "completed_at": "2026-05-20T01:56:00.000Z"
-    },
-    {
-      "id": "polish-5",
-      "title": "UI Polish: Visual consistency",
-      "status": "done",
-      "priority": 6,
-      "created_at": null,
-      "started_at": "2026-05-20T01:56:00.000Z",
-      "completed_at": "2026-05-20T02:04:00.000Z"
-    }
-  ]
+	"queue": [
+		{
+			"id": "polish-7",
+			"title": "Split index.vue (153 lines >150 cap)",
+			"status": "in_progress",
+			"priority": 9,
+			"started_at": "2026-05-20T03:18:11Z"
+		},
+		{
+			"id": "polish-8",
+			"title": "Deep bug hunt: manual review all components for logic errors",
+			"status": "pending",
+			"priority": 10
+		},
+		{
+			"id": "polish-9",
+			"title": "Biome + lint full check and fix",
+			"status": "pending",
+			"priority": 8
+		},
+		{
+			"id": "polish-10",
+			"title": "Architecture guard: verify no domain violations, store logic, any types",
+			"status": "pending",
+			"priority": 10
+		}
+	],
+	"completed": [
+		{
+			"id": "polish-1",
+			"title": "UI Polish: Mobile responsiveness",
+			"status": "done",
+			"priority": 10,
+			"completed_at": "2026-05-20T01:46:00.000Z"
+		},
+		{
+			"id": "polish-2",
+			"title": "UI Polish: Accessibility (a11y)",
+			"status": "done",
+			"priority": 9,
+			"completed_at": "2026-05-20T01:46:00.000Z"
+		},
+		{
+			"id": "polish-3",
+			"title": "UI Polish: Performance optimization",
+			"status": "done",
+			"priority": 8,
+			"completed_at": "2026-05-20T01:46:00.000Z"
+		},
+		{
+			"id": "polish-4",
+			"title": "UI Polish: Cross-browser compatibility",
+			"status": "done",
+			"priority": 7,
+			"completed_at": "2026-05-20T01:56:00.000Z"
+		},
+		{
+			"id": "polish-5",
+			"title": "UI Polish: Visual consistency",
+			"status": "done",
+			"priority": 6,
+			"created_at": null,
+			"started_at": "2026-05-20T01:56:00.000Z",
+			"completed_at": "2026-05-20T02:04:00.000Z"
+		},
+		{
+			"id": "polish-6",
+			"title": "Split ProfileCard.vue (235 lines >150 cap)",
+			"status": "done",
+			"priority": 10,
+			"completed_at": "2026-05-20T03:17:49Z"
+		}
+	]
 }

@@ -1,35 +1,35 @@
 {
-  "id": "mvp-0-T04-domain-profile-progression",
-  "wave_id": "mvp-0",
-  "goal": "Profile + Progression types + computeLevel + computeProgress + XP_PER_LEVEL=1000",
-  "risk_tier": "ordinary",
-  "file_count_max": 6,
-  "diff_budget_loc": 100,
-  "deps": ["mvp-0-T01-scaffold-base"],
-  "allowed_write_paths": [
-    "core/domain/profile/**",
-    "core/domain/progression/**",
-    "tests/domain/profile/**",
-    "tests/domain/progression/**"
-  ],
-  "read_first": [
-    "docs/specs/mvp-0-packets.md",
-    "docs/02-architecture.md",
-    "AGENTS.md"
-  ],
-  "acceptance": [
-    "core/domain/profile/types.ts + core/domain/progression/types.ts",
-    "XP_PER_LEVEL = 1000 (named constant, не inline)",
-    "computeLevel(xp): floor(xp / XP_PER_LEVEL)",
-    "computeProgress(xp): xp mod XP_PER_LEVEL (для progress bar 0..999)",
-    "tests покрывают edge cases: xp=0, xp=999, xp=1000, xp=1500, xp=10000",
-    "bun test проходит",
-    "tsc --noEmit чист",
-    "0 импортов из infrastructure/ или ui/"
-  ],
-  "architect_required": false,
-  "challenge_required": false,
-  "cso_required": false,
-  "model_dispatch": "sonnet",
-  "notes": "Linear progression per docs/03-build-roadmap.md § 2.2. MVP-0 не учитывает equipment XP multiplier (=1 explicit invariant)."
+	"id": "mvp-0-T04-domain-profile-progression",
+	"wave_id": "mvp-0",
+	"goal": "Profile + Progression types + computeLevel + computeProgress + XP_PER_LEVEL=1000",
+	"risk_tier": "ordinary",
+	"file_count_max": 6,
+	"diff_budget_loc": 100,
+	"deps": ["mvp-0-T01-scaffold-base"],
+	"allowed_write_paths": [
+		"core/domain/profile/**",
+		"core/domain/progression/**",
+		"tests/domain/profile/**",
+		"tests/domain/progression/**"
+	],
+	"read_first": [
+		"docs/specs/mvp-0-packets.md",
+		"docs/02-architecture.md",
+		"AGENTS.md"
+	],
+	"acceptance": [
+		"core/domain/profile/types.ts + core/domain/progression/types.ts",
+		"XP_PER_LEVEL = 1000 (named constant, не inline)",
+		"computeLevel(xp): floor(xp / XP_PER_LEVEL)",
+		"computeProgress(xp): xp mod XP_PER_LEVEL (для progress bar 0..999)",
+		"tests покрывают edge cases: xp=0, xp=999, xp=1000, xp=1500, xp=10000",
+		"bun test проходит",
+		"tsc --noEmit чист",
+		"0 импортов из infrastructure/ или ui/"
+	],
+	"architect_required": false,
+	"challenge_required": false,
+	"cso_required": false,
+	"model_dispatch": "sonnet",
+	"notes": "Linear progression per docs/03-build-roadmap.md § 2.2. MVP-0 не учитывает equipment XP multiplier (=1 explicit invariant)."
 }

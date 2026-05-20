@@ -1,18 +1,18 @@
 {
-  "version": 1,
-  "project": "Диплом",
-  "repo_path": "/usr/projects/Диплом",
-  "github": {
-    "owner": "Dimonya",
-    "repo": "diploma-gamification",
-    "branch": "main",
-    "remote": "origin"
-  },
-  "stack": {
-    "framework": "nuxt",
-    "runtime": "bun",
-    "mobile": "capacitor-android",
-    "testing": "playwright+vitest"
-  },
-  "last_check": null
+	"version": 1,
+	"project": "Диплом",
+	"repo_path": "/usr/projects/Диплом",
+	"github": {
+		"owner": "Dimonya",
+		"repo": "diploma-gamification",
+		"branch": "main",
+		"remote": "origin"
+	},
+	"stack": {
+		"framework": "nuxt",
+		"runtime": "bun",
+		"mobile": "capacitor-android",
+		"testing": "playwright+vitest"
+	},
+	"last_check": null
 }

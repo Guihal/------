@@ -1,32 +1,29 @@
 {
-  "id": "mvp-0-T03-domain-task",
-  "wave_id": "mvp-0",
-  "goal": "Task type + status/priority/complexity enums + invariants tests",
-  "risk_tier": "ordinary",
-  "file_count_max": 6,
-  "diff_budget_loc": 100,
-  "deps": ["mvp-0-T01-scaffold-base"],
-  "allowed_write_paths": [
-    "core/domain/task/**",
-    "tests/domain/task/**"
-  ],
-  "read_first": [
-    "docs/specs/mvp-0-packets.md",
-    "docs/02-architecture.md",
-    "AGENTS.md"
-  ],
-  "acceptance": [
-    "core/domain/task/types.ts экспортирует Task, TaskStatus, TaskPriority, TaskComplexity (TS literal unions, не enum)",
-    "core/domain/task/invariants.ts чистая логика без I/O",
-    "tests/domain/task/ покрывают status transitions + priority validation",
-    "bun test проходит",
-    "tsc --noEmit чист",
-    "0 импортов из infrastructure/ или ui/",
-    "0 импортов из use-cases/ (domain — leaf layer)"
-  ],
-  "architect_required": false,
-  "challenge_required": false,
-  "cso_required": false,
-  "model_dispatch": "sonnet",
-  "notes": "Pure domain — no Math.random(), no new Date() inline, no I/O. AGENTS.md § 5 + § 9 anti-patterns hard."
+	"id": "mvp-0-T03-domain-task",
+	"wave_id": "mvp-0",
+	"goal": "Task type + status/priority/complexity enums + invariants tests",
+	"risk_tier": "ordinary",
+	"file_count_max": 6,
+	"diff_budget_loc": 100,
+	"deps": ["mvp-0-T01-scaffold-base"],
+	"allowed_write_paths": ["core/domain/task/**", "tests/domain/task/**"],
+	"read_first": [
+		"docs/specs/mvp-0-packets.md",
+		"docs/02-architecture.md",
+		"AGENTS.md"
+	],
+	"acceptance": [
+		"core/domain/task/types.ts экспортирует Task, TaskStatus, TaskPriority, TaskComplexity (TS literal unions, не enum)",
+		"core/domain/task/invariants.ts чистая логика без I/O",
+		"tests/domain/task/ покрывают status transitions + priority validation",
+		"bun test проходит",
+		"tsc --noEmit чист",
+		"0 импортов из infrastructure/ или ui/",
+		"0 импортов из use-cases/ (domain — leaf layer)"
+	],
+	"architect_required": false,
+	"challenge_required": false,
+	"cso_required": false,
+	"model_dispatch": "sonnet",
+	"notes": "Pure domain — no Math.random(), no new Date() inline, no I/O. AGENTS.md § 5 + § 9 anti-patterns hard."
 }

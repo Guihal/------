@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { DARK_TOKENS as t } from "../assets/tokens/dark"
-import "@fontsource-variable/inter"
+import "@fontsource-variable/inter";
 </script>
 
 <template>

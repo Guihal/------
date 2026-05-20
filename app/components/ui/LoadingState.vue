@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
-
-const props = defineProps<{
-  message?: string
-}>()
+const _props = defineProps<{
+	message?: string;
+}>();
 </script>
 
 <template>

@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { computeLevel, computeProgress, XP_PER_LEVEL } from "../../../core/domain/progression/compute"
-
-import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
+import { computed } from "vue";
+import {
+	computeLevel,
+	computeProgress,
+	XP_PER_LEVEL,
+} from "../../../core/domain/progression/compute";
 
 const props = defineProps<{
-  xp: number
-  name: string
-}>()
+	xp: number;
+	name: string;
+}>();
 
-const level = computed(() => computeLevel(props.xp))
-const progress = computed(() => computeProgress(props.xp))
-const progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100)
+const _level = computed(() => computeLevel(props.xp));
+const progress = computed(() => computeProgress(props.xp));
+const _progressPercent = computed(() => (progress.value / XP_PER_LEVEL) * 100);
 </script>
 
 <template>

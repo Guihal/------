@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { DARK_TOKENS as t } from "../../../assets/tokens/dark"
 </script>
 
 <template>

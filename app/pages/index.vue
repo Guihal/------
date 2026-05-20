@@ -18,7 +18,11 @@ const { generateId } = useIdGenerator();
 const { nowIso } = useClock();
 const { overdue, upcoming, noDeadline, completed } = useTaskList();
 const { formDraft, suggestedComplexity, reset: resetForm } = useTaskForm();
-const { isLoading: isTaskLoading, start: startLoading, stop: stopLoading } = useTaskLoading();
+const {
+	isLoading: isTaskLoading,
+	start: startLoading,
+	stop: stopLoading,
+} = useTaskLoading();
 
 const showForm = ref(false);
 const isCreating = ref(false);

@@ -1,40 +1,40 @@
 {
-  "name": "task-companion",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "typecheck": "nuxt typecheck",
-    "cap:init": "cap init",
-    "cap:add-android": "cap add android",
-    "cap:sync": "cap sync",
-    "cap:open": "cap open android"
-  },
-  "dependencies": {
-    "@capacitor-community/sqlite": "^8.1.0",
-    "@capacitor/android": "^8.3.4",
-    "@capacitor/cli": "^8.3.4",
-    "@capacitor/core": "^8.3.4",
-    "@pinia/nuxt": "^0.11.3",
-    "nuxt": "^4.0.0",
-    "pinia": "^3.0.1",
-    "vue": "^3.5.13",
-    "vue-router": "^5.0.7"
-  },
-  "devDependencies": {
-    "@fontsource-variable/inter": "^5.2.8",
-    "@nuxt/test-utils": "^3.17.2",
-    "@playwright/test": "^1.60.0",
-    "@vue/test-utils": "^2.4.6",
-    "happy-dom": "^17.4.4",
-    "typescript": "^5.8.3",
-    "vitest": "^3.1.2",
-    "vue-tsc": "^3.3.0"
-  }
+	"name": "task-companion",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"typecheck": "nuxt typecheck",
+		"cap:init": "cap init",
+		"cap:add-android": "cap add android",
+		"cap:sync": "cap sync",
+		"cap:open": "cap open android"
+	},
+	"dependencies": {
+		"@capacitor-community/sqlite": "^8.1.0",
+		"@capacitor/android": "^8.3.4",
+		"@capacitor/cli": "^8.3.4",
+		"@capacitor/core": "^8.3.4",
+		"@pinia/nuxt": "^0.11.3",
+		"nuxt": "^4.0.0",
+		"pinia": "^3.0.1",
+		"vue": "^3.5.13",
+		"vue-router": "^5.0.7"
+	},
+	"devDependencies": {
+		"@fontsource-variable/inter": "^5.2.8",
+		"@nuxt/test-utils": "^3.17.2",
+		"@playwright/test": "^1.60.0",
+		"@vue/test-utils": "^2.4.6",
+		"happy-dom": "^17.4.4",
+		"typescript": "^5.8.3",
+		"vitest": "^3.1.2",
+		"vue-tsc": "^3.3.0"
+	}
 }

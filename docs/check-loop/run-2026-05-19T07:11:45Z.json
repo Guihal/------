@@ -1,9 +1,41 @@
 {
-  "timestamp": "2026-05-19T07:11:45Z",
-  "wave_phase": "fix-dispatching",
-  "current_packet": "mvp-0-T08-sqlite-migration-runner",
-  "code_review": {"ok": true, "findings": [{"file": "/usr/projects/Диплом/tests/domain/task/invariants.test.ts", "line": null, "severity": "low", "issue": "File size 215 LOC — превышает порог 150 LOC"}, {"file": "/usr/projects/Диплом/tests/infrastructure/sqlite/migration-runner.test.ts", "line": null, "severity": "low", "issue": "File size 183 LOC — превышает порог 150 LOC"}], "severity_max": "low"},
-  "playwright": {"ok": true, "build_ok": true, "playwright_status": "skipped", "console_errors": ["Vitest internal state error (imported outside vitest runner context)", "Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. Received protocol 'bun:'"], "smoke_summary": "Build OK (Nuxt 4.4.6, 161 modules). No playwright config found.", "note": "No playwright.config.* found. Tests run via vitest (119 pass across 17 files)."},
-  "tests_health": {"ok": true, "vitest": {"pass": 119, "fail": 0, "errors": []}, "tsc": {"ok": true, "errors": []}, "lint": {"ok": null, "note": "no linter config found"}},
-  "aggregate_severity": "low"
+	"timestamp": "2026-05-19T07:11:45Z",
+	"wave_phase": "fix-dispatching",
+	"current_packet": "mvp-0-T08-sqlite-migration-runner",
+	"code_review": {
+		"ok": true,
+		"findings": [
+			{
+				"file": "/usr/projects/Диплом/tests/domain/task/invariants.test.ts",
+				"line": null,
+				"severity": "low",
+				"issue": "File size 215 LOC — превышает порог 150 LOC"
+			},
+			{
+				"file": "/usr/projects/Диплом/tests/infrastructure/sqlite/migration-runner.test.ts",
+				"line": null,
+				"severity": "low",
+				"issue": "File size 183 LOC — превышает порог 150 LOC"
+			}
+		],
+		"severity_max": "low"
+	},
+	"playwright": {
+		"ok": true,
+		"build_ok": true,
+		"playwright_status": "skipped",
+		"console_errors": [
+			"Vitest internal state error (imported outside vitest runner context)",
+			"Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. Received protocol 'bun:'"
+		],
+		"smoke_summary": "Build OK (Nuxt 4.4.6, 161 modules). No playwright config found.",
+		"note": "No playwright.config.* found. Tests run via vitest (119 pass across 17 files)."
+	},
+	"tests_health": {
+		"ok": true,
+		"vitest": { "pass": 119, "fail": 0, "errors": [] },
+		"tsc": { "ok": true, "errors": [] },
+		"lint": { "ok": null, "note": "no linter config found" }
+	},
+	"aggregate_severity": "low"
 }

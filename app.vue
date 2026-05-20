@@ -1,35 +1,42 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
-import { useAppDependencies } from "./app/composables/useAppDependencies"
+import { onMounted, ref } from "vue";
+import { useAppDependencies } from "./app/composables/useAppDependencies";
 
-import '@fontsource-variable/inter'
+import "@fontsource-variable/inter";
 
 useHead({
-  meta: [
-    { name: "viewport", content: "width=device-width, initial-scale=1.0, viewport-fit=cover" },
-    { name: "theme-color", content: "#0d0d12" },
-    { name: "apple-mobile-web-app-capable", content: "yes" },
-    { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-    { name: "format-detection", content: "telephone=no" },
-  ],
-  htmlAttrs: { lang: "ru" },
-  bodyAttrs: { class: "safe-area" },
-})
+	meta: [
+		{
+			name: "viewport",
+			content: "width=device-width, initial-scale=1.0, viewport-fit=cover",
+		},
+		{ name: "theme-color", content: "#0d0d12" },
+		{ name: "apple-mobile-web-app-capable", content: "yes" },
+		{
+			name: "apple-mobile-web-app-status-bar-style",
+			content: "black-translucent",
+		},
+		{ name: "format-detection", content: "telephone=no" },
+	],
+	htmlAttrs: { lang: "ru" },
+	bodyAttrs: { class: "safe-area" },
+});
 
-const ready = ref(false)
-const error = ref("")
+const ready = ref(false);
+const error = ref("");
 
 onMounted(async () => {
-  // Wait for bootstrap plugin to complete (up to 5s)
-  for (let i = 0; i < 50; i++) {
-    if (useAppDependencies()) {
-      ready.value = true
-      return
-    }
-    await new Promise(r => setTimeout(r, 100))
-  }
-  error.value = "Ошибка загрузки приложения. Пожалуйста, перезагрузите страницу."
-})
+	// Wait for bootstrap plugin to complete (up to 5s)
+	for (let i = 0; i < 50; i++) {
+		if (useAppDependencies()) {
+			ready.value = true;
+			return;
+		}
+		await new Promise((r) => setTimeout(r, 100));
+	}
+	error.value =
+		"Ошибка загрузки приложения. Пожалуйста, перезагрузите страницу.";
+});
 </script>
 
 <template>
