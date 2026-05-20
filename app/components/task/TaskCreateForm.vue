@@ -110,7 +110,12 @@ function handleSubmit() {
 .form-title { margin: 0 0 16px 0; font-size: 16px; font-weight: 600; }
 .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
 .field-row { display: flex; gap: 12px; flex-wrap: wrap; }
-.field-row .field { flex: 1; min-width: 120px; }
+.field-row .field { flex: 1; min-width: 140px; }
+@media (max-width: 480px) {
+  .field-row { flex-direction: column; gap: 0; }
+  .field-row .field { min-width: auto; }
+  .form-actions { flex-direction: column; }
+}
 label { font-size: 13px; font-weight: 500; color: #a6adc8; }
 input, textarea, select { background: #181825; border: 1px solid #313244; border-radius: 8px; padding: 10px 12px; color: #cdd6f4; font-size: 14px; min-height: 44px; }
 input:focus, textarea:focus, select:focus { outline: none; border-color: #89b4fa; box-shadow: 0 0 0 2px rgba(137,180,250,0.25); }

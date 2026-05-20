@@ -87,6 +87,7 @@ describe("useTaskStore", () => {
       priority: "normal",
       complexity: "small",
       dueAt: null,
+      now: "2026-05-19T00:00:00Z",
     })
 
     expect(deps.useCases.createTask).toHaveBeenCalled()
@@ -102,7 +103,7 @@ describe("useTaskStore", () => {
     const store = useTaskStore()
     store.setTasks([mockTask])
 
-    await store.completeTask({ taskId: "t1", profileId: "p1" })
+    await store.completeTask({ taskId: "t1", profileId: "p1", now: "2026-05-19T00:00:00Z" })
 
     expect(deps.useCases.completeTask).toHaveBeenCalledWith(expect.objectContaining({ taskId: "t1", profileId: "p1" }))
     expect(store.tasks[0].status).toBe("completed")
@@ -116,7 +117,7 @@ describe("useTaskStore", () => {
     const store = useTaskStore()
     store.setTasks([mockTask])
 
-    await store.archiveTask({ taskId: "t1", profileId: "p1" })
+    await store.archiveTask({ taskId: "t1", profileId: "p1", now: "2026-05-19T00:00:00Z" })
 
     expect(deps.useCases.archiveTask).toHaveBeenCalledWith(expect.objectContaining({ taskId: "t1", profileId: "p1" }))
     expect(store.tasks[0].status).toBe("archived")
