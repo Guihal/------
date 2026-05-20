@@ -33,12 +33,13 @@ onMounted(async () => {
 </script>
 
 <template>
+  <a href="#main-content" class="skip-link">Перейти к содержимому</a>
   <div v-if="!ready" class="boot-screen">
     <div class="boot-spinner" />
     <p class="boot-text">Загрузка...</p>
     <p v-if="error" class="boot-error">{{ error }}</p>
   </div>
-  <NuxtPage v-else />
+  <NuxtPage v-else id="main-content" />
 </template>
 
 <style>
@@ -101,5 +102,22 @@ body.safe-area {
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #a6e3a1;
+  color: #1e1e2e;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 0 0 8px 0;
+  z-index: 10000;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
 }
 </style>
