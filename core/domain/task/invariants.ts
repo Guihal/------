@@ -44,8 +44,9 @@ export function validatePriority(priority: string): DomainResult<TaskPriority, V
   }
 
   const valid: readonly TaskPriority[] = ["low", "normal", "high"]
-  if (valid.includes(priority as TaskPriority)) {
-    return { ok: true, value: priority as TaskPriority }
+  const found = valid.find((v) => v === priority)
+  if (found) {
+    return { ok: true, value: found }
   }
 
   return { ok: true, value: "normal" }
