@@ -1,5 +1,36 @@
 {
-  "queue": [],
+  "queue": [
+    {
+      "id": "polish-6",
+      "title": "Split ProfileCard.vue (235 lines >150 cap)",
+      "status": "pending",
+      "priority": 10
+    },
+    {
+      "id": "polish-7",
+      "title": "Split index.vue (153 lines >150 cap)",
+      "status": "pending",
+      "priority": 9
+    },
+    {
+      "id": "polish-8",
+      "title": "Deep bug hunt: manual review all components for logic errors",
+      "status": "pending",
+      "priority": 10
+    },
+    {
+      "id": "polish-9",
+      "title": "Biome + lint full check and fix",
+      "status": "pending",
+      "priority": 8
+    },
+    {
+      "id": "polish-10",
+      "title": "Architecture guard: verify no domain violations, store logic, any types",
+      "status": "pending",
+      "priority": 10
+    }
+  ],
   "completed": [
     {
       "id": "polish-1",
