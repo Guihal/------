@@ -65,7 +65,7 @@ const priorityClasses: Record<Task["priority"], string> = {
 .priority-high { background: v-bind("t.color.priorityHighBg"); color: v-bind("t.color.priorityHighText"); }
 .task-meta { display: flex; flex-wrap: wrap; gap: v-bind("t.spacing.md"); font-size: v-bind("t.typography.size.sm"); color: v-bind("t.color.textSecondary"); margin-bottom: v-bind("t.spacing.sm"); }
 .task-complexity { text-transform: capitalize; }
-.task-description { font-size: v-bind("t.typography.size.md"); color: v-bind("t.color.textSecondary"); margin-bottom: v-bind("t.spacing.md"); line-height: v-bind("t.typography.lineHeight.normal"); }
+.task-description { font-size: v-bind("t.typography.size.md"); color: v-bind("t.color.textSecondary"); margin-bottom: v-bind("t.spacing.md"); line-height: v-bind("t.typography.lineHeight.normal"); word-break: break-word; }
 .task-actions { display: flex; gap: v-bind("t.spacing.sm"); }
 .btn-complete, .btn-archive { min-height: 44px; min-width: 80px; padding: v-bind("t.spacing.sm") v-bind("t.spacing.lg"); border: none; border-radius: v-bind("t.radius.md"); font-size: v-bind("t.typography.size.md"); font-weight: v-bind("t.typography.weight.semibold"); cursor: pointer; flex: 1; touch-action: manipulation; -webkit-tap-highlight-color: transparent; will-change: transform; }
 .btn-complete:active, .btn-archive:active { transform: scale(0.98); }

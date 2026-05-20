@@ -32,7 +32,6 @@ export default defineNuxtConfig({
         output: {
           manualChunks: {
             'vendor-vue': ['vue', 'vue-router'],
-            'vendor-pinia': ['pinia', '@pinia/nuxt'],
             'vendor-capacitor': ['@capacitor/core'],
           },
         },
