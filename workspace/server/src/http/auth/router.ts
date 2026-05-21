@@ -1,9 +1,23 @@
-import { verifyAccessToken, requireAdmin, type Role } from "../../security/jwt.ts";
+import { verifyAccessToken, requireAdmin } from "../../security/jwt.ts";
 import { handleRegister } from "./handlers/register.ts";
 import { handleLogin } from "./handlers/login.ts";
 import { handleRefresh } from "./handlers/refresh.ts";
 import { handleLogout } from "./handlers/logout.ts";
 import { findUserById, listUsers } from "../../db/users.ts";
+import { getClientIp } from "../../db/audit.ts";
+import {
+  checkRateLimit,
+  rateLimitResponse,
+  requireAuth,
+  json,
+  bad,
+  unauthorized,
+} from "../shared.ts";
+
+// Re-export shared utilities for backward compatibility with auth handlers and tests
+export { getClientIp } from "../../db/audit.ts";
+export { clearRateLimit } from "../shared.ts";
+export { json, bad, unauthorized } from "../shared.ts";
 
 export function validateEmail(email: string): boolean {
   if (email.length > 254) return false;
@@ -12,91 +26,6 @@ export function validateEmail(email: string): boolean {
 
 export function validatePassword(password: string): boolean {
   return password.length >= 6 && password.length <= 72;
-}
-
-export function getClientIp(req: Request): string | undefined {
-  const trustedProxy = process.env.TRUSTED_PROXY;
-  if (trustedProxy === "1") {
-    const forwarded = req.headers.get("x-forwarded-for");
-    if (forwarded) {
-      const first = forwarded.split(",")[0]?.trim();
-      if (first) return first;
-    }
-  }
-  return (req as Request & { remoteAddress?: string }).remoteAddress ?? undefined;
-}
-
-export function getBearer(req: Request): string | undefined {
-  const h = req.headers.get("authorization");
-  if (!h) return undefined;
-  const [scheme, token] = h.split(" ");
-  if (scheme?.toLowerCase() !== "bearer" || !token) return undefined;
-  return token;
-}
-
-export function json(data: unknown, status = 200): Response {
-  return Response.json(data, { status });
-}
-
-export function bad(message: string, status = 400): Response {
-  return json({ error: message }, status);
-}
-
-export function unauthorized(message = "Unauthorized"): Response {
-  return json({ error: message }, 401);
-}
-
-const rateStore = new Map<string, { count: number; resetAt: number }>();
-const RL_WINDOW = 15_000;
-const RL_MAX = 5;
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [k, e] of rateStore) if (now > e.resetAt) rateStore.delete(k);
-}, 60_000);
-
-function checkRateLimit(key: string): { allowed: boolean; retryAfter?: number } {
-  if (process.env.DISABLE_RATE_LIMIT === "1") return { allowed: true };
-  const now = Date.now();
-  const entry = rateStore.get(key);
-  if (!entry || now > entry.resetAt) {
-    rateStore.set(key, { count: 1, resetAt: now + RL_WINDOW });
-    return { allowed: true };
-  }
-  if (entry.count >= RL_MAX) {
-    return { allowed: false, retryAfter: Math.ceil((entry.resetAt - now) / 1000) };
-  }
-  entry.count++;
-  return { allowed: true };
-}
-
-export function clearRateLimit(): void {
-  rateStore.clear();
-}
-
-export interface AuthContext {
-  userId: number;
-  role: Role;
-}
-
-export function requireAuth(req: Request): AuthContext {
-  const token = getBearer(req);
-  if (!token) {
-    const err = new Error("Missing Bearer token");
-    (err as Error & { statusCode?: number }).statusCode = 401;
-    throw err;
-  }
-  const payload = verifyAccessToken(token);
-  if (payload.type !== "access") {
-    const err = new Error("Invalid token type");
-    (err as Error & { statusCode?: number }).statusCode = 401;
-    throw err;
-  }
-  return { userId: payload.sub, role: payload.role };
-}
-
-function rateLimitResponse(retryAfter?: number): Response {
-  return json({ error: "Too many requests", retry_after: retryAfter }, 429);
 }
 
 async function handleMe(req: Request): Promise<Response> {

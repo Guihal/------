@@ -23,6 +23,41 @@ describe("GET /profile", () => {
   });
 });
 
+describe("PATCH /profile", () => {
+  beforeAll(setupTests);
+  afterAll(teardownTests);
+
+  it("updates display_name", async () => {
+    const token = await registerAndLogin(`patch-${Date.now()}@example.com`);
+    const { status, data } = await fetchJson("/profile", {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ display_name: "New Name" }),
+    });
+    expect(status).toBe(200);
+    expect(data.profile.display_name).toBe("New Name");
+  });
+
+  it("rejects empty display_name", async () => {
+    const token = await registerAndLogin(`patch2-${Date.now()}@example.com`);
+    const { status } = await fetchJson("/profile", {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ display_name: "   " }),
+    });
+    expect(status).toBe(400);
+  });
+
+  it("returns 401 without token", async () => {
+    const { status } = await fetchJson("/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ display_name: "X" }),
+    });
+    expect(status).toBe(401);
+  });
+});
+
 describe("GET /progression", () => {
   beforeAll(setupTests);
   afterAll(teardownTests);
@@ -68,12 +103,43 @@ describe("POST /tasks", () => {
     expect(status).toBe(400);
   });
 
+  it("validates title empty after trim", async () => {
+    const token = await registerAndLogin(`task-trim-${Date.now()}@example.com`);
+    const { status } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "   " }),
+    });
+    expect(status).toBe(400);
+  });
+
   it("validates difficulty enum", async () => {
     const token = await registerAndLogin(`task3-${Date.now()}@example.com`);
     const { status } = await fetchJson("/tasks", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify({ title: "X", difficulty: "impossible" }),
+    });
+    expect(status).toBe(400);
+  });
+
+  it("validates description empty after trim", async () => {
+    const token = await registerAndLogin(`task-desc-${Date.now()}@example.com`);
+    const { status } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "X", description: "   " }),
+    });
+    expect(status).toBe(400);
+  });
+
+  it("validates deadline in the future", async () => {
+    const token = await registerAndLogin(`task-dl-${Date.now()}@example.com`);
+    const past = new Date(Date.now() - 86400000).toISOString();
+    const { status } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "X", deadline: past }),
     });
     expect(status).toBe(400);
   });

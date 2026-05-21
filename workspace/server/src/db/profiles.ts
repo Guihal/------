@@ -20,7 +20,7 @@ export async function createProfile(
     ? (await client.query(sql, [userId])).rows[0]
     : await queryOne<ProfileRow>(sql, [userId]);
   if (!row) throw new Error("Failed to create profile");
-  return row as ProfileRow;
+  return row;
 }
 
 export async function findProfileByUserId(userId: number): Promise<ProfileRow | undefined> {
@@ -46,8 +46,8 @@ export async function updateProfile(
   }
   if (fields.length === 0) return findProfileByUserId(userId);
   fields.push(`updated_at = NOW()`);
-  values.push(userId);
-  const sql = `UPDATE profiles SET ${fields.join(", ")} WHERE user_id = $${values.length}
+  const sql = `UPDATE profiles SET ${fields.join(", ")} WHERE user_id = $${fields.length}
     RETURNING id, user_id, display_name, avatar_url, created_at, updated_at`;
+  values.push(userId);
   return queryOne<ProfileRow>(sql, values);
 }

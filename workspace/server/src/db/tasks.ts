@@ -53,7 +53,7 @@ export async function createTask(
     ? (await client.query(sql, params)).rows[0]
     : await queryOne<TaskRow>(sql, params);
   if (!row) throw new Error("Failed to create task");
-  return row as TaskRow;
+  return row;
 }
 
 export async function findTaskById(id: number): Promise<TaskRow | undefined> {
@@ -85,7 +85,7 @@ export async function markTaskCompleted(
     RETURNING id, user_id, title, description, difficulty, category, size,
       deadline, completed, archived, completed_at, created_at, updated_at`;
   return client
-    ? (await client.query(sql, [id])).rows[0] as TaskRow | undefined
+    ? (await client.query(sql, [id])).rows[0]
     : queryOne<TaskRow>(sql, [id]);
 }
 
@@ -99,6 +99,6 @@ export async function markTaskArchived(
     RETURNING id, user_id, title, description, difficulty, category, size,
       deadline, completed, archived, completed_at, created_at, updated_at`;
   return client
-    ? (await client.query(sql, [id])).rows[0] as TaskRow | undefined
+    ? (await client.query(sql, [id])).rows[0]
     : queryOne<TaskRow>(sql, [id]);
 }

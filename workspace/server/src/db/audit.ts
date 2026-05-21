@@ -8,6 +8,20 @@ export interface AuditEntry {
   ipAddress?: string | undefined;
 }
 
+export function getClientIp(req: Request): string | undefined {
+  const trustedProxy = process.env.TRUSTED_PROXY;
+  if (trustedProxy === "1") {
+    const forwarded = req.headers.get("x-forwarded-for");
+    if (forwarded) {
+      const first = forwarded.split(",")[0]?.trim();
+      if (first) return first;
+    }
+  }
+  const remote = (req as unknown as Record<string, unknown>).remoteAddress;
+  if (typeof remote === "string") return remote;
+  return undefined;
+}
+
 export async function audit(entry: AuditEntry, client?: PoolClient): Promise<void> {
   const sql = `INSERT INTO audit_logs (user_id, action, details, ip_address)
      VALUES ($1, $2, $3, $4)`;

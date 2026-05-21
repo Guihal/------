@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Task Companion Server API",
-    "version": "0.1.0",
-    "description": "API contract placeholders"
+    "version": "0.2.0",
+    "description": "API contract for auth, tasks, profile, and progression"
   },
   "servers": [
     {
@@ -34,12 +34,256 @@
         }
       }
     },
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "operationId": "registerUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "minLength": 6, "maxLength": 72 }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User registered" },
+          "400": { "description": "Invalid input" },
+          "409": { "description": "Email already registered" }
+        }
+      }
+    },
     "/auth/login": {
       "post": {
-        "summary": "Login placeholder",
+        "summary": "Login",
         "operationId": "loginUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
         "responses": {
-          "501": { "description": "Not implemented" }
+          "200": { "description": "Login successful" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "Refresh access token",
+        "operationId": "refreshToken",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refresh_token": { "type": "string" }
+                },
+                "required": ["refresh_token"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Token refreshed" },
+          "401": { "description": "Invalid refresh token" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "operationId": "logoutUser",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Logged out" }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get current user",
+        "operationId": "getMe",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Current user info" }
+        }
+      }
+    },
+    "/profile": {
+      "get": {
+        "summary": "Get user profile",
+        "operationId": "getProfile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Profile data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "email": { "type": "string" },
+                    "role": { "type": "string" },
+                    "display_name": { "type": ["string", "null"] },
+                    "avatar_url": { "type": ["string", "null"] },
+                    "xp": { "type": "integer" },
+                    "level": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      },
+      "patch": {
+        "summary": "Update user profile",
+        "operationId": "patchProfile",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "display_name": { "type": "string", "maxLength": 100 },
+                  "avatar_url": { "type": "string", "maxLength": 2048 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Profile updated" },
+          "400": { "description": "Invalid input" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/progression": {
+      "get": {
+        "summary": "Get user progression",
+        "operationId": "getProgression",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Progression data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "xp": { "type": "integer" },
+                    "level": { "type": "integer" },
+                    "next_level_xp": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "summary": "List user tasks",
+        "operationId": "listTasks",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of tasks" },
+          "401": { "description": "Unauthorized" }
+        }
+      },
+      "post": {
+        "summary": "Create a task",
+        "operationId": "createTask",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+                  "description": { "type": "string", "maxLength": 2000 },
+                  "difficulty": { "type": "string", "enum": ["low", "normal", "high"] },
+                  "category": { "type": "string", "enum": ["general", "work", "personal", "health"] },
+                  "size": { "type": "string", "enum": ["tiny", "small", "medium", "large"] },
+                  "deadline": { "type": "string", "format": "date-time" }
+                },
+                "required": ["title"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Task created" },
+          "400": { "description": "Invalid input" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/tasks/{id}/complete": {
+      "patch": {
+        "summary": "Complete a task",
+        "operationId": "completeTask",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Task completed" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Task not found" }
+        }
+      }
+    },
+    "/tasks/{id}/archive": {
+      "patch": {
+        "summary": "Archive a task",
+        "operationId": "archiveTask",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Task archived" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Task not found" }
         }
       }
     },

@@ -1,5 +1,7 @@
 import { hashPassword } from "../../../security/password.ts";
 import { createUser, findUserByEmail } from "../../../db/users.ts";
+import { createProfile } from "../../../db/profiles.ts";
+import { createProgression } from "../../../db/progressions.ts";
 import { audit } from "../../../db/audit.ts";
 import { withTransaction } from "../../../db/client.ts";
 import { validateEmail, validatePassword, getClientIp, json, bad } from "../router.ts";
@@ -17,6 +19,8 @@ export async function handleRegister(req: Request): Promise<Response> {
   const passwordHash = await hashPassword(password);
   const user = await withTransaction(async (client) => {
     const u = await createUser(email, passwordHash, client);
+    await createProfile(u.id, client);
+    await createProgression(u.id, client);
     await audit({ userId: u.id, action: "register", ipAddress: getClientIp(req) }, client);
     return u;
   });

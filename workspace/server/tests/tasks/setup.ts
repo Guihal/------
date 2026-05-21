@@ -1,7 +1,7 @@
 import { spawn } from "bun";
 import { pool } from "../../src/db/client.ts";
 import { migrate } from "../../src/db/schema.ts";
-import { clearRateLimit } from "../../src/http/auth/router.ts";
+import { clearRateLimit } from "../../src/http/shared.ts";
 
 export const BASE = "http://localhost:3003";
 
@@ -56,16 +56,17 @@ export async function teardownTests() {
   await server?.exited;
 }
 
-export async function registerAndLogin(email: string, password = "secret123") {
+export async function registerAndLogin(email: string, password?: string) {
+  const pw = password ?? `pw-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   await fetchJson("/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password: pw }),
   });
   const { data } = await fetchJson("/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password: pw }),
   });
   return data.access_token as string;
 }

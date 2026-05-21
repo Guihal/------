@@ -20,7 +20,7 @@ export async function createProgression(
     ? (await client.query(sql, [userId])).rows[0]
     : await queryOne<ProgressionRow>(sql, [userId]);
   if (!row) throw new Error("Failed to create progression");
-  return row as ProgressionRow;
+  return row;
 }
 
 export async function findProgressionByUserId(userId: number): Promise<ProgressionRow | undefined> {
@@ -44,12 +44,20 @@ export async function addXp(
     RETURNING id, user_id, xp, level, created_at, updated_at`;
   const params = [xp, userId];
   return client
-    ? (await client.query(sql, params)).rows[0] as ProgressionRow | undefined
+    ? (await client.query(sql, params)).rows[0]
     : queryOne<ProgressionRow>(sql, params);
 }
 
-export async function ensureProgression(userId: number): Promise<ProgressionRow> {
-  const existing = await findProgressionByUserId(userId);
+export async function ensureProgression(
+  userId: number,
+  client?: PoolClient
+): Promise<ProgressionRow> {
+  const existing = client
+    ? (await client.query(
+        `SELECT id, user_id, xp, level, created_at, updated_at FROM progressions WHERE user_id = $1`,
+        [userId]
+      )).rows[0] as ProgressionRow | undefined
+    : await findProgressionByUserId(userId);
   if (existing) return existing;
-  return createProgression(userId);
+  return createProgression(userId, client);
 }
