@@ -4,6 +4,7 @@ import { handleAuth } from "./http/auth/router.ts";
 import { handleTasks } from "./http/tasks/router.ts";
 import { handleAdmin } from "./http/admin/router.ts";
 import { handleInventory } from "./http/inventory/router.ts";
+import { handleSettings } from "./http/settings/router.ts";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -32,6 +33,9 @@ serve({
 
     const inventoryResp = await handleInventory(req, url.pathname);
     if (inventoryResp) return inventoryResp;
+
+    const settingsResp = await handleSettings(req, url.pathname);
+    if (settingsResp) return settingsResp;
 
     return Response.json(
       { error: "not_implemented", route: `${req.method} ${url.pathname}` },

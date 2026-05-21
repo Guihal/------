@@ -1,7 +1,13 @@
 import { handleAdminItems } from "./items/router.ts";
+import { handleAdminStats } from "./stats/router.ts";
+import { handleAdminLogs } from "./logs/router.ts";
 
 export async function handleAdmin(req: Request, pathname: string): Promise<Response | undefined> {
   const itemsResp = await handleAdminItems(req, pathname);
   if (itemsResp) return itemsResp;
+  const statsResp = await handleAdminStats(req, pathname);
+  if (statsResp) return statsResp;
+  const logsResp = await handleAdminLogs(req, pathname);
+  if (logsResp) return logsResp;
   return undefined;
 }
