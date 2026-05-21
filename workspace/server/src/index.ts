@@ -1,6 +1,7 @@
 import { serve } from "bun";
 import { migrate } from "./db/schema.ts";
 import { handleAuth } from "./http/auth/router.ts";
+import { handleTasks } from "./http/tasks/router.ts";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -20,6 +21,9 @@ serve({
 
     const authResp = await handleAuth(req, url.pathname);
     if (authResp) return authResp;
+
+    const tasksResp = await handleTasks(req, url.pathname);
+    if (tasksResp) return tasksResp;
 
     return Response.json(
       { error: "not_implemented", route: `${req.method} ${url.pathname}` },

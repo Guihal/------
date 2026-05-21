@@ -33,6 +33,44 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
+
+CREATE TABLE IF NOT EXISTS profiles (
+  id         SERIAL PRIMARY KEY,
+  user_id    INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  display_name TEXT,
+  avatar_url   TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS progressions (
+  id         SERIAL PRIMARY KEY,
+  user_id    INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  xp         INTEGER NOT NULL DEFAULT 0,
+  level      INTEGER NOT NULL DEFAULT 1,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS tasks (
+  id          SERIAL PRIMARY KEY,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title       TEXT NOT NULL,
+  description TEXT,
+  difficulty  TEXT NOT NULL DEFAULT 'normal' CHECK (difficulty IN ('low', 'normal', 'high')),
+  category    TEXT NOT NULL DEFAULT 'general' CHECK (category IN ('general', 'work', 'personal', 'health')),
+  size        TEXT NOT NULL DEFAULT 'medium' CHECK (size IN ('tiny', 'small', 'medium', 'large')),
+  deadline    TIMESTAMPTZ,
+  completed   BOOLEAN NOT NULL DEFAULT FALSE,
+  archived    BOOLEAN NOT NULL DEFAULT FALSE,
+  completed_at TIMESTAMPTZ,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_completed ON tasks(completed);
+CREATE INDEX IF NOT EXISTS idx_tasks_archived ON tasks(archived);
 `;
 
 export async function migrate(): Promise<void> {
