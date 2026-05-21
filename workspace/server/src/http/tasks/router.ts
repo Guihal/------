@@ -5,14 +5,12 @@ import {
 } from "../shared.ts";
 import { handleGetProfile, handlePatchProfile } from "./handlers/profile.ts";
 import { handleGetProgression } from "./handlers/progression.ts";
-import {
-  handleGetTasks,
-  handlePostTasks,
-  handlePutTask,
-  handleDeleteTask,
-  handlePatchTaskComplete,
-  handlePatchTaskArchive,
-} from "./handlers/task-handlers.ts";
+import { handleGetTasks } from "./handlers/list.ts";
+import { handlePostTasks } from "./handlers/create.ts";
+import { handlePutTask } from "./handlers/update.ts";
+import { handleDeleteTask } from "./handlers/delete.ts";
+import { handlePatchTaskComplete } from "./handlers/complete.ts";
+import { handlePatchTaskArchive } from "./handlers/archive.ts";
 
 export async function handleTasks(req: Request, pathname: string): Promise<Response | undefined> {
   const ip = getClientIp(req) ?? "unknown";

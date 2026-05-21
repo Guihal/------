@@ -4,23 +4,26 @@ import { findProfileByUserId, updateProfile } from "../../../db/profiles.ts";
 import { findProgressionByUserId } from "../../../db/progressions.ts";
 import { audit } from "../../../db/audit.ts";
 
+function isValidBody(body: unknown): body is Record<string, unknown> {
+  return typeof body === "object" && body !== null && !Array.isArray(body);
+}
+
 function parsePatchProfile(body: unknown): { display_name?: string; avatar_url?: string } | { error: string } {
-  if (typeof body !== "object" || body === null || Array.isArray(body)) return { error: "Invalid body" };
-  const b = body as Record<string, unknown>;
+  if (!isValidBody(body)) return { error: "Invalid body" };
   const out: { display_name?: string; avatar_url?: string } = {};
-  if (b.display_name !== undefined) {
-    if (typeof b.display_name !== "string" || b.display_name.length > 100) {
+  if (body.display_name !== undefined) {
+    if (typeof body.display_name !== "string" || body.display_name.length > 100) {
       return { error: "display_name max 100 chars" };
     }
-    const trimmed = b.display_name.trim();
+    const trimmed = body.display_name.trim();
     if (trimmed.length === 0) return { error: "display_name cannot be empty" };
     out.display_name = trimmed;
   }
-  if (b.avatar_url !== undefined) {
-    if (typeof b.avatar_url !== "string" || b.avatar_url.length > 2048) {
+  if (body.avatar_url !== undefined) {
+    if (typeof body.avatar_url !== "string" || body.avatar_url.length > 2048) {
       return { error: "avatar_url max 2048 chars" };
     }
-    const trimmed = b.avatar_url.trim();
+    const trimmed = body.avatar_url.trim();
     if (trimmed.length === 0) return { error: "avatar_url cannot be empty" };
     out.avatar_url = trimmed;
   }

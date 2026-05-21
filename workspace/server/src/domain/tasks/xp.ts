@@ -1,4 +1,4 @@
-import type { Difficulty, Size } from "../../db/tasks.ts";
+import type { Difficulty, Size } from "../../db/task-types.ts";
 
 const BASE_XP: Record<Difficulty, number> = {
   low: 10,
