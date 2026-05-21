@@ -19,6 +19,7 @@ export async function grantLevelReward(
   const candidates = items.filter(i => i.rarity === targetRarity);
   if (candidates.length === 0) return null;
   const item = candidates[0];
+  if (!item) return null;
   await addItemToUser(userId, item.id, client);
   return { item_id: item.id, name: item.name, rarity: item.rarity };
 }

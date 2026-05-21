@@ -1,17 +1,17 @@
 import { json, bad } from "../../../shared.ts";
-import { createItem } from "../../../../db/items.ts";
+import { createItem, type Rarity } from "../../../../db/items.ts";
 import { saveAsset } from "../../../../storage/assets.ts";
 
 function isValidBody(body: unknown): body is Record<string, unknown> {
   return typeof body === "object" && body !== null && !Array.isArray(body);
 }
 
-function parseCreateItem(body: unknown): { name: string; description?: string; rarity?: string } | { error: string } {
+function parseCreateItem(body: unknown): { name: string; description?: string; rarity?: Rarity } | { error: string } {
   if (!isValidBody(body)) return { error: "Invalid body" };
   if (typeof body.name !== "string" || body.name.length < 1 || body.name.length > 100) {
     return { error: "name required (1-100 chars)" };
   }
-  const out: { name: string; description?: string; rarity?: string } = { name: body.name.trim() };
+  const out: { name: string; description?: string; rarity?: Rarity } = { name: body.name.trim() };
   if (body.description !== undefined) {
     if (typeof body.description !== "string" || body.description.length > 2000) {
       return { error: "description max 2000 chars" };
@@ -23,7 +23,7 @@ function parseCreateItem(body: unknown): { name: string; description?: string; r
     if (!["common", "rare", "epic", "legendary"].includes(r)) {
       return { error: "rarity must be common|rare|epic|legendary" };
     }
-    out.rarity = r;
+    out.rarity = r as Rarity;
   }
   return out;
 }
@@ -39,11 +39,11 @@ export async function handlePostItem(req: Request): Promise<Response> {
     if (typeof name !== "string" || name.length < 1 || name.length > 100) {
       return bad("name required (1-100 chars)");
     }
-    const parsed: { name: string; description?: string; rarity?: string; asset_url?: string | null } = { name: name.trim() };
+    const parsed: { name: string; description?: string; rarity?: Rarity; asset_url?: string | null } = { name: name.trim() };
     if (typeof description === "string") parsed.description = description.trim();
     if (typeof rarity === "string") {
       if (!["common", "rare", "epic", "legendary"].includes(rarity)) return bad("rarity must be common|rare|epic|legendary");
-      parsed.rarity = rarity;
+      parsed.rarity = rarity as Rarity;
     }
     if (file instanceof File) {
       const asset = await saveAsset(file);

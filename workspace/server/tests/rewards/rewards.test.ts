@@ -52,11 +52,12 @@ async function registerAndLogin(): Promise<{ accessToken: string; userId: number
 }
 
 async function createTask(accessToken: string, difficulty = "normal", size = "medium") {
-  const { data } = await fetchJson("/tasks", {
+  const { status, data } = await fetchJson("/tasks", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
     body: JSON.stringify({ title: "Test task", difficulty, size }),
   });
+  if (status !== 201) throw new Error(`Task create failed: ${status} ${JSON.stringify(data)}`);
   return data.task;
 }
 
@@ -79,6 +80,7 @@ beforeAll(async () => {
   await pool.query("DELETE FROM sessions");
   await pool.query("DELETE FROM users");
   server = spawn(["bun", "run", "src/index.ts"], {
+    cwd: "/usr/projects/Диплом/workspace/server",
     stdio: ["inherit", "inherit", "inherit"],
     env: { ...process.env, PORT: "3005", DISABLE_RATE_LIMIT: "1" },
   });
@@ -134,13 +136,13 @@ describe("inventory", () => {
     await pool.query("DELETE FROM sessions");
     await pool.query("DELETE FROM users");
     const item = await createItem("Sword", "rare");
-    const { accessToken } = await registerAndLogin();
-    await pool.query("INSERT INTO user_items (user_id, item_id, quantity) VALUES ($1, $2, 1)", [1, item.id]);
+    const { accessToken, userId } = await registerAndLogin();
+    await pool.query("INSERT INTO user_items (user_id, item_id, quantity) VALUES ($1, $2, 1)", [userId, item.id]);
     const { status, data } = await fetchJson("/inventory", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     expect(status).toBe(200);
-    expect(data.items.length).toBeGreaterThanOrEqual(0);
+    expect(data.items.length).toBeGreaterThanOrEqual(1);
   });
 });
 
@@ -171,8 +173,8 @@ describe("equip", () => {
     await pool.query("DELETE FROM sessions");
     await pool.query("DELETE FROM users");
     const item = await createItem("Shield", "common");
-    const { accessToken } = await registerAndLogin();
-    await pool.query("INSERT INTO user_items (user_id, item_id, quantity) VALUES ($1, $2, 1)", [1, item.id]);
+    const { accessToken, userId } = await registerAndLogin();
+    await pool.query("INSERT INTO user_items (user_id, item_id, quantity) VALUES ($1, $2, 1)", [userId, item.id]);
     const { status, data } = await fetchJson("/inventory/equip", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
@@ -191,8 +193,8 @@ describe("equip", () => {
     await pool.query("DELETE FROM sessions");
     await pool.query("DELETE FROM users");
     const item = await createItem("Helm", "common");
-    const { accessToken } = await registerAndLogin();
-    await pool.query("INSERT INTO user_items (user_id, item_id, quantity, equipped) VALUES ($1, $2, 1, true)", [1, item.id]);
+    const { accessToken, userId } = await registerAndLogin();
+    await pool.query("INSERT INTO user_items (user_id, item_id, quantity, equipped) VALUES ($1, $2, 1, true)", [userId, item.id]);
     const { status, data } = await fetchJson("/inventory/equip", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
@@ -214,7 +216,7 @@ describe("level rewards", () => {
     await pool.query("DELETE FROM users");
     await createItem("Common Gem", "common");
     const { accessToken } = await registerAndLogin();
-    const task = await createTask(accessToken, "hard", "huge");
+    const task = await createTask(accessToken, "high", "large");
     const { data } = await fetchJson(`/tasks/${task.id}/complete`, {
       method: "PATCH",
       headers: { Authorization: `Bearer ${accessToken}` },

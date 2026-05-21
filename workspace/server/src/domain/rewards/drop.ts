@@ -64,6 +64,7 @@ export async function rollDrop(
   if (candidates.length === 0) return null;
 
   const item = candidates[Math.floor(random() * candidates.length)];
+  if (!item) return null;
   await addItemToUser(userId, item.id, client);
   return { item_id: item.id, name: item.name, rarity: item.rarity };
 }

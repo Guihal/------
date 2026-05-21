@@ -1,14 +1,14 @@
 import { json, bad } from "../../../shared.ts";
-import { findItemById, updateItem } from "../../../../db/items.ts";
+import { findItemById, updateItem, type Rarity } from "../../../../db/items.ts";
 import { saveAsset } from "../../../../storage/assets.ts";
 
 function isValidBody(body: unknown): body is Record<string, unknown> {
   return typeof body === "object" && body !== null && !Array.isArray(body);
 }
 
-function parseUpdateItem(body: unknown): { name?: string; description?: string | null; rarity?: string; asset_url?: string | null } | { error: string } {
+function parseUpdateItem(body: unknown): { name?: string; description?: string | null; rarity?: Rarity; asset_url?: string | null } | { error: string } {
   if (!isValidBody(body)) return { error: "Invalid body" };
-  const out: { name?: string; description?: string | null; rarity?: string; asset_url?: string | null } = {};
+  const out: { name?: string; description?: string | null; rarity?: Rarity; asset_url?: string | null } = {};
   if (body.name !== undefined) {
     if (typeof body.name !== "string" || body.name.length < 1 || body.name.length > 100) {
       return { error: "name must be 1-100 chars" };
@@ -29,7 +29,7 @@ function parseUpdateItem(body: unknown): { name?: string; description?: string |
     if (!["common", "rare", "epic", "legendary"].includes(r)) {
       return { error: "rarity must be common|rare|epic|legendary" };
     }
-    out.rarity = r;
+    out.rarity = r as Rarity;
   }
   return out;
 }
@@ -45,7 +45,7 @@ export async function handlePutItem(req: Request, itemId: number): Promise<Respo
     const description = form.get("description");
     const rarity = form.get("rarity");
     const file = form.get("asset");
-    const parsed: { name?: string; description?: string | null; rarity?: string; asset_url?: string | null } = {};
+    const parsed: { name?: string; description?: string | null; rarity?: Rarity; asset_url?: string | null } = {};
     if (typeof name === "string") {
       if (name.length < 1 || name.length > 100) return bad("name must be 1-100 chars");
       parsed.name = name.trim();
@@ -54,7 +54,7 @@ export async function handlePutItem(req: Request, itemId: number): Promise<Respo
     if (description === null) parsed.description = null;
     if (typeof rarity === "string") {
       if (!["common", "rare", "epic", "legendary"].includes(rarity)) return bad("rarity must be common|rare|epic|legendary");
-      parsed.rarity = rarity;
+      parsed.rarity = rarity as Rarity;
     }
     if (file instanceof File) {
       const asset = await saveAsset(file);

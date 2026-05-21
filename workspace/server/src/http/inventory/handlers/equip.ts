@@ -1,5 +1,5 @@
-import { requireAuth, json, bad } from "../../../shared.ts";
-import { equipItem, unequipItem, findUserItem } from "../../../../db/inventory.ts";
+import { requireAuth, json, bad } from "../../shared.ts";
+import { equipItem, unequipItem, findUserItem } from "../../../db/inventory.ts";
 
 export async function handlePostEquip(req: Request): Promise<Response> {
   let ctx;

@@ -1,6 +1,6 @@
-import { requireAuth, json } from "../../../shared.ts";
-import { listUserItems } from "../../../../db/inventory.ts";
-import { findItemById } from "../../../../db/items.ts";
+import { requireAuth, json } from "../../shared.ts";
+import { listUserItems, type UserItemRow } from "../../../db/inventory.ts";
+import { findItemById } from "../../../db/items.ts";
 
 export async function handleGetInventory(req: Request): Promise<Response> {
   let ctx;
@@ -12,7 +12,7 @@ export async function handleGetInventory(req: Request): Promise<Response> {
   }
   const userItems = await listUserItems(ctx.userId);
   const enriched = await Promise.all(
-    userItems.map(async (ui) => {
+    userItems.map(async (ui: UserItemRow) => {
       const item = await findItemById(ui.item_id);
       return {
         id: ui.id,
