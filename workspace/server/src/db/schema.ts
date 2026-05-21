@@ -83,6 +83,20 @@ CREATE TABLE IF NOT EXISTS items (
 );
 
 CREATE INDEX IF NOT EXISTS idx_items_rarity ON items(rarity);
+
+CREATE TABLE IF NOT EXISTS user_items (
+  id          SERIAL PRIMARY KEY,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  item_id     INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,
+  quantity    INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
+  equipped    BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(user_id, item_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_items_user_id ON user_items(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_items_equipped ON user_items(user_id) WHERE equipped = TRUE;
 `;
 
 export async function migrate(): Promise<void> {

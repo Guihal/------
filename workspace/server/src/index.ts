@@ -3,6 +3,7 @@ import { migrate } from "./db/schema.ts";
 import { handleAuth } from "./http/auth/router.ts";
 import { handleTasks } from "./http/tasks/router.ts";
 import { handleAdmin } from "./http/admin/router.ts";
+import { handleInventory } from "./http/inventory/router.ts";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -28,6 +29,9 @@ serve({
 
     const adminResp = await handleAdmin(req, url.pathname);
     if (adminResp) return adminResp;
+
+    const inventoryResp = await handleInventory(req, url.pathname);
+    if (inventoryResp) return inventoryResp;
 
     return Response.json(
       { error: "not_implemented", route: `${req.method} ${url.pathname}` },

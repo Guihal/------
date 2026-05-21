@@ -1,7 +1,9 @@
 import { requireAuth, json } from "../../shared.ts";
 import { findTaskById, markTaskCompleted } from "../../../db/tasks.ts";
-import { ensureProgression, addXp } from "../../../db/progressions.ts";
+import { ensureProgression } from "../../../db/progressions.ts";
 import { computeTaskXp } from "../../../domain/tasks/xp.ts";
+import { rollDrop } from "../../../domain/rewards/drop.ts";
+import { addXpWithReward } from "../../../domain/rewards/progression-rewards.ts";
 import { audit } from "../../../db/audit.ts";
 import { withTransaction } from "../../../db/client.ts";
 
@@ -25,9 +27,14 @@ export async function handlePatchTaskComplete(req: Request, taskId: number): Pro
     const t = await markTaskCompleted(taskId, client);
     if (!t) throw new Error("Task completion failed");
     await ensureProgression(ctx.userId, client);
-    await addXp(ctx.userId, xp, client);
-    return t;
+    const { reward: levelReward } = await addXpWithReward(ctx.userId, xp, client);
+    return { task: t, levelReward };
   });
-  await audit({ userId: ctx.userId, action: "task_completed", details: { task_id: taskId, xp } });
-  return json({ task: updated, xp_gained: xp, reward: null });
+  const drop = await rollDrop(ctx.userId);
+  const reward = {
+    drop: drop || undefined,
+    level: updated.levelReward || undefined,
+  };
+  await audit({ userId: ctx.userId, action: "task_completed", details: { task_id: taskId, xp, reward } });
+  return json({ task: updated.task, xp_gained: xp, reward });
 }
