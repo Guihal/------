@@ -258,3 +258,176 @@ describe("PATCH /tasks/:id/archive", () => {
     expect(found).toBeUndefined();
   });
 });
+
+describe("PUT /tasks/:id", () => {
+  beforeAll(setupTests);
+  afterAll(teardownTests);
+
+  it("updates a task", async () => {
+    const token = await registerAndLogin(`edit-${Date.now()}@example.com`);
+    const { data: createData } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Old title", difficulty: "low" }),
+    });
+    const taskId = createData.task.id;
+    const { status, data } = await fetchJson(`/tasks/${taskId}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "New title", difficulty: "high" }),
+    });
+    expect(status).toBe(200);
+    expect(data.task.title).toBe("New title");
+    expect(data.task.difficulty).toBe("high");
+  });
+
+  it("returns 404 for other user's task", async () => {
+    const tokenA = await registerAndLogin(`ea-${Date.now()}@example.com`);
+    const tokenB = await registerAndLogin(`eb-${Date.now()}@example.com`);
+    const { data: createData } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${tokenA}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Private" }),
+    });
+    const { status } = await fetchJson(`/tasks/${createData.task.id}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${tokenB}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Hacked" }),
+    });
+    expect(status).toBe(404);
+  });
+
+  it("rejects empty title", async () => {
+    const token = await registerAndLogin(`edit2-${Date.now()}@example.com`);
+    const { data: createData } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "X" }),
+    });
+    const { status } = await fetchJson(`/tasks/${createData.task.id}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "   " }),
+    });
+    expect(status).toBe(400);
+  });
+});
+
+describe("DELETE /tasks/:id", () => {
+  beforeAll(setupTests);
+  afterAll(teardownTests);
+
+  it("deletes a task", async () => {
+    const token = await registerAndLogin(`del-${Date.now()}@example.com`);
+    const { data: createData } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Delete me" }),
+    });
+    const taskId = createData.task.id;
+    const { status, data } = await fetchJson(`/tasks/${taskId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(status).toBe(200);
+    expect(data.deleted).toBe(true);
+
+    const { data: list } = await fetchJson("/tasks", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const found = list.tasks.find((t: { id: number }) => t.id === taskId);
+    expect(found).toBeUndefined();
+  });
+
+  it("returns 404 for other user's task", async () => {
+    const tokenA = await registerAndLogin(`da-${Date.now()}@example.com`);
+    const tokenB = await registerAndLogin(`db-${Date.now()}@example.com`);
+    const { data: createData } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${tokenA}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Private" }),
+    });
+    const { status } = await fetchJson(`/tasks/${createData.task.id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${tokenB}` },
+    });
+    expect(status).toBe(404);
+  });
+});
+
+describe("GET /tasks?status=", () => {
+  beforeAll(setupTests);
+  afterAll(teardownTests);
+
+  it("filters active tasks", async () => {
+    const token = await registerAndLogin(`f-${Date.now()}@example.com`);
+    await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Active task" }),
+    });
+    const { data: list } = await fetchJson("/tasks?status=active", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(list.tasks.every((t: { completed: boolean; archived: boolean }) => !t.completed && !t.archived)).toBe(true);
+  });
+
+  it("filters completed tasks", async () => {
+    const token = await registerAndLogin(`fc-${Date.now()}@example.com`);
+    const { data: createData } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Complete me" }),
+    });
+    await fetchJson(`/tasks/${createData.task.id}/complete`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const { data: list } = await fetchJson("/tasks?status=completed", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(list.tasks.every((t: { completed: boolean }) => t.completed)).toBe(true);
+  });
+
+  it("filters archived tasks", async () => {
+    const token = await registerAndLogin(`fa-${Date.now()}@example.com`);
+    const { data: createData } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Archive me" }),
+    });
+    await fetchJson(`/tasks/${createData.task.id}/archive`, {
+      method: "PATCH",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const { data: list } = await fetchJson("/tasks?status=archived", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(list.tasks.every((t: { archived: boolean }) => t.archived)).toBe(true);
+  });
+});
+
+describe("GET /tasks?overdue=true", () => {
+  beforeAll(setupTests);
+  afterAll(teardownTests);
+
+  it("returns only overdue uncompleted tasks", async () => {
+    const token = await registerAndLogin(`ov-${Date.now()}@example.com`);
+    const { data: createData } = await fetchJson("/tasks", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Overdue task" }),
+    });
+    const past = new Date(Date.now() - 86400000).toISOString();
+    await fetchJson(`/tasks/${createData.task.id}`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ deadline: past }),
+    });
+    const { data: list } = await fetchJson("/tasks?overdue=true", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(list.tasks.length).toBeGreaterThanOrEqual(1);
+    expect(list.tasks.every((t: { deadline: string | null; completed: boolean }) => t.deadline !== null && !t.completed)).toBe(true);
+  });
+});

@@ -30,6 +30,15 @@ export interface CreateTaskInput {
   deadline?: Date | null;
 }
 
+export interface UpdateTaskInput {
+  title?: string;
+  description?: string | null;
+  difficulty?: Difficulty;
+  category?: Category;
+  size?: Size;
+  deadline?: Date | null;
+}
+
 export async function createTask(
   userId: number,
   input: CreateTaskInput,
@@ -101,4 +110,83 @@ export async function markTaskArchived(
   return client
     ? (await client.query(sql, [id])).rows[0]
     : queryOne<TaskRow>(sql, [id]);
+}
+
+export async function updateTask(
+  id: number,
+  input: UpdateTaskInput,
+  client?: PoolClient
+): Promise<TaskRow | undefined> {
+  const setClauses: string[] = [];
+  const values: unknown[] = [];
+  if (input.title !== undefined) {
+    setClauses.push(`title = $${setClauses.length + 1}`);
+    values.push(input.title);
+  }
+  if (input.description !== undefined) {
+    setClauses.push(`description = $${setClauses.length + 1}`);
+    values.push(input.description);
+  }
+  if (input.difficulty !== undefined) {
+    setClauses.push(`difficulty = $${setClauses.length + 1}`);
+    values.push(input.difficulty);
+  }
+  if (input.category !== undefined) {
+    setClauses.push(`category = $${setClauses.length + 1}`);
+    values.push(input.category);
+  }
+  if (input.size !== undefined) {
+    setClauses.push(`size = $${setClauses.length + 1}`);
+    values.push(input.size);
+  }
+  if (input.deadline !== undefined) {
+    setClauses.push(`deadline = $${setClauses.length + 1}`);
+    values.push(input.deadline);
+  }
+  if (setClauses.length === 0) return findTaskById(id);
+  const fields = [...setClauses, `updated_at = NOW()`];
+  const sql = `UPDATE tasks SET ${fields.join(", ")} WHERE id = $${setClauses.length + 1}
+    RETURNING id, user_id, title, description, difficulty, category, size,
+      deadline, completed, archived, completed_at, created_at, updated_at`;
+  values.push(id);
+  return client
+    ? (await client.query(sql, values)).rows[0]
+    : queryOne<TaskRow>(sql, values);
+}
+
+export async function deleteTask(
+  id: number,
+  client?: PoolClient
+): Promise<TaskRow | undefined> {
+  const sql = `DELETE FROM tasks WHERE id = $1
+    RETURNING id, user_id, title, description, difficulty, category, size,
+      deadline, completed, archived, completed_at, created_at, updated_at`;
+  return client
+    ? (await client.query(sql, [id])).rows[0]
+    : queryOne<TaskRow>(sql, [id]);
+}
+
+export async function listTasksByUserFiltered(
+  userId: number,
+  filters: { status?: "active" | "completed" | "archived" | "all" | undefined; overdue?: boolean | undefined }
+): Promise<TaskRow[]> {
+  const conditions = ["user_id = $1"];
+  const params: unknown[] = [userId];
+  if (filters.status === "active") {
+    conditions.push("completed = FALSE AND archived = FALSE");
+  } else if (filters.status === "completed") {
+    conditions.push("completed = TRUE AND archived = FALSE");
+  } else if (filters.status === "archived") {
+    conditions.push("archived = TRUE");
+  } else {
+    conditions.push("archived = FALSE");
+  }
+  if (filters.overdue === true) {
+    conditions.push("deadline IS NOT NULL AND deadline < NOW() AND completed = FALSE AND archived = FALSE");
+  }
+  const sql = `SELECT id, user_id, title, description, difficulty, category, size,
+      deadline, completed, archived, completed_at, created_at, updated_at
+     FROM tasks WHERE ${conditions.join(" AND ")}
+     ORDER BY created_at DESC`;
+  return query<TaskRow>(sql, params);
 }
