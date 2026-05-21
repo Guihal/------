@@ -11,14 +11,13 @@ export interface UserRow {
 
 export async function createUser(
   email: string,
-  passwordHash: string,
-  role: "user" | "admin" = "user"
+  passwordHash: string
 ): Promise<UserRow> {
   const row = await queryOne<UserRow>(
     `INSERT INTO users (email, password_hash, role)
-     VALUES ($1, $2, $3)
+     VALUES ($1, $2, 'user')
      RETURNING id, email, password_hash, role, created_at, updated_at`,
-    [email, passwordHash, role]
+    [email, passwordHash]
   );
   if (!row) throw new Error("Failed to create user");
   return row;
@@ -35,5 +34,11 @@ export async function findUserById(id: number): Promise<UserRow | undefined> {
   return queryOne<UserRow>(
     `SELECT id, email, password_hash, role, created_at, updated_at FROM users WHERE id = $1`,
     [id]
+  );
+}
+
+export async function listUsers(): Promise<Pick<UserRow, "id" | "email" | "role" | "created_at">[]> {
+  return query<Pick<UserRow, "id" | "email" | "role" | "created_at">>(
+    `SELECT id, email, role, created_at FROM users ORDER BY id`
   );
 }

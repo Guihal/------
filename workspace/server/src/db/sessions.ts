@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { query, queryOne } from "./client.ts";
 import { hashPassword, verifyPassword } from "../security/password.ts";
+import jwt from "jsonwebtoken";
 
 export interface SessionRow {
   id: number;
@@ -14,8 +15,8 @@ export function generateRefreshToken(): string {
   return crypto.randomBytes(32).toString("base64url");
 }
 
-export async function createSession(userId: number, refreshToken: string, expiresAt: Date): Promise<SessionRow> {
-  const hash = await hashPassword(refreshToken);
+export async function createSession(userId: number, refreshTokenPlain: string, expiresAt: Date): Promise<SessionRow> {
+  const hash = await hashPassword(refreshTokenPlain);
   const row = await queryOne<SessionRow>(
     `INSERT INTO sessions (user_id, refresh_token_hash, expires_at)
      VALUES ($1, $2, $3)
@@ -26,15 +27,25 @@ export async function createSession(userId: number, refreshToken: string, expire
   return row;
 }
 
-export async function findSessionByRefreshToken(refreshToken: string): Promise<SessionRow | undefined> {
-  // We hash every candidate and compare; for speed we iterate rows.
-  // In production with many sessions add a lookup prefix or use HMAC.
+function extractJti(refreshJwt: string): string | undefined {
+  try {
+    const decoded = jwt.decode(refreshJwt) as { jti?: string } | null;
+    return decoded?.jti;
+  } catch {
+    return undefined;
+  }
+}
+
+export async function findSessionByRefreshToken(refreshJwt: string): Promise<SessionRow | undefined> {
+  const jti = extractJti(refreshJwt);
+  if (!jti) return undefined;
+
   const rows = await query<SessionRow>(
     `SELECT id, user_id, refresh_token_hash, expires_at, created_at
      FROM sessions WHERE expires_at > NOW()`
   );
   for (const row of rows) {
-    if (await verifyPassword(refreshToken, row.refresh_token_hash)) {
+    if (await verifyPassword(jti, row.refresh_token_hash)) {
       return row;
     }
   }

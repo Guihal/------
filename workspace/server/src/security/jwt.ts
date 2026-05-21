@@ -1,7 +1,13 @@
 import jwt from "jsonwebtoken";
 
-const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET ?? "dev-access-secret";
-const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET ?? "dev-refresh-secret";
+function requireEnv(name: string): string {
+  const v = process.env[name];
+  if (!v) throw new Error(`Missing required environment variable: ${name}`);
+  return v;
+}
+
+const ACCESS_SECRET = requireEnv("JWT_ACCESS_SECRET");
+const REFRESH_SECRET = requireEnv("JWT_REFRESH_SECRET");
 const ACCESS_TTL = 60 * 15; // 15 minutes
 const REFRESH_TTL = 60 * 60 * 24 * 7; // 7 days
 
@@ -10,6 +16,19 @@ export interface TokenPayload {
   role: "user" | "admin";
   jti?: string; // refresh token id
   type: "access" | "refresh";
+}
+
+function isValidRole(v: unknown): v is "user" | "admin" {
+  return v === "user" || v === "admin";
+}
+
+function assertTokenPayload(raw: unknown): TokenPayload {
+  if (typeof raw !== "object" || raw === null) throw new Error("Invalid token payload");
+  const p = raw as Record<string, unknown>;
+  if (typeof p.sub !== "number") throw new Error("Invalid token sub");
+  if (!isValidRole(p.role)) throw new Error("Invalid token role");
+  if (p.type !== "access" && p.type !== "refresh") throw new Error("Invalid token type");
+  return p as unknown as TokenPayload;
 }
 
 export function signAccessToken(userId: number, role: "user" | "admin"): string {
@@ -25,11 +44,13 @@ export function signRefreshToken(userId: number, role: "user" | "admin", jti: st
 }
 
 export function verifyAccessToken(token: string): TokenPayload {
-  return jwt.verify(token, ACCESS_SECRET, { clockTolerance: 5 }) as unknown as TokenPayload;
+  const raw = jwt.verify(token, ACCESS_SECRET, { clockTolerance: 5 });
+  return assertTokenPayload(raw);
 }
 
 export function verifyRefreshToken(token: string): TokenPayload {
-  return jwt.verify(token, REFRESH_SECRET, { clockTolerance: 5 }) as unknown as TokenPayload;
+  const raw = jwt.verify(token, REFRESH_SECRET, { clockTolerance: 5 });
+  return assertTokenPayload(raw);
 }
 
 export function decodeToken(token: string): TokenPayload | null {
