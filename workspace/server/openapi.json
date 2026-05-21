@@ -47,6 +47,7 @@
       "get": {
         "summary": "List items placeholder",
         "operationId": "listAdminItems",
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "501": { "description": "Not implemented" }
         }
@@ -59,6 +60,16 @@
         "responses": {
           "501": { "description": "Not implemented" }
         }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Bearer token authentication"
       }
     }
   }
