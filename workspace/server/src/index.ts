@@ -2,6 +2,7 @@ import { serve } from "bun";
 import { migrate } from "./db/schema.ts";
 import { handleAuth } from "./http/auth/router.ts";
 import { handleTasks } from "./http/tasks/router.ts";
+import { handleAdmin } from "./http/admin/router.ts";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -24,6 +25,9 @@ serve({
 
     const tasksResp = await handleTasks(req, url.pathname);
     if (tasksResp) return tasksResp;
+
+    const adminResp = await handleAdmin(req, url.pathname);
+    if (adminResp) return adminResp;
 
     return Response.json(
       { error: "not_implemented", route: `${req.method} ${url.pathname}` },
