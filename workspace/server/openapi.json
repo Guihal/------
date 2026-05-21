@@ -1,0 +1,65 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Task Companion Server API",
+    "version": "0.1.0",
+    "description": "API contract placeholders"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "Server is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" }
+                  },
+                  "required": ["status"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login placeholder",
+        "operationId": "loginUser",
+        "responses": {
+          "501": { "description": "Not implemented" }
+        }
+      }
+    },
+    "/admin/items": {
+      "get": {
+        "summary": "List items placeholder",
+        "operationId": "listAdminItems",
+        "responses": {
+          "501": { "description": "Not implemented" }
+        }
+      }
+    },
+    "/reward": {
+      "post": {
+        "summary": "Reward placeholder",
+        "operationId": "claimReward",
+        "responses": {
+          "501": { "description": "Not implemented" }
+        }
+      }
+    }
+  }
+}
