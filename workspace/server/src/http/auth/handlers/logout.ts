@@ -1,7 +1,7 @@
 import { verifyRefreshToken } from "../../../security/jwt.ts";
 import { findSessionByRefreshToken, deleteSessionById } from "../../../db/sessions.ts";
 import { audit } from "../../../db/audit.ts";
-import { getClientIp, json } from "../utils.ts";
+import { getClientIp, json } from "../router.ts";
 
 export async function handleLogout(req: Request): Promise<Response> {
   let body: { refresh_token?: string } = {};

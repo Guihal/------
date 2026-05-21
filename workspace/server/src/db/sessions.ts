@@ -1,6 +1,5 @@
 import crypto from "crypto";
 import { query, queryOne } from "./client.ts";
-import { hashPassword, verifyPassword } from "../security/password.ts";
 import jwt from "jsonwebtoken";
 
 export interface SessionRow {
@@ -15,16 +14,21 @@ export function generateRefreshToken(): string {
   return crypto.randomBytes(32).toString("base64url");
 }
 
-export async function createSession(userId: number, refreshTokenPlain: string, expiresAt: Date): Promise<SessionRow> {
-  const hash = await hashPassword(refreshTokenPlain);
-  const row = await queryOne<SessionRow>(
-    `INSERT INTO sessions (user_id, refresh_token_hash, expires_at)
+function sha256(plain: string): string {
+  return crypto.createHash("sha256").update(plain).digest("hex");
+}
+
+export async function createSession(userId: number, refreshTokenPlain: string, expiresAt: Date, client?: import("pg").PoolClient): Promise<SessionRow> {
+  const hash = sha256(refreshTokenPlain);
+  const sql = `INSERT INTO sessions (user_id, refresh_token_hash, expires_at)
      VALUES ($1, $2, $3)
-     RETURNING id, user_id, refresh_token_hash, expires_at, created_at`,
-    [userId, hash, expiresAt]
-  );
+     RETURNING id, user_id, refresh_token_hash, expires_at, created_at`;
+  const params = [userId, hash, expiresAt];
+  const row = client
+    ? (await client.query(sql, params)).rows[0]
+    : await queryOne<SessionRow>(sql, params);
   if (!row) throw new Error("Failed to create session");
-  return row;
+  return row as SessionRow;
 }
 
 function extractJti(refreshJwt: string): string | undefined {
@@ -40,16 +44,11 @@ export async function findSessionByRefreshToken(refreshJwt: string): Promise<Ses
   const jti = extractJti(refreshJwt);
   if (!jti) return undefined;
 
-  const rows = await query<SessionRow>(
+  return queryOne<SessionRow>(
     `SELECT id, user_id, refresh_token_hash, expires_at, created_at
-     FROM sessions WHERE expires_at > NOW()`
+     FROM sessions WHERE refresh_token_hash = $1 AND expires_at > NOW()`,
+    [sha256(jti)]
   );
-  for (const row of rows) {
-    if (await verifyPassword(jti, row.refresh_token_hash)) {
-      return row;
-    }
-  }
-  return undefined;
 }
 
 export async function deleteSessionById(id: number): Promise<void> {

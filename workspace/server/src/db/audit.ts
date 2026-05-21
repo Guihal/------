@@ -1,4 +1,5 @@
 import { query } from "./client.ts";
+import type { PoolClient } from "pg";
 
 export interface AuditEntry {
   userId?: number;
@@ -7,15 +8,18 @@ export interface AuditEntry {
   ipAddress?: string | undefined;
 }
 
-export async function audit(entry: AuditEntry): Promise<void> {
-  await query(
-    `INSERT INTO audit_logs (user_id, action, details, ip_address)
-     VALUES ($1, $2, $3, $4)`,
-    [
-      entry.userId ?? null,
-      entry.action,
-      entry.details ? JSON.stringify(entry.details) : null,
-      entry.ipAddress ?? null,
-    ]
-  );
+export async function audit(entry: AuditEntry, client?: PoolClient): Promise<void> {
+  const sql = `INSERT INTO audit_logs (user_id, action, details, ip_address)
+     VALUES ($1, $2, $3, $4)`;
+  const params = [
+    entry.userId ?? null,
+    entry.action,
+    entry.details ? JSON.stringify(entry.details) : null,
+    entry.ipAddress ?? null,
+  ];
+  if (client) {
+    await client.query(sql, params);
+  } else {
+    await query(sql, params);
+  }
 }

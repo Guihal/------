@@ -7,7 +7,7 @@ import {
   deleteAllUserSessions,
 } from "../../../db/sessions.ts";
 import { audit } from "../../../db/audit.ts";
-import { getClientIp, json, bad, unauthorized } from "../utils.ts";
+import { getClientIp, json, bad, unauthorized } from "../router.ts";
 
 export async function handleRefresh(req: Request): Promise<Response> {
   let body: { refresh_token?: string } = {};

@@ -1,4 +1,5 @@
 import { query, queryOne } from "./client.ts";
+import type { PoolClient } from "pg";
 
 export interface UserRow {
   id: number;
@@ -11,16 +12,18 @@ export interface UserRow {
 
 export async function createUser(
   email: string,
-  passwordHash: string
+  passwordHash: string,
+  client?: PoolClient
 ): Promise<UserRow> {
-  const row = await queryOne<UserRow>(
-    `INSERT INTO users (email, password_hash, role)
+  const sql = `INSERT INTO users (email, password_hash, role)
      VALUES ($1, $2, 'user')
-     RETURNING id, email, password_hash, role, created_at, updated_at`,
-    [email, passwordHash]
-  );
+     RETURNING id, email, password_hash, role, created_at, updated_at`;
+  const params = [email, passwordHash];
+  const row = client
+    ? (await client.query(sql, params)).rows[0]
+    : await queryOne<UserRow>(sql, params);
   if (!row) throw new Error("Failed to create user");
-  return row;
+  return row as UserRow;
 }
 
 export async function findUserByEmail(email: string): Promise<UserRow | undefined> {

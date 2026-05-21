@@ -1,5 +1,5 @@
 import { serve } from "bun";
-import { migrate } from "./db/migrate.ts";
+import { migrate } from "./db/schema.ts";
 import { handleAuth } from "./http/auth/router.ts";
 
 const PORT = Number(process.env.PORT) || 3000;

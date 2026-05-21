@@ -1,7 +1,7 @@
 import { spawn } from "bun";
 import { pool } from "../../src/db/client.ts";
-import { migrate } from "../../src/db/migrate.ts";
-import { clearRateLimit } from "../../src/http/auth/handlers/rate-limit.ts";
+import { migrate } from "../../src/db/schema.ts";
+import { clearRateLimit } from "../../src/http/auth/router.ts";
 
 export const BASE = "http://localhost:3003";
 

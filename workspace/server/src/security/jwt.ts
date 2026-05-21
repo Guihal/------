@@ -11,14 +11,16 @@ const REFRESH_SECRET = requireEnv("JWT_REFRESH_SECRET");
 const ACCESS_TTL = 60 * 15; // 15 minutes
 const REFRESH_TTL = 60 * 60 * 24 * 7; // 7 days
 
+export type Role = "user" | "admin";
+
 export interface TokenPayload {
   sub: number; // user id
-  role: "user" | "admin";
+  role: Role;
   jti?: string; // refresh token id
   type: "access" | "refresh";
 }
 
-function isValidRole(v: unknown): v is "user" | "admin" {
+function isValidRole(v: unknown): v is Role {
   return v === "user" || v === "admin";
 }
 
@@ -31,13 +33,13 @@ function assertTokenPayload(raw: unknown): TokenPayload {
   return p as unknown as TokenPayload;
 }
 
-export function signAccessToken(userId: number, role: "user" | "admin"): string {
+export function signAccessToken(userId: number, role: Role): string {
   return jwt.sign({ sub: userId, role, type: "access" } as TokenPayload, ACCESS_SECRET, {
     expiresIn: ACCESS_TTL,
   });
 }
 
-export function signRefreshToken(userId: number, role: "user" | "admin", jti: string): string {
+export function signRefreshToken(userId: number, role: Role, jti: string): string {
   return jwt.sign({ sub: userId, role, jti, type: "refresh" } as TokenPayload, REFRESH_SECRET, {
     expiresIn: REFRESH_TTL,
   });
@@ -58,5 +60,17 @@ export function decodeToken(token: string): TokenPayload | null {
     return jwt.decode(token) as TokenPayload | null;
   } catch {
     return null;
+  }
+}
+
+export function isAdmin(role: Role): boolean {
+  return role === "admin";
+}
+
+export function requireAdmin(role: Role): void {
+  if (!isAdmin(role)) {
+    const err = new Error("Forbidden: admin role required");
+    (err as Error & { statusCode?: number }).statusCode = 403;
+    throw err;
   }
 }
