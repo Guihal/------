@@ -248,7 +248,9 @@ Default gates for every implementation packet, even when the packet JSON omits
   ],
   "allowed_write_paths": [
     "/usr/projects/Диплом/workspace/server/src/domain/tasks/**",
+    "/usr/projects/Диплом/workspace/server/src/db/**",
     "/usr/projects/Диплом/workspace/server/src/http/tasks/**",
+    "/usr/projects/Диплом/workspace/server/src/index.ts",
     "/usr/projects/Диплом/workspace/server/tests/tasks/**"
   ],
   "read_context": [
@@ -260,8 +262,8 @@ Default gates for every implementation packet, even when the packet JSON omits
     "cd /usr/projects/Диплом/workspace/server && bun test tests/tasks && bun run typecheck",
     "cd /usr/projects/Диплом/workspace/server && ! rg \"xp\" src/http/tasks/create*"
   ],
-  "diff_budget_loc": 380,
-  "file_count_max": 12,
+  "diff_budget_loc": 800,
+  "file_count_max": 14,
   "rollback": "Remove task/progression files and route registrations added by this packet.",
   "escalation_triggers": [
     "Client can submit XP.",
@@ -299,7 +301,7 @@ Default gates for every implementation packet, even when the packet JSON omits
     "cd /usr/projects/Диплом/workspace/server && rg -n \"common|rare|epic|legendary|webp|png\" src/http/admin/items src/storage"
   ],
   "diff_budget_loc": 420,
-  "file_count_max": 12,
+  "file_count_max": 14,
   "rollback": "Remove item catalog and storage files added by this packet.",
   "escalation_triggers": [
     "Asset validation cannot reject non-image files.",
@@ -413,7 +415,7 @@ Default gates for every implementation packet, even when the packet JSON omits
     "cd /usr/projects/Диплом/workspace/server && bun test tests/stats && bun run typecheck"
   ],
   "diff_budget_loc": 360,
-  "file_count_max": 12,
+  "file_count_max": 14,
   "rollback": "Remove settings/stats/logs files and route registrations added by this packet.",
   "escalation_triggers": [
     "Stats query requires missing schema.",
@@ -594,7 +596,7 @@ Default gates for every implementation packet, even when the packet JSON omits
     "cd /usr/projects/Диплом/workspace/app && bunx cap sync android"
   ],
   "diff_budget_loc": 2300,
-  "file_count_max": 120,
+  "file_count_max": 140,
   "rollback": "Restore only workspace/app to the pre-Q10 state; do not delete root app files.",
   "escalation_triggers": [
     "Any WAPP packet acceptance cannot pass after two fix attempts.",
