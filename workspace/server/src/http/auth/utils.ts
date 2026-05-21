@@ -7,10 +7,13 @@ export function validatePassword(password: string): boolean {
 }
 
 export function getClientIp(req: Request): string | undefined {
-  const trusted = req.headers.get("x-forwarded-for");
-  if (trusted) {
-    const first = trusted.split(",")[0]?.trim();
-    if (first) return first;
+  const trustedProxy = process.env.TRUSTED_PROXY;
+  if (trustedProxy === "1") {
+    const forwarded = req.headers.get("x-forwarded-for");
+    if (forwarded) {
+      const first = forwarded.split(",")[0]?.trim();
+      if (first) return first;
+    }
   }
   return (req as Request & { remoteAddress?: string }).remoteAddress ?? undefined;
 }

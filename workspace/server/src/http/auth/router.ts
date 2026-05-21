@@ -1,5 +1,5 @@
 import { verifyAccessToken } from "../../security/jwt.ts";
-import { getBearer, json } from "./utils.ts";
+import { getBearer, getClientIp, json } from "./utils.ts";
 import { checkRateLimit } from "./handlers/rate-limit.ts";
 import { handleRegister } from "./handlers/register.ts";
 import { handleLogin } from "./handlers/login.ts";
@@ -35,9 +35,7 @@ function rateLimitResponse(retryAfter?: number): Response {
 }
 
 export async function handleAuth(req: Request, pathname: string): Promise<Response | undefined> {
-  const ip = (req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()) ??
-    (req as Request & { remoteAddress?: string }).remoteAddress ??
-    "unknown";
+  const ip = getClientIp(req) ?? "unknown";
 
   if (pathname === "/auth/register" && req.method === "POST") {
     const rl = checkRateLimit(`${ip}:register`);

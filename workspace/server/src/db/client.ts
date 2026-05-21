@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import { Pool, type PoolClient } from "pg";
 
 function requireEnv(name: string): string {
   const v = process.env[name];
@@ -15,7 +15,7 @@ export async function query<T = unknown>(
   params?: unknown[]
 ): Promise<T[]> {
   const result = await pool.query(text, params);
-  return result.rows as T[];
+  return result.rows satisfies unknown[] as T[];
 }
 
 export async function queryOne<T = unknown>(
@@ -26,11 +26,11 @@ export async function queryOne<T = unknown>(
   return rows[0];
 }
 
-export async function withTransaction<R>(fn: (client: Pool) => Promise<R>): Promise<R> {
+export async function withTransaction<R>(fn: (client: PoolClient) => Promise<R>): Promise<R> {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const result = await fn(client as unknown as Pool);
+    const result = await fn(client);
     await client.query("COMMIT");
     return result;
   } catch (err) {
