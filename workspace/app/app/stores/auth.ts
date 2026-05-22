@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useApi } from '~/composables/useApi'
 import type { AuthResponse, RegisterResponse, User } from '~/types/api'
 
 export const useAuthStore = defineStore('app-auth', () => {
@@ -92,7 +93,7 @@ export const useAuthStore = defineStore('app-auth', () => {
     clearAuth()
   }
 
-  function init() {
+  async function init() {
     const t = localStorage.getItem('app_token')
     const rt = localStorage.getItem('app_refresh_token')
     const u = localStorage.getItem('app_user')
@@ -103,6 +104,15 @@ export const useAuthStore = defineStore('app-auth', () => {
         user.value = JSON.parse(u)
       } catch {
         user.value = null
+      }
+    }
+    if (token.value) {
+      try {
+        const me = await useApi().fetch<{ id: number; email: string }>('/auth/me')
+        setUser(me)
+      } catch {
+        // token invalid — clear and let caller redirect
+        clearAuth()
       }
     }
   }

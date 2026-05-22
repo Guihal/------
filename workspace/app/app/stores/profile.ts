@@ -23,10 +23,14 @@ export const useProfileStore = defineStore('app-profile', () => {
   }
 
   async function fetchProgression() {
+    loading.value = true
+    error.value = ''
     try {
       progression.value = await api.fetch<Progression>('/progression')
     } catch (e: any) {
       error.value = e?.data?.detail || 'Ошибка загрузки прогресса'
+    } finally {
+      loading.value = false
     }
   }
 

@@ -6,12 +6,18 @@
         <NuxtLink to="/profile" class="text-sm text-gray-600 hover:text-gray-900">
           Профиль
         </NuxtLink>
-        <button class="text-sm text-red-600" @click="emit('logout')">Выйти</button>
+        <button class="text-sm text-red-600" @click="logout">Выйти</button>
       </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits<{ logout: [] }>()
+const auth = useAuthStore()
+const router = useRouter()
+
+async function logout() {
+  auth.logout()
+  await router.push('/login')
+}
 </script>

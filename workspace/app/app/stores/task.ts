@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { Task, TaskPriority, TasksResponse, TaskResponse } from '~/types/api'
 
 export const useTaskStore = defineStore('app-tasks', () => {

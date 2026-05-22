@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'com.diploma.app',
-  appName: 'Diploma App',
+  appId: 'com.taskcompanion.app',
+  appName: 'Таск Компаньон',
   webDir: 'dist',
   server: {
     androidScheme: 'https',
