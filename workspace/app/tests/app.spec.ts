@@ -19,7 +19,7 @@ const localStorageMock: Storage = {
 globalThis.localStorage = localStorageMock
 
 // @ts-ignore
-globalThis.useRuntimeConfig = () => ({ public: { apiBase: 'http://localhost:3000' } })
+globalThis.useRuntimeConfig = () => ({ public: { apiBase: 'http://localhost:3001' } })
 // @ts-ignore
 globalThis.useApi = () => ({ fetch: mockFetch })
 // @ts-ignore
@@ -48,13 +48,54 @@ vi.mock('~/composables/useApi', () => ({
 }))
 
 vi.mock('#app', () => ({
-  useRuntimeConfig: () => ({ public: { apiBase: 'http://localhost:3000' } }),
+  useRuntimeConfig: () => ({ public: { apiBase: 'http://localhost:3001' } }),
   useRoute: () => ({ params: {} }),
   useRouter: () => ({ push: vi.fn() }),
   navigateTo: vi.fn(),
   defineNuxtRouteMiddleware: (fn: unknown) => fn,
   definePageMeta: () => {},
 }))
+
+function makeTask(overrides: Partial<{
+  id: number
+  title: string
+  completed: boolean
+  archived: boolean
+  deadline: string | null
+  difficulty: 'low' | 'normal' | 'high'
+  size: 'tiny' | 'small' | 'medium' | 'large'
+  category: 'general' | 'work' | 'personal' | 'health'
+}> = {}): {
+  id: number
+  user_id: number
+  title: string
+  description: string | null
+  difficulty: 'low' | 'normal' | 'high'
+  category: 'general' | 'work' | 'personal' | 'health'
+  size: 'tiny' | 'small' | 'medium' | 'large'
+  deadline: string | null
+  completed: boolean
+  archived: boolean
+  completed_at: string | null
+  created_at: string
+  updated_at: string
+} {
+  return {
+    id: overrides.id ?? 1,
+    user_id: 1,
+    title: overrides.title ?? 'Task',
+    description: null,
+    difficulty: overrides.difficulty ?? 'normal',
+    category: overrides.category ?? 'general',
+    size: overrides.size ?? 'medium',
+    deadline: overrides.deadline ?? null,
+    completed: overrides.completed ?? false,
+    archived: overrides.archived ?? false,
+    completed_at: null,
+    created_at: 'x',
+    updated_at: 'x',
+  }
+}
 
 describe('auth store', () => {
   beforeEach(() => {
@@ -150,11 +191,11 @@ describe('task store computed groups', () => {
   it('groups tasks by status and deadline', async () => {
     mockFetch.mockResolvedValue({
       tasks: [
-        { id: 1, title: 'Overdue', status: 'pending', priority: 'high', due_at: '2000-01-01T00:00:00Z', created_at: 'x', updated_at: 'x', description: null },
-        { id: 2, title: 'Upcoming', status: 'pending', priority: 'normal', due_at: '2099-01-01T00:00:00Z', created_at: 'x', updated_at: 'x', description: null },
-        { id: 3, title: 'No deadline', status: 'pending', priority: 'low', due_at: null, created_at: 'x', updated_at: 'x', description: null },
-        { id: 4, title: 'Done', status: 'completed', priority: 'normal', due_at: null, created_at: 'x', updated_at: 'x', description: null },
-        { id: 5, title: 'Archived', status: 'archived', priority: 'normal', due_at: null, created_at: 'x', updated_at: 'x', description: null },
+        makeTask({ id: 1, title: 'Overdue', deadline: '2000-01-01T00:00:00Z' }),
+        makeTask({ id: 2, title: 'Upcoming', deadline: '2099-01-01T00:00:00Z' }),
+        makeTask({ id: 3, title: 'No deadline', deadline: null }),
+        makeTask({ id: 4, title: 'Done', completed: true }),
+        makeTask({ id: 5, title: 'Archived', archived: true }),
       ],
     })
 
@@ -180,7 +221,7 @@ describe('task store computed groups', () => {
 
   it('createTask prepends to list', async () => {
     mockFetch.mockResolvedValue({
-      task: { id: 10, title: 'New', status: 'pending', priority: 'normal', due_at: null, created_at: 'x', updated_at: 'x', description: null },
+      task: makeTask({ id: 10, title: 'New' }),
     })
 
     const { useTaskStore } = await import('../app/stores/task')
@@ -192,12 +233,14 @@ describe('task store computed groups', () => {
     expect(store.tasks[0]!.id).toBe(10)
   })
 
-  it('completeTask updates status', async () => {
+  it('completeTask updates completed flag', async () => {
     mockFetch.mockResolvedValueOnce({
-      tasks: [{ id: 1, title: 'T', status: 'pending', priority: 'normal', due_at: null, created_at: 'x', updated_at: 'x', description: null }],
+      tasks: [makeTask({ id: 1, title: 'T' })],
     })
     mockFetch.mockResolvedValueOnce({
-      task: { id: 1, title: 'T', status: 'completed', priority: 'normal', due_at: null, created_at: 'x', updated_at: 'x', description: null },
+      task: makeTask({ id: 1, title: 'T', completed: true }),
+      xp_gained: 10,
+      reward: {},
     })
 
     const { useTaskStore } = await import('../app/stores/task')
@@ -205,6 +248,6 @@ describe('task store computed groups', () => {
     await store.fetchTasks()
     await store.completeTask(1)
 
-    expect(store.tasks[0]!.status).toBe('completed')
+    expect(store.tasks[0]!.completed).toBe(true)
   })
 })

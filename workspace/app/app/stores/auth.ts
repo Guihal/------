@@ -3,6 +3,20 @@ import { ref } from 'vue'
 import { useApi } from '~/composables/useApi'
 import type { AuthResponse, RegisterResponse, User } from '~/types/api'
 
+function getErrorMessage(error: unknown, fallback: string) {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'data' in error &&
+    typeof (error as { data?: unknown }).data === 'object' &&
+    (error as { data?: { detail?: unknown } }).data !== null &&
+    typeof (error as { data?: { detail?: unknown } }).data?.detail === 'string'
+  ) {
+    return (error as { data: { detail: string } }).data.detail
+  }
+  return fallback
+}
+
 export const useAuthStore = defineStore('app-auth', () => {
   const token = ref('')
   const refreshToken = ref('')
@@ -46,8 +60,8 @@ export const useAuthStore = defineStore('app-auth', () => {
       setTokens(res.access_token, res.refresh_token)
       setUser(res.user)
       return true
-    } catch (e: any) {
-      error.value = e?.data?.detail || 'Ошибка входа'
+    } catch (e: unknown) {
+      error.value = getErrorMessage(e, 'Ошибка входа')
       return false
     } finally {
       loading.value = false
@@ -64,8 +78,8 @@ export const useAuthStore = defineStore('app-auth', () => {
         body: { email, password },
       })
       return true
-    } catch (e: any) {
-      error.value = e?.data?.detail || 'Ошибка регистрации'
+    } catch (e: unknown) {
+      error.value = getErrorMessage(e, 'Ошибка регистрации')
       return false
     } finally {
       loading.value = false
@@ -110,8 +124,17 @@ export const useAuthStore = defineStore('app-auth', () => {
       try {
         const me = await useApi().fetch<{ id: number; email: string }>('/auth/me')
         setUser(me)
-      } catch (e: any) {
-        const status = e?.status ?? e?.response?.status ?? e?.data?.status
+      } catch (e: unknown) {
+        const status =
+          typeof e === 'object' && e !== null
+            ? ('status' in e && typeof e.status === 'number'
+                ? e.status
+                : 'response' in e && e.response !== null && typeof e.response === 'object' && 'status' in e.response && typeof e.response.status === 'number'
+                  ? e.response.status
+                  : 'data' in e && e.data !== null && typeof e.data === 'object' && 'status' in e.data && typeof e.data.status === 'number'
+                    ? e.data.status
+                    : undefined)
+            : undefined
         if (status === 401 || status === 403) {
           clearAuth()
         }

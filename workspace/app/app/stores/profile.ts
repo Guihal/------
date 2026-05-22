@@ -2,6 +2,20 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Profile, Progression } from '~/types/api'
 
+function getErrorMessage(error: unknown, fallback: string) {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'data' in error &&
+    typeof (error as { data?: unknown }).data === 'object' &&
+    (error as { data?: { detail?: unknown } }).data !== null &&
+    typeof (error as { data?: { detail?: unknown } }).data?.detail === 'string'
+  ) {
+    return (error as { data: { detail: string } }).data.detail
+  }
+  return fallback
+}
+
 export const useProfileStore = defineStore('app-profile', () => {
   const profile = ref<Profile | null>(null)
   const progression = ref<Progression | null>(null)
@@ -15,8 +29,8 @@ export const useProfileStore = defineStore('app-profile', () => {
     error.value = ''
     try {
       profile.value = await api.fetch<Profile>('/profile')
-    } catch (e: any) {
-      error.value = e?.data?.detail || 'Ошибка загрузки профиля'
+    } catch (e: unknown) {
+      error.value = getErrorMessage(e, 'Ошибка загрузки профиля')
     } finally {
       loading.value = false
     }
@@ -27,8 +41,8 @@ export const useProfileStore = defineStore('app-profile', () => {
     error.value = ''
     try {
       progression.value = await api.fetch<Progression>('/progression')
-    } catch (e: any) {
-      error.value = e?.data?.detail || 'Ошибка загрузки прогресса'
+    } catch (e: unknown) {
+      error.value = getErrorMessage(e, 'Ошибка загрузки прогресса')
     } finally {
       loading.value = false
     }

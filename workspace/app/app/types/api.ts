@@ -96,3 +96,27 @@ export interface TaskCompleteResponse {
     level?: RewardLevelUp
   } | null
 }
+
+export interface AppSettings {
+  theme: 'light' | 'dark' | 'system'
+  language: string
+  notifications_enabled: boolean
+  reminder_time: string | null
+}
+
+export interface SettingsResponse {
+  settings: AppSettings
+}
+
+export interface VisualState {
+  display_name: string
+  avatar_url: string | null
+  xp: number
+  level: number
+  equipped_item: {
+    id: number
+    name: string
+    rarity: Rarity
+    asset_url: string
+  } | null
+}

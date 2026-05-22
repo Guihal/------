@@ -65,6 +65,17 @@ export async function markTaskArchived(
     : queryOne<TaskRow>(sql, [id]);
 }
 
+export async function findTaskByIdForUser(
+  id: number,
+  userId: number,
+  client?: PoolClient
+): Promise<TaskRow | undefined> {
+  const sql = `SELECT ${TASK_COLUMNS} FROM tasks WHERE id = $1 AND user_id = $2`;
+  return client
+    ? (await client.query(sql, [id, userId])).rows[0]
+    : queryOne<TaskRow>(sql, [id, userId]);
+}
+
 export async function updateTask(
   id: number,
   input: UpdateTaskInput,
@@ -109,7 +120,8 @@ export async function deleteTask(
   id: number,
   client?: PoolClient
 ): Promise<TaskRow | undefined> {
-  const sql = `DELETE FROM tasks WHERE id = $1 RETURNING ${TASK_COLUMNS}`;
+  const sql = `UPDATE tasks SET archived = TRUE, updated_at = NOW()
+    WHERE id = $1 AND archived = FALSE RETURNING ${TASK_COLUMNS}`;
   return client
     ? (await client.query(sql, [id])).rows[0]
     : queryOne<TaskRow>(sql, [id]);

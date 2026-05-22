@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
 const config: CapacitorConfig = {
   appId: 'com.taskcompanion.app',
   appName: 'Таск Компаньон',
-  webDir: 'dist',
+  webDir: '.output/public',
   server: {
     androidScheme: 'https',
   },
