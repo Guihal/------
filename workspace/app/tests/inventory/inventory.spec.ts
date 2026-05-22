@@ -165,7 +165,7 @@ describe('task store completeTask with reward', () => {
 
   it('completeTask returns reward payload', async () => {
     mockFetch.mockResolvedValue({
-      task: { id: 1, title: 'T', status: 'completed', priority: 'normal', due_at: null, created_at: 'x', updated_at: 'x', description: null },
+      task: { id: 1, title: 'T', completed: true, archived: false, difficulty: 'normal', size: 'medium', category: 'general', deadline: null, created_at: 'x', updated_at: 'x', description: null, user_id: 1, completed_at: 'x' },
       xp_gained: 100,
       reward: {
         drop: { item_id: 5, name: 'Меч', rarity: 'rare' },
@@ -178,13 +178,13 @@ describe('task store completeTask with reward', () => {
     const result = await store.completeTask(1)
 
     expect(result.xp_gained).toBe(100)
-    expect(result.reward.drop?.name).toBe('Меч')
-    expect(result.reward.level?.name).toBe('Корона')
+    expect(result.reward?.drop?.name).toBe('Меч')
+    expect(result.reward?.level?.name).toBe('Корона')
   })
 
   it('completeTask works without drop or level reward', async () => {
     mockFetch.mockResolvedValue({
-      task: { id: 1, title: 'T', status: 'completed', priority: 'normal', due_at: null, created_at: 'x', updated_at: 'x', description: null },
+      task: { id: 1, title: 'T', completed: true, archived: false, difficulty: 'normal', size: 'medium', category: 'general', deadline: null, created_at: 'x', updated_at: 'x', description: null, user_id: 1, completed_at: 'x' },
       xp_gained: 10,
       reward: {},
     })
@@ -194,7 +194,7 @@ describe('task store completeTask with reward', () => {
     const result = await store.completeTask(1)
 
     expect(result.xp_gained).toBe(10)
-    expect(result.reward.drop).toBeUndefined()
-    expect(result.reward.level).toBeUndefined()
+    expect(result.reward?.drop).toBeUndefined()
+    expect(result.reward?.level).toBeUndefined()
   })
 })

@@ -1,6 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <AppHeader />
+    <ClientOnly>
+      <AppHeader />
+    </ClientOnly>
     <main class="mx-auto max-w-2xl p-4">
       <slot />
     </main>
