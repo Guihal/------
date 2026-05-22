@@ -434,37 +434,62 @@ Default gates for every implementation packet, even when the packet JSON omits
 ```json
 {
   "task_id": "Q08-admin-scaffold-dashboard",
-  "goal": "Create admin-panel app with login, dashboard, users, logs, and stats pages. Use Nuxt 4 (Vue), not React.",
+  "goal": "Create admin-panel app with login, dashboard, users, logs, and stats pages. Use Nuxt 4 (Vue), not React. PLUS: migrate workspace/app from React/Vite to Nuxt/Capacitor, remove root app/ local auth pollution, add RBAC to server admin items, fix reward schema per platform contract, fix app/server API contract compatibility, add missing server routes, update openapi.json.",
   "non_goals": [
-    "Do not implement item manager.",
-    "Do not edit server code.",
-    "Do not use cookies."
+    "Do not implement item manager UI.",
+    "Do not use cookies.",
+    "Do not rewrite server auth system — only fix RBAC gaps on existing endpoints."
   ],
   "allowed_write_paths": [
+    "/usr/projects/Диплом/workspace/admin-panel/nuxt.config.ts",
     "/usr/projects/Диплом/workspace/admin-panel/package.json",
     "/usr/projects/Диплом/workspace/admin-panel/tsconfig.json",
-    "/usr/projects/Диплом/workspace/admin-panel/src/**",
-    "/usr/projects/Диплом/workspace/admin-panel/tests/**"
+    "/usr/projects/Диплом/workspace/admin-panel/app.vue",
+    "/usr/projects/Диплом/workspace/admin-panel/app/**",
+    "/usr/projects/Диплом/workspace/admin-panel/tests/**",
+    "/usr/projects/Диплом/workspace/admin-panel/biome.json",
+    "/usr/projects/Диплом/workspace/server/src/http/admin/items/**",
+    "/usr/projects/Диплом/workspace/server/src/http/admin/router.ts",
+    "/usr/projects/Диплом/workspace/server/src/http/inventory/router.ts",
+    "/usr/projects/Диплом/workspace/server/src/http/settings/router.ts",
+    "/usr/projects/Диплом/workspace/server/src/http/tasks/router.ts",
+    "/usr/projects/Диплом/workspace/server/src/db/schema.ts",
+    "/usr/projects/Диплом/workspace/server/src/domain/rewards/**",
+    "/usr/projects/Диплом/workspace/server/openapi.json",
+    "/usr/projects/Диплом/workspace/app/**",
+    "/usr/projects/Диплом/app/**",
+    "/usr/projects/Диплом/core/**",
+    "/usr/projects/Диплом/infrastructure/**"
   ],
   "read_context": [
     "/usr/projects/Диплом/workspace/server/openapi.json",
-    "/usr/projects/Диплом/docs/specs/platform-wave.md"
+    "/usr/projects/Диплом/docs/specs/platform-wave.md",
+    "/usr/projects/Диплом/docs/specs/workspace-app-android-migration-fix.md",
+    "/usr/projects/Диплом/docs/specs/workspace-app-interface-contract.md"
   ],
-  "risk_tier": "ordinary",
+  "risk_tier": "security",
   "acceptance": [
     "cd /usr/projects/Диплом/workspace/admin-panel && bun install && bun run typecheck && bun test && bun run build",
-    "cd /usr/projects/Диплом/workspace/admin-panel && rg -n 'Authorization|Dashboard|Users|Logs|Stats' app"
+    "cd /usr/projects/Диплом/workspace/admin-panel && rg -n 'Authorization|Dashboard|Users|Logs|Stats' app",
+    "cd /usr/projects/Диплом/workspace/server && bun run typecheck && bun test",
+    "cd /usr/projects/Диплом && biome check --max-diagnostics=20 || true",
+    "test ! -f /usr/projects/Диплом/app/stores/useAuthStore.ts && test ! -f /usr/projects/Диплом/infrastructure/sqlite/migrations/002_users.sql",
+    "test ! -d /usr/projects/Диплом/core/domain/user",
+    "rg -n 'requireAdmin' /usr/projects/Диплом/workspace/server/src/http/admin/items/router.ts",
+    "rg -n 'level_rewards|task_reward_rolls' /usr/projects/Диплом/workspace/server/src/db/schema.ts"
   ],
-  "diff_budget_loc": 480,
-  "file_count_max": 18,
-  "rollback": "Delete admin-panel scaffold files added by this packet.",
+  "diff_budget_loc": 3000,
+  "file_count_max": 40,
+  "rollback": "Manual revert required — scope spans admin-panel, server, app, root cleanup.",
   "escalation_triggers": [
-    "OpenAPI contract missing admin routes.",
     "Build tool cannot be installed.",
-    "Auth transport requires cookies."
+    "Auth transport requires cookies.",
+    "Database migration irreversible.",
+    "Capacitor android build fails."
   ],
   "glossary": {
-    "admin-panel": "Separate web app for admin role."
+    "admin-panel": "Separate web app for admin role.",
+    "app": "Mobile app (Nuxt + Capacitor) replacing old React/Vite scaffold."
   }
 }
 ```

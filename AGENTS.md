@@ -13,9 +13,9 @@
 ## 1. TL;DR
 
 - Дипломный мобильный offline-first task-manager с легкой геймификацией (XP, уровни, маскот, предметы).
-- Стек: Nuxt 4 (client-only, без SSR), Vue 3, TypeScript strict, Pinia, Capacitor, SQLite через `@capacitor-community/sqlite` (кандидат, подтвердить на scaffold), Vitest.
-- Архитектура: hexagonal, ports & adapters. Domain чистый, infrastructure заменяема (SQLite на Android / memory в browser dev).
-- Текущий этап — **MVP-0**: task flow + SQLite + XP/уровни. Маскот, инвентарь, уведомления, visual random — **Post-MVP-0**.
+- Стек: Nuxt 4 (client-only, без SSR), Vue 3, TypeScript strict, Pinia, Capacitor, Vitest.
+- Архитектура: hexagonal, ports & adapters. Domain чистый, infrastructure заменяема (server API / memory в browser dev).
+- Текущий этап — **MVP-0**: task flow + server API + XP/уровни. Маскот, инвентарь, уведомления, visual random — **Post-MVP-0**.
 - Платформа MVP — Android. iOS не блокирует.
 
 ---
@@ -27,7 +27,7 @@ UI (Vue components, pages)
   -> Store (Pinia, тонкий)
     -> Use Case (бизнес-операция)
       -> Port / Repository Interface
-        -> Infrastructure (SQLite / memory / capacitor)
+        -> Infrastructure (server API / memory / capacitor)
 ```
 
 Стрелки **только вниз**. Обратные импорты запрещены.
@@ -38,7 +38,7 @@ UI (Vue components, pages)
 - UI **не** вызывает `Math.random()`, `crypto.randomUUID()`, `Date.now()` для доменного/визуального поведения. Идти через ports.
 - Store **не** содержит business logic. State + loading/error + методы `load`, `create`, `complete`, диспатч в use case. Расчет XP / drop / сортировка — в use case, не в store.
 - Use case принимает зависимости через аргумент (deps), **не** импортирует глобальный контейнер. Никаких `import { db } from '...'` внутри use case.
-- Domain (`core/domain/*`) **не** зависит от Vue, Pinia, Nuxt, Capacitor, SQLite. Только TS типы + чистые функции.
+- Domain (`core/domain/*`) **не** зависит от Vue, Pinia, Nuxt, Capacitor. Только TS типы + чистые функции.
 - Use cases с несколькими write — через `UnitOfWorkPort.run(ctx => ...)`. Внутри callback писать только через `ctx.*Repository`, не через repos из `AppDependencies`.
 - Nested transactions запрещены. Вложенный use case принимает `UnitOfWorkContext` как аргумент.
 
@@ -54,7 +54,7 @@ UI (Vue components, pages)
 
 - `core/` (domain + use-cases + ports) не зависит от `app/` и `infrastructure/`.
 - `app/` — Nuxt UI слой (pages, components, composables, stores).
-- `infrastructure/` — реализации портов: `sqlite/`, `memory/`, `capacitor/`, `noop/`, `system/`.
+- `infrastructure/` — реализации портов: `memory/`, `server/`, `capacitor/`, `noop/`, `system/`.
 - `plugins/dependencies.client.ts` — сборка `AppDependencies` (Nuxt plugin, client-only).
 - MVP-фазирование папок (mascot/inventory — MVP-1; visual/settings/notification — MVP-2) — см. 02 § 5.
 
@@ -73,7 +73,7 @@ UI (Vue components, pages)
 - Use cases — **глагол + объект**: `completeTask`, `createTask`, `archiveTask`, `equipItem`, `grantLevelRewards`, `rollInventoryDrop`. Файл: `<verb-object>.use-case.ts`.
 - Repositories — `<Entity>Repository` (`TaskRepository`, `InventoryRepository`). Файл: `<entity>.repository.ts`.
 - Ports — `<Capability>Port` (`ClockPort`, `RandomPort`, `NotificationPort`, `UnitOfWorkPort`). Файл: `<capability>.port.ts`.
-- Implementations — `<Adapter><Entity>Repository` / `<Adapter><Capability>Port`. `SqliteTaskRepository`, `MemoryTaskRepository`, `CapacitorNotificationPort`, `SystemClockPort`.
+- Implementations — `<Adapter><Entity>Repository` / `<Adapter><Capability>Port`. `ServerTaskRepository`, `MemoryTaskRepository`, `CapacitorNotificationPort`, `SystemClockPort`.
 - Stores — `<feature>.store.ts`, `use<Feature>Store`.
 - Composables — `use<X>` (`useAppDependencies`).
 - Тестовые файлы — `*.test.ts` (см § 6).
@@ -138,12 +138,11 @@ Tier 2 — **Use case (Vitest integration)**:
 - Транзакционность `completeTask`: проверить, что `grant-task-xp` + `apply-level-progress` (+ MVP-1 rewards/drop) выполняются через единый `ctx`.
 - Запрет: **не мокать domain функции внутри use case теста**. Юзать реальные domain функции + memory repo.
 
-Tier 3 — **Infrastructure (SQLite)**:
+Tier 3 — **Infrastructure (server API)**:
 
-- Тестируется на Android device/emulator после scaffold.
-- Локально (без Android) — smoke через mock Capacitor или skip.
-- Migration runner: smoke-test применения из пустой БД — обязателен для MVP-0 ([docs/02-architecture.md § 12](docs/02-architecture.md)).
-- Web SQLite — **не требуется**, browser dev на memory repos ([ADR-004](docs/04-technical-decisions.md)).
+- HTTP client tests against local server (bun run src/index.ts).
+- Contract compatibility: client DTOs must match server OpenAPI.
+- Browser dev — memory repos or mocked server responses.
 
 Tier 4 — **UI**:
 
@@ -184,10 +183,9 @@ bunx cap run android
 
 Правила:
 
-- Если плагин Capacitor (`@capacitor-community/sqlite` или другой) **еще не установлен** — не запускать `cap run android`. Сначала установка + sync + проверка с юзером.
-- `bunx nuxt dev` обязан работать на memory repositories. Если упало — баг в DI / browser fallback, не в SQLite.
+- Перед `cap run android` — убедиться что Capacitor плагины установлены и sync выполнен.
+- `bunx nuxt dev` обязан работать на memory repositories или mocked server. Если упало — баг в DI / browser fallback.
 - Перед каждым PR/commit: `bun test` + typecheck зелёные.
-- Migration smoke (пустая БД → 001_initial → проверка таблиц) — обязателен в CI/local при изменении миграций.
 
 ---
 
@@ -197,8 +195,7 @@ bunx cap run android
 - [ ] Доменные функции / use case с pure logic — чистые, тестируемые без I/O.
 - [ ] Use case реализован через ports. Multi-write — через `UnitOfWorkPort.run(ctx => ...)`.
 - [ ] Memory repository обновлен (browser dev должен работать).
-- [ ] SQLite repository обновлен ИЛИ явный TODO + ADR/комментарий, если этап разрешает (MVP-0 — обязателен SQLite; MVP-1/2 — синхронно).
-- [ ] Миграция добавлена, если меняется SQL-схема. Новая `00X_<name>.sql` + смок применения из пустой БД.
+- [ ] Server API contract обновлен ИЛИ явный TODO + ADR/комментарий, если этап разрешает.
 - [ ] Vitest тесты зеленые (`bun test`). Покрыты: invariants, идемпотентность, ownership, ordered decision tree, transaction boundary.
 - [ ] `tsc --noEmit` чистый. Без `any`.
 - [ ] UI прокликан в `bunx nuxt dev`, mobile viewport. Empty / loading / error states присутствуют там, где применимо.
@@ -217,7 +214,7 @@ bunx cap run android
 4. **Повторная выдача reward за тот же level** → идемпотентность через `level_rewards.(profile_id, level)` ([ADR-015](docs/04-technical-decisions.md)).
 5. **Повторный roll drop за ту же задачу** → `task_reward_rolls.task_id PRIMARY KEY` ([ADR-015](docs/04-technical-decisions.md)).
 6. **Business logic в Pinia store** (расчет XP, сортировка, drop chance) → перенести в use case или domain функцию ([ADR-007](docs/04-technical-decisions.md)).
-7. **Импорт `infrastructure/sqlite/*` в browser bundle** → memory fallback через DI плагин ([ADR-004](docs/04-technical-decisions.md)). Capacitor SQLite не должен попасть в `bunx nuxt dev` bundle.
+7. **Импорт `infrastructure/server/*` в browser bundle** → client-only HTTP client, no server code in Nuxt bundle.
 8. **Бонусы предметов кроме `xpMultiplier`** в MVP-1 (бонусы к шансам выпадения, штрафам, сериям) → Post-MVP ([ADR-009](docs/04-technical-decisions.md)).
 9. **Negative XP / штрафы за просрочку** → нет наказаний в MVP ([docs/02-architecture.md § 9](docs/02-architecture.md), [ADR-010](docs/04-technical-decisions.md)).
 10. **`any` в TS** → `unknown` + narrowing.
@@ -234,15 +231,8 @@ bunx cap run android
 21. **Side effect (notification schedule/cancel) внутри transaction** → после commit. Расхождение чинит reconciliation на bootstrap ([ADR-020](docs/04-technical-decisions.md)).
 22. **CSS / template как место бизнес-правил** → правила в domain / use case ([docs/02-architecture.md § 18](docs/02-architecture.md)).
 23. **MVP-1/2 фичи до рабочего MVP-0 task flow** → блокирует scaffold по плану ([03-build-roadmap.md § 6](docs/03-build-roadmap.md)).
-24. **Пропуск CHECK constraints из [docs/02-architecture.md § 11](docs/02-architecture.md#11-sqlite-схема)** при создании / правке миграций. Канонические инварианты (копировать дословно):
-   - `xp_multiplier REAL NOT NULL CHECK (xp_multiplier >= 1.0 AND xp_multiplier <= 1.45)` (user_inventory_items)
-   - `CHECK (source = 'level' AND source_level IS NOT NULL AND source_task_id IS NULL) OR (source = 'task-drop' AND source_task_id IS NOT NULL AND source_level IS NULL)` — XOR источника
-   - `CHECK (source_level IS NULL OR source_level >= 1)`
-   - `CHECK ((dropped_rarity IS NULL AND user_inventory_item_id IS NULL) OR (dropped_rarity IS NOT NULL AND user_inventory_item_id IS NOT NULL))` — связь rarity ↔ item в task_reward_rolls
-   - `PRAGMA foreign_keys = ON` в КАЖДОМ открытии connection (не один раз)
-25. **`ON DELETE CASCADE` на audit FK** (`task_reward_rolls`, `level_rewards`) → audit должен запрещать reroll, использовать `ON DELETE RESTRICT` ([критика #30](docs/05-critic-pass.md#что-было-исправлено)). Каскад на audit ломает невозможность повторной выдачи.
-26. **`createTaskRewardRoll` без проверки `item.rarity === droppedRarity`** → audit может ссылаться на предмет другой редкости ([критика #32](docs/05-critic-pass.md#что-было-исправлено)). Use case обязан загрузить item и сверить.
-27. **`equipItem` без 5-шаговой pre-write валидации** ([02-architecture § 8 Экипировка](docs/02-architecture.md#экипировка-предмета) + [критика #28](docs/05-critic-pass.md#что-было-исправлено)): обязательно загрузить (1) owned UserInventoryItem (2) base InventoryItem (3) active Mascot (4) Mascot slots, и (5) валидировать slot compatibility (`item.slot === mascotSlot.key` + same-profile ownership) ДО любого repository write. Прямой `repository.equip()` без сверки → cross-profile / wrong-slot bug.
+24. **`createTaskRewardRoll` без проверки `item.rarity === droppedRarity`** → audit может ссылаться на предмет другой редкости ([критика #32](docs/05-critic-pass.md#что-было-исправлено)). Use case обязан загрузить item и сверить.
+25. **`equipItem` без 5-шаговой pre-write валидации** ([02-architecture § 8 Экипировка](docs/02-architecture.md#экипировка-предмета) + [критика #28](docs/05-critic-pass.md#что-было-исправлено)): обязательно загрузить (1) owned UserInventoryItem (2) base InventoryItem (3) active Mascot (4) Mascot slots, и (5) валидировать slot compatibility (`item.slot === mascotSlot.key` + same-profile ownership) ДО любого repository write. Прямой `repository.equip()` без сверки → cross-profile / wrong-slot bug.
 
 ---
 
@@ -253,12 +243,10 @@ bunx cap run android
 - Старый ADR помечается `Superseded by ADR-N`, оригинальный текст не удалять.
 - Watchlist пункты из [05-critic-pass.md](docs/05-critic-pass.md) при закрытии — становятся ADR или фиксируются в коде с TODO + ссылкой на pass.
 - Решения, требующие закрытия до или в начале scaffold (см [docs/02-architecture.md § 19](docs/02-architecture.md)):
-  1. SQLite-плагин Capacitor — финально подтвердить установкой.
-  2. Минимальный Android SDK / target version.
-  3. Формат ассетов маскота и предметов (webp/png + anchor json).
-  4. Web SQLite vs memory-only для browser dev (пока memory).
-  5. Менеджер пакетов: bun / npm / pnpm.
-  6. Result-style либа: ручной Result vs `neverthrow`.
+  1. Минимальный Android SDK / target version.
+  2. Формат ассетов маскота и предметов (webp/png + anchor json).
+  3. Менеджер пакетов: bun / npm / pnpm.
+  4. Result-style либа: ручной Result vs `neverthrow`.
 
 ---
 
@@ -269,7 +257,7 @@ bunx cap run android
 - **Existing 00-05 docs целиком не переписывать** — patch-style edit (Edit tool, мелкие диффы). Не reformatting ради reformatting.
 - **Перед большим refactor / новой механикой → читать [docs/05-critic-pass.md](docs/05-critic-pass.md)** (история ошибок и watchlist). Не повторять закрытые баги (cross-profile, double-grant, reminder-в-MVP-0 и т.д.).
 - **Перед изменением domain → перечитать § 2 Layering rule + [docs/02-architecture.md § 7 Доменная модель](docs/02-architecture.md)**.
-- **Перед изменением SQL → [docs/02-architecture.md § 11 SQLite схема + § 12 Migration runner](docs/02-architecture.md)**. Никогда не редактировать примененную миграцию.
+- **Перед изменением domain / SQL / use case** → перечитать § 2 Layering rule + [docs/02-architecture.md § 7 Доменная модель](docs/02-architecture.md). Никаких примененных миграций не редактировать.
 - **Перед `completeTask` / multi-write use case → § 13 UnitOfWorkPort**.
 - **Стиль обсуждения / коммитов** — caveman ru (короткие фрагменты, дроп частиц, инфинитив/императив). Технический контент / код — стандартный TS.
 - **Безопасные пути / clarity override** — destructive операции (drop table, delete migration, force push) — полными фразами, без caveman compression.
@@ -300,10 +288,10 @@ bunx cap run android
 
 ## 13. Cheat sheet — частые операции
 
-- **Добавить новое поле в Task**: domain `task.ts` → migration `00X_*.sql` (ALTER) → SqliteTaskRepository (mapper) → MemoryTaskRepository → use case (если затрагивает logic) → UI → тесты domain + use case.
+- **Добавить новое поле в Task**: domain `task.ts` → server repository mapper → memory repository → use case (если затрагивает logic) → UI → тесты domain + use case.
 - **Новый use case с multi-write**: signature принимает `deps: { unitOfWork, clock, idGenerator, ... }` → внутри `unitOfWork.run(async ctx => { ... })` → писать через `ctx.*Repository`.
-- **Новая port-зависимость**: добавить в `core/ports/<x>.port.ts` → реализация в `infrastructure/...` (sqlite + memory + noop, по необходимости) → добавить в `AppDependencies` + `plugins/dependencies.client.ts` → передать use case через arg.
-- **Новая миграция**: `infrastructure/sqlite/migrations/00X_<name>.sql` с возрастающим `version` → migration runner подхватит → smoke-test пустая БД → 00X → assert.
+- **Новая port-зависимость**: добавить в `core/ports/<x>.port.ts` → реализация в `infrastructure/...` (server + memory + noop, по необходимости) → добавить в `AppDependencies` + `plugins/dependencies.client.ts` → передать use case через arg.
+- **Новая миграция**: `workspace/server/src/db/migrations/00X_<name>.sql` с возрастающим `version` → migration runner подхватит → smoke-test пустая БД → assert.
 - **Random/Date в новом use case**: получать через `RandomPort` / `ClockPort` из deps, не глобально.
 
 ---
