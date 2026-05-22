@@ -53,3 +53,40 @@ export interface Progression {
   xp_to_next: number
   tasks_completed: number
 }
+
+export type Rarity = 'common' | 'rare' | 'epic' | 'legendary'
+
+export interface InventoryItem {
+  id: number
+  item_id: number
+  name: string
+  rarity: Rarity
+  asset_url: string
+  quantity: number
+  equipped: boolean
+}
+
+export interface InventoryResponse {
+  items: InventoryItem[]
+}
+
+export interface RewardDrop {
+  item_id: number
+  name: string
+  rarity: Rarity
+}
+
+export interface RewardLevelUp {
+  item_id: number
+  name: string
+  rarity: Rarity
+}
+
+export interface TaskCompleteResponse {
+  task: Task
+  xp_gained: number
+  reward: {
+    drop?: RewardDrop
+    level?: RewardLevelUp
+  }
+}

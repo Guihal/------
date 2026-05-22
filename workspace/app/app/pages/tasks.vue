@@ -65,6 +65,8 @@
       @close="showCreate = false"
       @submit="handleCreate"
     />
+
+    <RewardPopup />
   </div>
 </template>
 
@@ -74,6 +76,7 @@ import type { TaskPriority } from '~/types/api'
 definePageMeta({ middleware: 'auth' })
 
 const taskStore = useTaskStore()
+const rewardStore = useRewardStore()
 const showCreate = ref(false)
 
 async function fetchTasks() {
@@ -96,7 +99,12 @@ async function handleCreate(payload: {
 
 async function handleComplete(id: number) {
   try {
-    await taskStore.completeTask(id)
+    const result = await taskStore.completeTask(id)
+    rewardStore.open({
+      xpGained: result.xp_gained,
+      drop: result.reward.drop,
+      level: result.reward.level,
+    })
   } catch {
     // error в store
   }

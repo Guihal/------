@@ -3,6 +3,9 @@
     <div class="mx-auto flex max-w-2xl items-center justify-between">
       <NuxtLink to="/tasks" class="font-bold">Таск Компаньон</NuxtLink>
       <div class="flex items-center gap-4">
+        <NuxtLink to="/inventory" class="text-sm text-gray-600 hover:text-gray-900">
+          Инвентарь
+        </NuxtLink>
         <NuxtLink to="/profile" class="text-sm text-gray-600 hover:text-gray-900">
           Профиль
         </NuxtLink>
