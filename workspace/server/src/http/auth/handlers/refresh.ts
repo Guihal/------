@@ -51,9 +51,9 @@ export async function handleRefresh(req: Request): Promise<Response> {
   await audit({ userId: session.user_id, action: "refresh", ipAddress: getClientIp(req) });
 
   return json({
-    accessToken,
-    refreshToken: newRefreshJwt,
-    tokenType: "Bearer",
-    expiresIn: 900,
+    access_token: accessToken,
+    refresh_token: newRefreshJwt,
+    token_type: "Bearer",
+    expires_in: 900,
   });
 }

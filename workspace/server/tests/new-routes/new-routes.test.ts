@@ -48,7 +48,7 @@ async function registerAndLogin(): Promise<{ accessToken: string; userId: number
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password: "secret123" }),
   });
-  return { accessToken: data.accessToken, userId: reg.data.id ?? data.user.id, email };
+  return { accessToken: data.access_token, userId: reg.data.id ?? data.user.id, email };
 }
 
 async function makeAdmin(userId: number) {
@@ -282,7 +282,7 @@ describe("GET /admin/stats/levels", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status, data } = await fetchJson("/admin/stats/levels", {
-      headers: { Authorization: `Bearer ${loginData.accessToken}` },
+      headers: { Authorization: `Bearer ${loginData.access_token}` },
     });
     expect(status).toBe(200);
     expect(Array.isArray(data.levels)).toBe(true);
@@ -313,7 +313,7 @@ describe("GET /admin/stats/drops", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status, data } = await fetchJson("/admin/stats/drops", {
-      headers: { Authorization: `Bearer ${loginData.accessToken}` },
+      headers: { Authorization: `Bearer ${loginData.access_token}` },
     });
     expect(status).toBe(200);
     expect(Array.isArray(data.drops)).toBe(true);
@@ -344,7 +344,7 @@ describe("GET /admin/stats/tasks", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status, data } = await fetchJson("/admin/stats/tasks", {
-      headers: { Authorization: `Bearer ${loginData.accessToken}` },
+      headers: { Authorization: `Bearer ${loginData.access_token}` },
     });
     expect(status).toBe(200);
     expect(Array.isArray(data.by_difficulty)).toBe(true);
@@ -376,7 +376,7 @@ describe("GET /admin/users/:id", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status, data } = await fetchJson(`/admin/users/${userId}`, {
-      headers: { Authorization: `Bearer ${loginData.accessToken}` },
+      headers: { Authorization: `Bearer ${loginData.access_token}` },
     });
     expect(status).toBe(200);
     expect(data.user.id).toBe(userId);
@@ -392,7 +392,7 @@ describe("GET /admin/users/:id", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status } = await fetchJson("/admin/users/99999", {
-      headers: { Authorization: `Bearer ${loginData.accessToken}` },
+      headers: { Authorization: `Bearer ${loginData.access_token}` },
     });
     expect(status).toBe(404);
   });
@@ -428,7 +428,7 @@ describe("GET /admin/item-assets", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status, data } = await fetchJson("/admin/item-assets", {
-      headers: { Authorization: `Bearer ${loginData.accessToken}` },
+      headers: { Authorization: `Bearer ${loginData.access_token}` },
     });
     expect(status).toBe(200);
     expect(Array.isArray(data.assets)).toBe(true);

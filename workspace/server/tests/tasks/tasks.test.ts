@@ -160,8 +160,8 @@ describe("GET /tasks", () => {
       headers: { Authorization: `Bearer ${token}` },
     });
     expect(status).toBe(200);
-    expect(Array.isArray(data)).toBe(true);
-    expect(data.length).toBeGreaterThanOrEqual(1);
+    expect(Array.isArray(data.tasks)).toBe(true);
+    expect(data.tasks.length).toBeGreaterThanOrEqual(1);
   });
 });
 
@@ -254,7 +254,7 @@ describe("PATCH /tasks/:id/archive", () => {
     const { data: list } = await fetchJson("/tasks", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const found = list.find((t: { id: number }) => t.id === taskId);
+    const found = list.tasks.find((t: { id: number }) => t.id === taskId);
     expect(found).toBeUndefined();
   });
 });
@@ -335,7 +335,7 @@ describe("DELETE /tasks/:id", () => {
     const { data: list } = await fetchJson("/tasks", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const found = list.find((t: { id: number }) => t.id === taskId);
+    const found = list.tasks.find((t: { id: number }) => t.id === taskId);
     expect(found).toBeUndefined();
   });
 
@@ -369,7 +369,7 @@ describe("GET /tasks?status=", () => {
     const { data: list } = await fetchJson("/tasks?status=active", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    expect(list.every((t: { completed: boolean; archived: boolean }) => !t.completed && !t.archived)).toBe(true);
+    expect(list.tasks.every((t: { completed: boolean; archived: boolean }) => !t.completed && !t.archived)).toBe(true);
   });
 
   it("filters completed tasks", async () => {
@@ -386,7 +386,7 @@ describe("GET /tasks?status=", () => {
     const { data: list } = await fetchJson("/tasks?status=completed", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    expect(list.every((t: { completed: boolean }) => t.completed)).toBe(true);
+    expect(list.tasks.every((t: { completed: boolean }) => t.completed)).toBe(true);
   });
 
   it("filters archived tasks", async () => {
@@ -403,7 +403,7 @@ describe("GET /tasks?status=", () => {
     const { data: list } = await fetchJson("/tasks?status=archived", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    expect(list.every((t: { archived: boolean }) => t.archived)).toBe(true);
+    expect(list.tasks.every((t: { archived: boolean }) => t.archived)).toBe(true);
   });
 });
 
@@ -427,7 +427,7 @@ describe("GET /tasks?overdue=true", () => {
     const { data: list } = await fetchJson("/tasks?overdue=true", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    expect(list.length).toBeGreaterThanOrEqual(1);
-    expect(list.every((t: { deadline: string | null; completed: boolean }) => t.deadline !== null && !t.completed)).toBe(true);
+    expect(list.tasks.length).toBeGreaterThanOrEqual(1);
+    expect(list.tasks.every((t: { deadline: string | null; completed: boolean }) => t.deadline !== null && !t.completed)).toBe(true);
   });
 });

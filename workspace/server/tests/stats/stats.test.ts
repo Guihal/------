@@ -47,7 +47,7 @@ async function registerAndLogin(): Promise<{ accessToken: string; userId: number
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password: "secret123" }),
   });
-  return { accessToken: data.accessToken, userId: reg.data.id ?? data.user.id, email };
+  return { accessToken: data.access_token, userId: reg.data.id ?? data.user.id, email };
 }
 
 async function makeAdmin(userId: number) {
@@ -142,7 +142,7 @@ describe("admin stats", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status, data } = await fetchJson("/admin/stats", {
-      headers: { Authorization: `Bearer ${loginData.accessToken}` },
+      headers: { Authorization: `Bearer ${loginData.access_token}` },
     });
     expect(status).toBe(200);
     expect(typeof data.stats.total_users).toBe("number");
@@ -173,7 +173,7 @@ describe("admin logs", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status, data } = await fetchJson("/admin/logs", {
-      headers: { Authorization: `Bearer ${loginData.accessToken}` },
+      headers: { Authorization: `Bearer ${loginData.access_token}` },
     });
     expect(status).toBe(200);
     expect(Array.isArray(data.logs)).toBe(true);
@@ -192,7 +192,7 @@ describe("admin logs", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { data } = await fetchJson("/admin/logs?limit=5", {
-      headers: { Authorization: `Bearer ${loginData.accessToken}` },
+      headers: { Authorization: `Bearer ${loginData.access_token}` },
     });
     expect(data.pagination.limit).toBe(5);
   });

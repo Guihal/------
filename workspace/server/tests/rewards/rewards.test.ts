@@ -48,7 +48,7 @@ async function registerAndLogin(): Promise<{ accessToken: string; userId: number
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password: "secret123" }),
   });
-  return { accessToken: data.accessToken, userId: reg.data.id ?? data.user.id };
+  return { accessToken: data.access_token, userId: reg.data.id ?? data.user.id };
 }
 
 async function createTask(accessToken: string, difficulty = "normal", size = "medium") {

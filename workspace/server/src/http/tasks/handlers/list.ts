@@ -19,5 +19,5 @@ export async function handleGetTasks(req: Request): Promise<Response> {
   const tasks = validStatus || overdue !== undefined
     ? await listTasksByUserFiltered(ctx.userId, { status: validStatus, overdue })
     : await listTasksByUser(ctx.userId);
-  return json(tasks);
+  return json({ tasks });
 }

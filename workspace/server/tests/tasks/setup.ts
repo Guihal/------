@@ -68,5 +68,5 @@ export async function registerAndLogin(email: string, password?: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password: pw }),
   });
-  return data.accessToken as string;
+  return data.access_token as string;
 }
