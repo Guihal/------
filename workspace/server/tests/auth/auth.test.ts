@@ -81,10 +81,10 @@ describe("POST /auth/login", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     expect(status).toBe(200);
-    expect(data.access_token).toBeString();
-    expect(data.refresh_token).toBeString();
-    expect(data.token_type).toBe("Bearer");
-    expect(data.expires_in).toBe(900);
+    expect(data.accessToken).toBeString();
+    expect(data.refreshToken).toBeString();
+    expect(data.tokenType).toBe("Bearer");
+    expect(data.expiresIn).toBe(900);
     expect(data.user.role).toBe("user");
   });
 
@@ -141,12 +141,12 @@ describe("POST /auth/refresh", () => {
     const { status, data } = await fetchJson("/auth/refresh", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: loginData.refresh_token }),
+      body: JSON.stringify({ refresh_token: loginData.refreshToken }),
     });
     expect(status).toBe(200);
-    expect(data.access_token).toBeString();
-    expect(data.refresh_token).toBeString();
-    expect(data.refresh_token).not.toBe(loginData.refresh_token);
+    expect(data.accessToken).toBeString();
+    expect(data.refreshToken).toBeString();
+    expect(data.refreshToken).not.toBe(loginData.refreshToken);
   });
 
   it("returns 401 for revoked token", async () => {
@@ -174,21 +174,21 @@ describe("POST /auth/refresh", () => {
     const { data: refresh1 } = await fetchJson("/auth/refresh", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: loginData.refresh_token }),
+      body: JSON.stringify({ refresh_token: loginData.refreshToken }),
     });
-    expect(refresh1.access_token).toBeString();
+    expect(refresh1.accessToken).toBeString();
 
     const { status } = await fetchJson("/auth/refresh", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: loginData.refresh_token }),
+      body: JSON.stringify({ refresh_token: loginData.refreshToken }),
     });
     expect(status).toBe(401);
 
     const { status: status2 } = await fetchJson("/auth/refresh", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: refresh1.refresh_token }),
+      body: JSON.stringify({ refresh_token: refresh1.refreshToken }),
     });
     expect(status2).toBe(401);
   });
@@ -209,7 +209,7 @@ describe("POST /auth/refresh", () => {
     await fetchJson("/auth/refresh", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: loginData.refresh_token }),
+      body: JSON.stringify({ refresh_token: loginData.refreshToken }),
     });
     const after = await countAuditLogs("refresh");
     expect(after).toBe(before + 1);
@@ -244,12 +244,12 @@ describe("POST /auth/logout", () => {
     await fetchJson("/auth/logout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: loginData.refresh_token }),
+      body: JSON.stringify({ refresh_token: loginData.refreshToken }),
     });
     const { status } = await fetchJson("/auth/refresh", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: loginData.refresh_token }),
+      body: JSON.stringify({ refresh_token: loginData.refreshToken }),
     });
     expect(status).toBe(401);
   });
@@ -270,7 +270,7 @@ describe("POST /auth/logout", () => {
     await fetchJson("/auth/logout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: loginData.refresh_token }),
+      body: JSON.stringify({ refresh_token: loginData.refreshToken }),
     });
     const after = await countAuditLogs("logout");
     expect(after).toBe(before + 1);
@@ -294,7 +294,7 @@ describe("GET /auth/me", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status, data } = await fetchJson("/auth/me", {
-      headers: { Authorization: `Bearer ${loginData.access_token}` },
+      headers: { Authorization: `Bearer ${loginData.accessToken}` },
     });
     expect(status).toBe(200);
     expect(data.email).toBe(email);
@@ -324,7 +324,7 @@ describe("GET /auth/users (admin)", () => {
       body: JSON.stringify({ email, password: "secret123" }),
     });
     const { status } = await fetchJson("/auth/users", {
-      headers: { Authorization: `Bearer ${loginData.access_token}` },
+      headers: { Authorization: `Bearer ${loginData.accessToken}` },
     });
     expect(status).toBe(403);
   });

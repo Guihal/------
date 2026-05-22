@@ -32,10 +32,10 @@ export async function handleLogin(req: Request): Promise<Response> {
   });
 
   return json({
-    access_token: accessToken,
-    refresh_token: refreshJwt,
-    token_type: "Bearer",
-    expires_in: 900,
+    accessToken,
+    refreshToken: refreshJwt,
+    tokenType: "Bearer",
+    expiresIn: 900,
     user: { id: user.id, email: user.email, role: user.role },
   });
 }
