@@ -1,5 +1,7 @@
-import { listItems } from "../../db/items.ts";
+import { listActiveItems } from "../../db/items.ts";
 import { addItemToUser } from "../../db/inventory.ts";
+import { listTaskRewardRolls } from "../../db/task-reward-rolls.ts";
+import { recordTaskDrop, findTaskDropByTaskId } from "../../db/task-drops.ts";
 import type { PoolClient } from "pg";
 
 export interface RollResult {
@@ -44,9 +46,44 @@ const RARITY_WEIGHTS: Record<string, number> = {
 };
 
 export async function rollDrop(
+  taskId: number,
   userId: number,
   client?: PoolClient
 ): Promise<RollResult | null> {
+  // Idempotency: check if drop already recorded for this task
+  const existing = await findTaskDropByTaskId(taskId);
+  if (existing) {
+    if (existing.item_id) {
+      const { findItemById } = await import("../../db/items.ts");
+      const item = await findItemById(existing.item_id);
+      if (item) {
+        return { item_id: item.id, name: item.name, rarity: item.rarity };
+      }
+    }
+    return null;
+  }
+
+  // Try task-specific reward rolls first
+  const rolls = await listTaskRewardRolls(taskId, client);
+  if (rolls.length > 0) {
+    const roll = random();
+    let cumulative = 0;
+    for (const r of rolls) {
+      cumulative += Number(r.probability);
+      if (roll < cumulative) {
+        const items = await listActiveItems();
+        const item = items.find(i => i.id === r.item_id);
+        if (item) {
+          await addItemToUser(userId, item.id, client);
+          await recordTaskDrop(taskId, item.id, client);
+          return { item_id: item.id, name: item.name, rarity: item.rarity };
+        }
+        break;
+      }
+    }
+  }
+
+  // Fallback to rarity-based roll
   const roll = random() * 100;
   let cumulative = 0;
   let selectedRarity: string | null = null;
@@ -57,14 +94,24 @@ export async function rollDrop(
       break;
     }
   }
-  if (!selectedRarity) return null;
+  if (!selectedRarity) {
+    await recordTaskDrop(taskId, null, client);
+    return null;
+  }
 
-  const items = await listItems();
+  const items = await listActiveItems();
   const candidates = items.filter(i => i.rarity === selectedRarity);
-  if (candidates.length === 0) return null;
+  if (candidates.length === 0) {
+    await recordTaskDrop(taskId, null, client);
+    return null;
+  }
 
   const item = candidates[Math.floor(random() * candidates.length)];
-  if (!item) return null;
+  if (!item) {
+    await recordTaskDrop(taskId, null, client);
+    return null;
+  }
   await addItemToUser(userId, item.id, client);
+  await recordTaskDrop(taskId, item.id, client);
   return { item_id: item.id, name: item.name, rarity: item.rarity };
 }

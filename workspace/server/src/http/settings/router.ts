@@ -1,4 +1,4 @@
-import { handleGetSettings, handlePutSettings } from "./handlers.ts";
+import { handleGetSettings, handlePutSettings, handlePatchSettings } from "./handlers.ts";
 
 export async function handleSettings(req: Request, pathname: string): Promise<Response | undefined> {
   if (pathname === "/settings" && req.method === "GET") {
@@ -6,6 +6,9 @@ export async function handleSettings(req: Request, pathname: string): Promise<Re
   }
   if (pathname === "/settings" && req.method === "PUT") {
     return handlePutSettings(req);
+  }
+  if (pathname === "/settings" && req.method === "PATCH") {
+    return handlePatchSettings(req);
   }
   return undefined;
 }

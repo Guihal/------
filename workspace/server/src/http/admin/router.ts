@@ -2,6 +2,7 @@ import { handleAdminItems } from "./items/router.ts";
 import { handleAdminStats } from "./stats/router.ts";
 import { handleAdminLogs } from "./logs/router.ts";
 import { handleAdminUsers } from "./users/router.ts";
+import { handleAdminItemAssets } from "./item-assets/router.ts";
 
 export async function handleAdmin(req: Request, pathname: string): Promise<Response | undefined> {
   const itemsResp = await handleAdminItems(req, pathname);
@@ -12,5 +13,7 @@ export async function handleAdmin(req: Request, pathname: string): Promise<Respo
   if (statsResp) return statsResp;
   const logsResp = await handleAdminLogs(req, pathname);
   if (logsResp) return logsResp;
+  const assetsResp = await handleAdminItemAssets(req, pathname);
+  if (assetsResp) return assetsResp;
   return undefined;
 }

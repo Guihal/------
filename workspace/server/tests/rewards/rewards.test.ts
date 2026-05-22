@@ -61,10 +61,12 @@ async function createTask(accessToken: string, difficulty = "normal", size = "me
   return data.task;
 }
 
+import { signAccessToken } from "../../src/security/jwt.ts";
+
 async function createItem(name: string, rarity: string) {
   const { data } = await fetchJson("/admin/items", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${signAccessToken(1, "admin")}` },
     body: JSON.stringify({ name, rarity }),
   });
   return data.item;

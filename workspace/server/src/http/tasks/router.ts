@@ -11,6 +11,7 @@ import { handlePutTask } from "./handlers/update.ts";
 import { handleDeleteTask } from "./handlers/delete.ts";
 import { handlePatchTaskComplete } from "./handlers/complete.ts";
 import { handlePatchTaskArchive } from "./handlers/archive.ts";
+import { handlePostReminder } from "./handlers/reminder.ts";
 
 export async function handleTasks(req: Request, pathname: string): Promise<Response | undefined> {
   const ip = getClientIp(req) ?? "unknown";
@@ -56,6 +57,12 @@ export async function handleTasks(req: Request, pathname: string): Promise<Respo
     const rl = checkRateLimit(`${ip}:archive`);
     if (!rl.allowed) return rateLimitResponse(rl.retryAfter);
     return handlePatchTaskArchive(req, Number(archiveMatch[1]));
+  }
+  const reminderMatch = pathname.match(/^\/tasks\/(\d+)\/reminder$/);
+  if (reminderMatch && req.method === "POST") {
+    const rl = checkRateLimit(`${ip}:reminder`);
+    if (!rl.allowed) return rateLimitResponse(rl.retryAfter);
+    return handlePostReminder(req, Number(reminderMatch[1]));
   }
   return undefined;
 }

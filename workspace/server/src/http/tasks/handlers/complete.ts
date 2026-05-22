@@ -28,11 +28,11 @@ export async function handlePatchTaskComplete(req: Request, taskId: number): Pro
     if (!t) throw new Error("Task completion failed");
     await ensureProgression(ctx.userId, client);
     const { reward: levelReward } = await addXpWithReward(ctx.userId, xp, client);
-    return { task: t, levelReward };
+    const drop = await rollDrop(taskId, ctx.userId, client);
+    return { task: t, levelReward, drop };
   });
-  const drop = await rollDrop(ctx.userId);
   const reward = {
-    drop: drop || undefined,
+    drop: updated.drop || undefined,
     level: updated.levelReward || undefined,
   };
   await audit({ userId: ctx.userId, action: "task_completed", details: { task_id: taskId, xp, reward } });

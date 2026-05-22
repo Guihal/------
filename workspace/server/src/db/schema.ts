@@ -10,6 +10,17 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Migration: add xp_multiplier if missing
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'users' AND column_name = 'xp_multiplier'
+  ) THEN
+    ALTER TABLE users ADD COLUMN xp_multiplier NUMERIC NOT NULL DEFAULT 1.0 CHECK (xp_multiplier > 0);
+  END IF;
+END $$;
+
 CREATE TABLE IF NOT EXISTS sessions (
   id           SERIAL PRIMARY KEY,
   user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -82,7 +93,75 @@ CREATE TABLE IF NOT EXISTS items (
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Migration: add slots if missing
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'items' AND column_name = 'slots'
+  ) THEN
+    ALTER TABLE items ADD COLUMN slots INTEGER NOT NULL DEFAULT 1 CHECK (slots > 0);
+  END IF;
+END $$;
+
+-- Migration: add active column if missing (schema evolved after initial deploy)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'items' AND column_name = 'active'
+  ) THEN
+    ALTER TABLE items ADD COLUMN active BOOLEAN NOT NULL DEFAULT TRUE;
+  END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_items_rarity ON items(rarity);
+
+-- Migration: add active column if missing (schema evolved after initial deploy)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'items' AND column_name = 'active'
+  ) THEN
+    ALTER TABLE items ADD COLUMN active BOOLEAN NOT NULL DEFAULT TRUE;
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_items_active ON items(active);
+
+CREATE TABLE IF NOT EXISTS level_rewards (
+  id           SERIAL PRIMARY KEY,
+  level        INTEGER NOT NULL UNIQUE CHECK (level > 0),
+  reward_type  TEXT NOT NULL CHECK (reward_type IN ('item', 'currency', 'xp')),
+  amount       INTEGER NOT NULL DEFAULT 1 CHECK (amount > 0),
+  item_id      INTEGER REFERENCES items(id) ON DELETE SET NULL,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_level_rewards_level ON level_rewards(level);
+
+CREATE TABLE IF NOT EXISTS task_reward_rolls (
+  id          SERIAL PRIMARY KEY,
+  task_id     INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+  item_id     INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,
+  probability NUMERIC NOT NULL CHECK (probability >= 0 AND probability <= 1),
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(task_id, item_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_task_reward_rolls_task_id ON task_reward_rolls(task_id);
+
+CREATE TABLE IF NOT EXISTS task_drops (
+  id          SERIAL PRIMARY KEY,
+  task_id     INTEGER NOT NULL UNIQUE REFERENCES tasks(id) ON DELETE CASCADE,
+  item_id     INTEGER REFERENCES items(id) ON DELETE SET NULL,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_task_drops_task_id ON task_drops(task_id);
 
 CREATE TABLE IF NOT EXISTS user_items (
   id          SERIAL PRIMARY KEY,
