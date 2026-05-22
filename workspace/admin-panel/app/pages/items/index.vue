@@ -63,8 +63,12 @@ async function load() {
 
 async function remove(id: number) {
   if (!confirm('Delete this item?')) return
-  await api.fetch(`/admin/items/${id}`, { method: 'DELETE' }).catch(() => null)
-  await load()
+  try {
+    await api.fetch(`/admin/items/${id}`, { method: 'DELETE' })
+    await load()
+  } catch {
+    alert('Failed to delete item')
+  }
 }
 
 onMounted(load)

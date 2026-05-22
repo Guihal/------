@@ -62,9 +62,18 @@ const previewUrl = ref(props.item?.asset_url ?? '')
 function onFileChange() {
   const file = fileInput.value?.files?.[0]
   if (file) {
+    if (previewUrl.value && previewUrl.value.startsWith('blob:')) {
+      URL.revokeObjectURL(previewUrl.value)
+    }
     previewUrl.value = URL.createObjectURL(file)
   }
 }
+
+onBeforeUnmount(() => {
+  if (previewUrl.value && previewUrl.value.startsWith('blob:')) {
+    URL.revokeObjectURL(previewUrl.value)
+  }
+})
 
 function submit() {
   const body = new FormData()

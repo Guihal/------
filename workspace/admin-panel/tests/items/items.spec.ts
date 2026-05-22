@@ -17,7 +17,26 @@ vi.mock('#app', () => ({
 }))
 
 // Bun can't compile .vue SFCs in tests (no @vitejs/plugin-vue).
-// Tests verify store logic + API contract instead.
+// Tests verify store logic + API contract + FormData structure instead.
+
+/** Build FormData matching ItemForm.submit logic */
+function buildItemFormData(values: {
+  name: string
+  description?: string
+  rarity?: string
+  slots?: number
+  active?: boolean
+  file?: File
+}): FormData {
+  const body = new FormData()
+  body.append('name', values.name)
+  if (values.description) body.append('description', values.description)
+  body.append('rarity', values.rarity ?? 'common')
+  body.append('slots', String(values.slots ?? 1))
+  body.append('active', String(values.active ?? true))
+  if (values.file) body.append('asset', values.file)
+  return body
+}
 
 describe('ItemForm logic', () => {
   beforeEach(() => {
@@ -25,25 +44,41 @@ describe('ItemForm logic', () => {
     mockFetch.mockReset()
   })
 
-  it('builds FormData correctly', () => {
-    const body = new FormData()
-    body.append('name', 'Shield')
-    body.append('description', 'A shield')
-    body.append('rarity', 'epic')
-    body.append('slots', '2')
-    body.append('active', 'true')
+  it('builds FormData with all fields', () => {
+    const body = buildItemFormData({
+      name: 'Shield',
+      description: 'A shield',
+      rarity: 'epic',
+      slots: 2,
+      active: true,
+    })
     expect(body.get('name')).toBe('Shield')
+    expect(body.get('description')).toBe('A shield')
     expect(body.get('rarity')).toBe('epic')
     expect(body.get('slots')).toBe('2')
     expect(body.get('active')).toBe('true')
   })
 
-  it('rarities match server schema', () => {
-    const rarities = ['common', 'rare', 'epic', 'legendary']
-    expect(rarities).toContain('common')
-    expect(rarities).toContain('rare')
-    expect(rarities).toContain('epic')
-    expect(rarities).toContain('legendary')
+  it('builds FormData with defaults', () => {
+    const body = buildItemFormData({ name: 'Sword' })
+    expect(body.get('name')).toBe('Sword')
+    expect(body.get('rarity')).toBe('common')
+    expect(body.get('slots')).toBe('1')
+    expect(body.get('active')).toBe('true')
+    expect(body.get('description')).toBeNull()
+  })
+
+  it('omits description when empty', () => {
+    const body = buildItemFormData({ name: 'Axe', description: '' })
+    expect(body.get('description')).toBeNull()
+  })
+
+  it('includes asset file when provided', () => {
+    const file = new File(['x'], 'test.png', { type: 'image/png' })
+    const body = buildItemFormData({ name: 'Helm', file })
+    const asset = body.get('asset')
+    expect(asset).toBeInstanceOf(File)
+    expect((asset as File).name).toBe('test.png')
   })
 })
 

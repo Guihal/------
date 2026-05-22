@@ -12,7 +12,11 @@ const api = useApi()
 const router = useRouter()
 
 async function create(body: FormData) {
-  await api.fetch('/admin/items', { method: 'POST', body })
-  router.push('/items')
+  try {
+    await api.fetch('/admin/items', { method: 'POST', body })
+    router.push('/items')
+  } catch {
+    alert('Failed to create item')
+  }
 }
 </script>

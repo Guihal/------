@@ -24,13 +24,27 @@ const router = useRouter()
 const api = useApi()
 const item = ref<Item | null>(null)
 
+const itemId = computed(() => {
+  const id = Number(route.params.id)
+  return Number.isNaN(id) ? null : id
+})
+
 onMounted(async () => {
-  const data = await api.fetch<{ item: Item }>(`/admin/items/${route.params.id}`).catch(() => null)
+  if (itemId.value === null) {
+    item.value = null
+    return
+  }
+  const data = await api.fetch<{ item: Item }>(`/admin/items/${itemId.value}`).catch(() => null)
   item.value = data?.item ?? null
 })
 
 async function update(body: FormData) {
-  await api.fetch(`/admin/items/${route.params.id}`, { method: 'PUT', body })
-  router.push('/items')
+  if (itemId.value === null) return
+  try {
+    await api.fetch(`/admin/items/${itemId.value}`, { method: 'PUT', body })
+    router.push('/items')
+  } catch {
+    alert('Failed to update item')
+  }
 }
 </script>
