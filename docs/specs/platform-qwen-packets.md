@@ -434,7 +434,7 @@ Default gates for every implementation packet, even when the packet JSON omits
 ```json
 {
   "task_id": "Q08-admin-scaffold-dashboard",
-  "goal": "Create admin-panel app with login, dashboard, users, logs, and stats pages.",
+  "goal": "Create admin-panel app with login, dashboard, users, logs, and stats pages. Use Nuxt 4 (Vue), not React.",
   "non_goals": [
     "Do not implement item manager.",
     "Do not edit server code.",
