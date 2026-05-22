@@ -452,8 +452,8 @@ Default gates for every implementation packet, even when the packet JSON omits
   ],
   "risk_tier": "ordinary",
   "acceptance": [
-    "cd /usr/projects/Диплом/workspace/admin-panel && bun install && bun test && bun run build",
-    "cd /usr/projects/Диплом/workspace/admin-panel && rg -n \"Authorization|Dashboard|Users|Logs|Levels|Drops\" src"
+    "cd /usr/projects/Диплом/workspace/admin-panel && bun install && bun run typecheck && bun test && bun run build",
+    "cd /usr/projects/Диплом/workspace/admin-panel && rg -n 'Authorization|Dashboard|Users|Logs|Stats' app"
   ],
   "diff_budget_loc": 480,
   "file_count_max": 18,
