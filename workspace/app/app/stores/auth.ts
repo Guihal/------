@@ -110,9 +110,12 @@ export const useAuthStore = defineStore('app-auth', () => {
       try {
         const me = await useApi().fetch<{ id: number; email: string }>('/auth/me')
         setUser(me)
-      } catch {
-        // token invalid — clear and let caller redirect
-        clearAuth()
+      } catch (e: any) {
+        const status = e?.status ?? e?.response?.status ?? e?.data?.status
+        if (status === 401 || status === 403) {
+          clearAuth()
+        }
+        // остальные ошибки (network, 500) — не трогаем токен
       }
     }
   }

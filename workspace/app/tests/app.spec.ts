@@ -84,9 +84,9 @@ describe('auth store', () => {
     expect(lsStore['app_user']).toBe('{"id":1,"email":"a@b.c"}')
   })
 
-  it('init clears auth on /auth/me failure', async () => {
+  it('init clears auth on /auth/me 401', async () => {
     lsStore['app_token'] = 'bad'
-    mockFetch.mockRejectedValue(new Error('401'))
+    mockFetch.mockRejectedValue({ status: 401 })
 
     const { useAuthStore } = await import('../app/stores/auth')
     const auth = useAuthStore()
@@ -95,6 +95,18 @@ describe('auth store', () => {
     expect(auth.token).toBe('')
     expect(auth.user).toBeNull()
     expect(lsStore['app_token']).toBeUndefined()
+  })
+
+  it('init keeps auth on network/500 error', async () => {
+    lsStore['app_token'] = 'good'
+    mockFetch.mockRejectedValue(new Error('network'))
+
+    const { useAuthStore } = await import('../app/stores/auth')
+    const auth = useAuthStore()
+    await auth.init()
+
+    expect(auth.token).toBe('good')
+    expect(lsStore['app_token']).toBe('good')
   })
 
   it('login sets tokens and user', async () => {
