@@ -499,15 +499,15 @@ Default gates for every implementation packet, even when the packet JSON omits
 ```json
 {
   "task_id": "Q09-admin-item-manager",
-  "goal": "Implement admin item manager with asset upload and rarity fields.",
+  "goal": "Implement admin item manager with asset upload and rarity enum selector.",
   "non_goals": [
     "Do not grant items to users.",
     "Do not edit server code.",
     "Do not bypass admin auth."
   ],
   "allowed_write_paths": [
-    "/usr/projects/Диплом/workspace/admin-panel/src/pages/items/**",
-    "/usr/projects/Диплом/workspace/admin-panel/src/components/items/**",
+    "/usr/projects/Диплом/workspace/admin-panel/app/pages/items/**",
+    "/usr/projects/Диплом/workspace/admin-panel/app/components/items/**",
     "/usr/projects/Диплом/workspace/admin-panel/tests/items/**"
   ],
   "read_context": [
@@ -516,19 +516,15 @@ Default gates for every implementation packet, even when the packet JSON omits
   "risk_tier": "ordinary",
   "acceptance": [
     "cd /usr/projects/Диплом/workspace/admin-panel && bun test tests/items && bun run build",
-    "cd /usr/projects/Диплом/workspace/admin-panel && rg -n \"common|rare|epic|legendary|asset|xp\" src/pages/items src/components/items"
+    "cd /usr/projects/Диплом/workspace/admin-panel && rg -n \"common|rare|epic|legendary|asset\" app/pages/items app/components/items"
   ],
   "diff_budget_loc": 420,
   "file_count_max": 14,
   "rollback": "Remove item manager pages, components, and tests.",
   "escalation_triggers": [
     "Asset upload endpoint missing.",
-    "Rarity enum mismatch.",
-    "Item save can omit XP multiplier range."
-  ],
-  "glossary": {
-    "XP multiplier range": "Min/max value server uses when granting a user item."
-  }
+    "Rarity enum mismatch."
+  ]
 }
 ```
 
