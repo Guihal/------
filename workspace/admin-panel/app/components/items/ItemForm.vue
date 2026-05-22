@@ -27,23 +27,15 @@
       <input ref="fileInput" type="file" accept="image/*" @change="onFileChange">
       <img v-if="previewUrl" :src="previewUrl" class="preview" alt="Preview">
     </div>
-    <button type="submit" class="btn">{{ item ? 'Update' : 'Create' }}</button>
+    <button type="submit" class="btn" :disabled="submitting">{{ item ? 'Update' : 'Create' }}</button>
     <NuxtLink to="/items" class="btn secondary">Cancel</NuxtLink>
   </form>
 </template>
 
 <script setup lang="ts">
-const rarities = ['common', 'rare', 'epic', 'legendary'] as const
+import type { Item } from './types'
 
-interface Item {
-  id: number
-  name: string
-  description: string | null
-  rarity: 'common' | 'rare' | 'epic' | 'legendary'
-  slots: number
-  asset_url: string | null
-  active: boolean
-}
+const rarities = ['common', 'rare', 'epic', 'legendary'] as const
 
 const props = defineProps<{ item?: Item }>()
 const emit = defineEmits<{ submit: [FormData] }>()
@@ -58,6 +50,7 @@ const form = reactive({
 
 const fileInput = ref<HTMLInputElement | null>(null)
 const previewUrl = ref(props.item?.asset_url ?? '')
+const submitting = ref(false)
 
 function onFileChange() {
   const file = fileInput.value?.files?.[0]
@@ -75,7 +68,8 @@ onBeforeUnmount(() => {
   }
 })
 
-function submit() {
+async function submit() {
+  if (submitting.value) return
   if (form.slots < 1) {
     alert('Slots must be at least 1')
     return
@@ -84,6 +78,7 @@ function submit() {
     alert('Invalid rarity')
     return
   }
+  submitting.value = true
   const body = new FormData()
   body.append('name', form.name)
   if (form.description) body.append('description', form.description)
@@ -93,6 +88,7 @@ function submit() {
   const file = fileInput.value?.files?.[0]
   if (file) body.append('asset', file)
   emit('submit', body)
+  submitting.value = false
 }
 </script>
 

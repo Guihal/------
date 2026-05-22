@@ -2,27 +2,20 @@
   <div>
     <h1>Edit Item</h1>
     <ItemForm v-if="item" :item="item" @submit="update" />
+    <p v-else-if="notFound">Item not found</p>
     <p v-else>Loading…</p>
   </div>
 </template>
 
 <script setup lang="ts">
 definePageMeta({ middleware: 'auth' })
-
-interface Item {
-  id: number
-  name: string
-  description: string | null
-  rarity: 'common' | 'rare' | 'epic' | 'legendary'
-  slots: number
-  asset_url: string | null
-  active: boolean
-}
+import type { Item } from '../../components/items/types'
 
 const route = useRoute()
 const router = useRouter()
 const api = useApi()
 const item = ref<Item | null>(null)
+const notFound = ref(false)
 
 const itemId = computed(() => {
   const id = Number(route.params.id)
@@ -41,6 +34,7 @@ onMounted(async () => {
     item.value = data.item
   } catch {
     item.value = null
+    notFound.value = true
   }
 })
 
