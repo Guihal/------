@@ -68,6 +68,17 @@ export async function listActiveItems(): Promise<ItemRow[]> {
   );
 }
 
+export async function searchItems(q: string): Promise<ItemRow[]> {
+  const pattern = `%${q.replace(/[%_\\]/g, "\\$&")}%`;
+  return query<ItemRow>(
+    `SELECT id, name, description, rarity, slots, asset_url, active, created_at, updated_at
+     FROM items
+     WHERE name ILIKE $1 OR description ILIKE $1
+     ORDER BY created_at DESC`,
+    [pattern]
+  );
+}
+
 export async function updateItem(id: number, input: UpdateItemInput): Promise<ItemRow | undefined> {
   const setClauses: string[] = [];
   const values: unknown[] = [];

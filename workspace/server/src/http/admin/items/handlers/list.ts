@@ -1,7 +1,9 @@
 import { json } from "../../../shared.ts";
-import { listItems } from "../../../../db/items.ts";
+import { listItems, searchItems } from "../../../../db/items.ts";
 
-export async function handleGetItems(): Promise<Response> {
-  const items = await listItems();
+export async function handleGetItems(req: Request): Promise<Response> {
+  const url = new URL(req.url);
+  const search = url.searchParams.get("search");
+  const items = search ? await searchItems(search) : await listItems();
   return json({ items });
 }

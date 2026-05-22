@@ -64,16 +64,28 @@ async function del(path: string, token?: string) {
   return { status: res.status, json: await res.json().catch(() => ({})) };
 }
 
-async function get(path: string) {
-  const res = await fetch(`${BASE}${path}`);
+async function get(path: string, token?: string) {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(`${BASE}${path}`, { headers });
   return { status: res.status, json: await res.json().catch(() => ({})) };
 }
 
 describe("admin items", () => {
   it("lists empty items", async () => {
-    const { status, json } = await get("/admin/items");
+    const { status, json } = await get("/admin/items", adminToken());
     expect(status).toBe(200);
     expect(json.items).toEqual([]);
+  });
+
+  it("GET requires auth", async () => {
+    const { status } = await get("/admin/items");
+    expect(status).toBe(401);
+  });
+
+  it("GET rejects non-admin", async () => {
+    const { status } = await get("/admin/items", userToken());
+    expect(status).toBe(403);
   });
 
   it("creates item with json", async () => {
@@ -117,7 +129,7 @@ describe("admin items", () => {
     const id = created.item.id;
     const { status } = await del(`/admin/items/${id}`, adminToken());
     expect(status).toBe(200);
-    const { json } = await get("/admin/items");
+    const { json } = await get("/admin/items", adminToken());
     expect(json.items.find((i: { id: number }) => i.id === id)).toBeUndefined();
   });
 

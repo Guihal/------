@@ -6,6 +6,7 @@ import { handleAdmin } from "./http/admin/router.ts";
 import { handleInventory } from "./http/inventory/router.ts";
 import { handleSettings } from "./http/settings/router.ts";
 import { handleVisualState } from "./http/visual-state/router.ts";
+import { handleCharacter } from "./http/character/router.ts";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -40,6 +41,9 @@ serve({
 
     const visualResp = await handleVisualState(req, url.pathname);
     if (visualResp) return visualResp;
+
+    const charResp = await handleCharacter(req, url.pathname);
+    if (charResp) return charResp;
 
     return Response.json(
       { error: "not_implemented", route: `${req.method} ${url.pathname}` },

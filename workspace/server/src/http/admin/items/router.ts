@@ -24,7 +24,9 @@ function adminGuard(req: Request): Response | undefined {
 
 export async function handleAdminItems(req: Request, pathname: string): Promise<Response | undefined> {
   if (pathname === "/admin/items" && req.method === "GET") {
-    return handleGetItems();
+    const guard = adminGuard(req);
+    if (guard) return guard;
+    return handleGetItems(req);
   }
   if (pathname === "/admin/items" && req.method === "POST") {
     const guard = adminGuard(req);

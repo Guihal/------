@@ -1,15 +1,6 @@
 import { requireAuth, json, bad } from "../../shared.ts";
 import { requireAdmin } from "../../../security/jwt.ts";
-import { query } from "../../../db/client.ts";
-
-interface AuditLogRow {
-  id: number;
-  user_id: number | null;
-  action: string;
-  details: string | null;
-  ip_address: string | null;
-  created_at: Date;
-}
+import { countAuditLogs, listAuditLogs } from "../../../db/logs.ts";
 
 export async function handleGetLogs(req: Request): Promise<Response> {
   let ctx;
@@ -38,16 +29,8 @@ export async function handleGetLogs(req: Request): Promise<Response> {
     return bad("Invalid pagination params");
   }
 
-  const countResult = await query<{ count: string }>(`SELECT COUNT(*)::text as count FROM audit_logs`);
-  const total = Number(countResult[0]?.count ?? 0);
-
-  const rows = await query<AuditLogRow>(
-    `SELECT id, user_id, action, details, ip_address, created_at
-     FROM audit_logs
-     ORDER BY created_at DESC
-     LIMIT $1 OFFSET $2`,
-    [limit, offset]
-  );
+  const total = await countAuditLogs();
+  const rows = await listAuditLogs(limit, offset);
 
   const logs = rows.map((r) => ({
     id: r.id,
