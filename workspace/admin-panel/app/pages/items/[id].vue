@@ -34,8 +34,14 @@ onMounted(async () => {
     item.value = null
     return
   }
-  const data = await api.fetch<{ item: Item }>(`/admin/items/${itemId.value}`).catch(() => null)
-  item.value = data?.item ?? null
+  const ctrl = new AbortController()
+  onBeforeUnmount(() => ctrl.abort())
+  try {
+    const data = await api.fetch<{ item: Item }>(`/admin/items/${itemId.value}`, { signal: ctrl.signal })
+    item.value = data.item
+  } catch {
+    item.value = null
+  }
 })
 
 async function update(body: FormData) {

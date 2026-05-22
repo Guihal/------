@@ -76,6 +76,14 @@ onBeforeUnmount(() => {
 })
 
 function submit() {
+  if (form.slots < 1) {
+    alert('Slots must be at least 1')
+    return
+  }
+  if (!rarities.includes(form.rarity)) {
+    alert('Invalid rarity')
+    return
+  }
   const body = new FormData()
   body.append('name', form.name)
   if (form.description) body.append('description', form.description)

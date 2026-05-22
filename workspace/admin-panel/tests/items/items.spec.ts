@@ -78,7 +78,7 @@ describe('ItemForm logic', () => {
     const body = buildItemFormData({ name: 'Helm', file })
     const asset = body.get('asset')
     expect(asset).toBeInstanceOf(File)
-    expect((asset as File).name).toBe('test.png')
+    expect(asset && (asset instanceof File) ? asset.name : '').toBe('test.png')
   })
 })
 

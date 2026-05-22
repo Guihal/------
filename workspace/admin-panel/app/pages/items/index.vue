@@ -55,10 +55,17 @@ interface Item {
 
 const items = ref<Item[]>([])
 const api = useApi()
+let loadCtrl: AbortController | null = null
 
 async function load() {
-  const data = await api.fetch<{ items: Item[] }>('/admin/items').catch(() => null)
-  items.value = data?.items ?? []
+  if (loadCtrl) loadCtrl.abort()
+  loadCtrl = new AbortController()
+  try {
+    const data = await api.fetch<{ items: Item[] }>('/admin/items', { signal: loadCtrl.signal })
+    items.value = data.items
+  } catch {
+    items.value = []
+  }
 }
 
 async function remove(id: number) {
