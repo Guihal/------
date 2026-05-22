@@ -16,16 +16,22 @@ export interface RegisterResponse {
   email: string
 }
 
-export type TaskPriority = 'low' | 'normal' | 'high'
-export type TaskStatus = 'pending' | 'completed' | 'archived'
+export type TaskDifficulty = 'low' | 'normal' | 'high'
+export type TaskCategory = 'general' | 'work' | 'personal' | 'health'
+export type TaskSize = 'tiny' | 'small' | 'medium' | 'large'
 
 export interface Task {
   id: number
+  user_id: number
   title: string
   description: string | null
-  status: TaskStatus
-  priority: TaskPriority
-  due_at: string | null
+  difficulty: TaskDifficulty
+  category: TaskCategory
+  size: TaskSize
+  deadline: string | null
+  completed: boolean
+  archived: boolean
+  completed_at: string | null
   created_at: string
   updated_at: string
 }
@@ -41,17 +47,17 @@ export interface TaskResponse {
 export interface Profile {
   id: number
   email: string
+  role: string
+  display_name: string | null
+  avatar_url: string | null
   xp: number
   level: number
-  tasks_completed: number
-  created_at: string
 }
 
 export interface Progression {
-  level: number
   xp: number
-  xp_to_next: number
-  tasks_completed: number
+  level: number
+  next_level_xp: number
 }
 
 export type Rarity = 'common' | 'rare' | 'epic' | 'legendary'
@@ -88,5 +94,5 @@ export interface TaskCompleteResponse {
   reward: {
     drop?: RewardDrop
     level?: RewardLevelUp
-  }
+  } | null
 }
