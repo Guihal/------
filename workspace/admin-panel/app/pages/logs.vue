@@ -40,11 +40,10 @@ const limit = 20
 const offset = ref(0)
 const logs = ref<Log[]>([])
 const total = ref(0)
+const api = useApi()
 
 async function fetchLogs() {
-  const data = await $fetch<LogsResponse>('/admin/logs', {
-    baseURL: useRuntimeConfig().public.apiBase as string,
-    headers: { Authorization: `Bearer ${useAuthStore().token}` },
+  const data = await api.fetch<LogsResponse>('/admin/logs', {
     query: { limit, offset: offset.value },
   }).catch(() => null)
   logs.value = data?.logs ?? []

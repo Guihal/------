@@ -3,7 +3,4 @@ export default defineNuxtRouteMiddleware(() => {
   if (!auth.token) {
     return navigateTo('/login')
   }
-  if (!auth.isAdmin) {
-    return navigateTo('/login')
-  }
 })

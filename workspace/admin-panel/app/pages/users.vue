@@ -27,12 +27,10 @@ interface User {
 }
 
 const users = ref<User[]>([])
+const api = useApi()
 
 onMounted(async () => {
-  const data = await $fetch<{ users: User[] }>('/admin/users', {
-    baseURL: useRuntimeConfig().public.apiBase as string,
-    headers: { Authorization: `Bearer ${useAuthStore().token}` },
-  }).catch(() => null)
+  const data = await api.fetch<{ users: User[] }>('/admin/users').catch(() => null)
   users.value = data?.users ?? []
 })
 </script>
