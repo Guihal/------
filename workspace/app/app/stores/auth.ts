@@ -1,51 +1,122 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type { AuthResponse, RegisterResponse, User } from '~/types/api'
 
 export const useAuthStore = defineStore('app-auth', () => {
   const token = ref('')
-  const userId = ref<number | null>(null)
+  const refreshToken = ref('')
+  const user = ref<User | null>(null)
+  const loading = ref(false)
+  const error = ref('')
 
-  function setToken(t: string) {
-    token.value = t
-    localStorage.setItem('app_token', t)
+  const config = useRuntimeConfig()
+  const baseURL = config.public.apiBase as string
+
+  function setTokens(access: string, refresh: string) {
+    token.value = access
+    refreshToken.value = refresh
+    localStorage.setItem('app_token', access)
+    localStorage.setItem('app_refresh_token', refresh)
   }
 
-  function setUserId(id: number) {
-    userId.value = id
-    localStorage.setItem('app_user_id', String(id))
+  function setUser(u: User) {
+    user.value = u
+    localStorage.setItem('app_user', JSON.stringify(u))
   }
 
-  function logout() {
+  function clearAuth() {
     token.value = ''
-    userId.value = null
+    refreshToken.value = ''
+    user.value = null
     localStorage.removeItem('app_token')
-    localStorage.removeItem('app_user_id')
+    localStorage.removeItem('app_refresh_token')
+    localStorage.removeItem('app_user')
   }
 
   async function login(email: string, password: string): Promise<boolean> {
+    loading.value = true
+    error.value = ''
     try {
-      const res = await $fetch<{
-        access_token: string
-        user: { id: number }
-      }>('/auth/login', {
-        baseURL: useRuntimeConfig().public.apiBase as string,
+      const res = await $fetch<AuthResponse>('/auth/login', {
+        baseURL,
         method: 'POST',
         body: { email, password },
       })
-      setToken(res.access_token)
-      setUserId(res.user.id)
+      setTokens(res.access_token, res.refresh_token)
+      setUser(res.user)
+      return true
+    } catch (e: any) {
+      error.value = e?.data?.detail || 'Ошибка входа'
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function register(email: string, password: string): Promise<boolean> {
+    loading.value = true
+    error.value = ''
+    try {
+      await $fetch<RegisterResponse>('/auth/register', {
+        baseURL,
+        method: 'POST',
+        body: { email, password },
+      })
+      return true
+    } catch (e: any) {
+      error.value = e?.data?.detail || 'Ошибка регистрации'
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function refresh(): Promise<boolean> {
+    if (!refreshToken.value) return false
+    try {
+      const res = await $fetch<AuthResponse>('/auth/refresh', {
+        baseURL,
+        method: 'POST',
+        body: { refresh_token: refreshToken.value },
+      })
+      setTokens(res.access_token, res.refresh_token)
+      if (res.user) setUser(res.user)
       return true
     } catch {
+      clearAuth()
       return false
     }
   }
 
-  function init() {
-    const t = localStorage.getItem('app_token')
-    const id = localStorage.getItem('app_user_id')
-    if (t) token.value = t
-    if (id) userId.value = Number(id)
+  function logout() {
+    clearAuth()
   }
 
-  return { token, userId, login, logout, init, setToken, setUserId }
+  function init() {
+    const t = localStorage.getItem('app_token')
+    const rt = localStorage.getItem('app_refresh_token')
+    const u = localStorage.getItem('app_user')
+    if (t) token.value = t
+    if (rt) refreshToken.value = rt
+    if (u) {
+      try {
+        user.value = JSON.parse(u)
+      } catch {
+        user.value = null
+      }
+    }
+  }
+
+  return {
+    token,
+    refreshToken,
+    user,
+    loading,
+    error,
+    login,
+    register,
+    refresh,
+    logout,
+    init,
+  }
 })
