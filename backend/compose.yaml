@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: task_companion
+      POSTGRES_PASSWORD: task_companion
+      POSTGRES_DB: task_companion
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U task_companion -d task_companion"]
+      interval: 2s
+      timeout: 3s
+      retries: 20

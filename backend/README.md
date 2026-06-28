@@ -17,10 +17,28 @@ go run ./cmd/server
 curl http://127.0.0.1:8080/health
 ```
 
-Migrations will use goose after schema work starts:
+## Local PostgreSQL
 
 ```sh
-goose -dir migrations postgres "$DATABASE_URL" up
+docker compose -f compose.yaml up -d postgres
+```
+
+## Migrations
+
+Goose is run repo-locally; no global `goose` binary is required.
+
+```sh
+go run ./cmd/migrate up
+go run ./cmd/migrate status
+```
+
+## Demo Seed
+
+Demo data is never applied automatically in production. Run it explicitly for
+local demo/dev databases after migrations:
+
+```sh
+go run ./cmd/seed
 ```
 
 Typed queries will use sqlc after SQL files are added:

@@ -5,7 +5,7 @@ import "os"
 const (
 	defaultAppEnv      = "development"
 	defaultHTTPAddr    = "127.0.0.1:8080"
-	defaultDatabaseURL = "postgres://task_companion:task_companion@localhost:5432/task_companion"
+	defaultDatabaseURL = "postgres://task_companion:task_companion@localhost:5432/task_companion?sslmode=disable"
 	defaultServiceName = "task-manager-backend"
 )
 
