@@ -18,11 +18,58 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
-  /auth/register: { post: { security: [], tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /auth/login: { post: { security: [], tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /auth/logout: { post: { tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /auth/refresh: { post: { security: [], tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /auth/me: { get: { tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /auth/register:
+    post:
+      security: []
+      tags: [auth]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/RegisterRequest" } } }
+      responses:
+        "201": { description: Registered session., content: { application/json: { schema: { $ref: "#/components/schemas/AuthResponse" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /auth/login:
+    post:
+      security: []
+      tags: [auth]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/LoginRequest" } } }
+      responses:
+        "200": { description: Authenticated session., content: { application/json: { schema: { $ref: "#/components/schemas/AuthResponse" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /auth/logout:
+    post:
+      tags: [auth]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/RefreshRequest" } } }
+      responses:
+        "204": { description: Refresh session revoked. }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+  /auth/refresh:
+    post:
+      security: []
+      tags: [auth]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/RefreshRequest" } } }
+      responses:
+        "200": { description: Rotated session., content: { application/json: { schema: { $ref: "#/components/schemas/AuthResponse" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /auth/me:
+    get:
+      tags: [auth]
+      responses:
+        "200": { description: Current user., content: { application/json: { schema: { $ref: "#/components/schemas/AuthUser" } } } }
+        "401": { $ref: "#/components/responses/Error" }
   /tasks: { get: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /tasks/{id}: { get: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, patch: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /tasks/{id}/complete: { post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
@@ -40,7 +87,14 @@ paths:
   /admin/items/{id}: { patch: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /admin/items/{id}/disable: { post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /admin/items/{id}/assets: { post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /admin/stats: { get: { tags: [admin-stats], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/stats:
+    get:
+      tags: [admin-stats]
+      description: Minimal protected admin placeholder for RBAC verification. Requires role `admin`.
+      responses:
+        "200": { description: Admin placeholder. }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
   /admin/logs: { get: { tags: [admin-logs], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
 components:
   securitySchemes:
@@ -49,6 +103,12 @@ components:
       scheme: bearer
       bearerFormat: JWT
   responses:
+    Error:
+      description: Error response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
     NotImplemented:
       description: Endpoint planned by rebuild spec.
       content:
@@ -64,6 +124,41 @@ components:
         status: { type: string, enum: [ok] }
         env: { type: string }
         request_id: { type: string }
+    RegisterRequest:
+      type: object
+      required: [email, password, display_name]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        display_name: { type: string, minLength: 1 }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token: { type: string }
+    AuthUser:
+      type: object
+      required: [id, email, role, display_name]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        role: { type: string, enum: [user, admin] }
+        display_name: { type: string }
+    AuthResponse:
+      type: object
+      required: [access_token, refresh_token, access_expires_at, user]
+      properties:
+        access_token: { type: string }
+        refresh_token: { type: string }
+        access_expires_at: { type: string, format: date-time }
+        user:
+          $ref: "#/components/schemas/AuthUser"
     ErrorResponse:
       type: object
       required: [code, message]

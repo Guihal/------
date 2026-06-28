@@ -1,19 +1,12 @@
 package dbtest
 
 import (
-	"context"
-	"database/sql"
-	"fmt"
 	"os"
 	"testing"
-	"time"
-
-	_ "github.com/lib/pq"
-	"github.com/pressly/goose/v3"
 )
 
 func TestMigrationsAndConstraints(t *testing.T) {
-	db := openMigratedDB(t)
+	db := OpenMigratedDB(t)
 	defer db.Close()
 
 	var tableCount int
@@ -76,7 +69,7 @@ func TestMigrationsAndConstraints(t *testing.T) {
 }
 
 func TestDemoSeedIsIdempotent(t *testing.T) {
-	db := openMigratedDB(t)
+	db := OpenMigratedDB(t)
 	defer db.Close()
 	seedBytes, err := os.ReadFile("../../seed/demo.sql")
 	if err != nil {
@@ -94,38 +87,4 @@ func TestDemoSeedIsIdempotent(t *testing.T) {
 	if users != 2 || items < 5 || taskCopies != 1 {
 		t.Fatalf("seed not idempotent: users=%d items=%d taskCopies=%d", users, items, taskCopies)
 	}
-}
-
-func openMigratedDB(t *testing.T) *sql.DB {
-	t.Helper()
-	adminURL := DatabaseURL()
-	adminDB, err := sql.Open("postgres", adminURL)
-	if err != nil {
-		t.Fatalf("open admin db: %v", err)
-	}
-	if err := adminDB.Ping(); err != nil {
-		t.Skipf("postgres unavailable at DATABASE_URL: %v", err)
-	}
-	name := fmt.Sprintf("task_companion_test_%d", time.Now().UnixNano())
-	mustExec(t, adminDB, `CREATE DATABASE `+name)
-	t.Cleanup(func() {
-		mustExec(t, adminDB, `DROP DATABASE IF EXISTS `+name+` WITH (FORCE)`)
-		adminDB.Close()
-	})
-
-	testURL, err := WithDatabase(adminURL, name)
-	if err != nil {
-		t.Fatalf("build test db url: %v", err)
-	}
-	db, err := sql.Open("postgres", testURL)
-	if err != nil {
-		t.Fatalf("open test db: %v", err)
-	}
-	if err := goose.SetDialect("postgres"); err != nil {
-		t.Fatalf("goose dialect: %v", err)
-	}
-	if err := goose.UpContext(context.Background(), db, "../../migrations"); err != nil {
-		t.Fatalf("goose up: %v", err)
-	}
-	return db
 }

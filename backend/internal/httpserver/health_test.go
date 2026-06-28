@@ -13,7 +13,7 @@ import (
 
 func TestHealthHandler(t *testing.T) {
 	cfg := config.Config{AppEnv: "test", HTTPAddr: "127.0.0.1:0", ServiceName: "task-manager-backend"}
-	server := New(cfg, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	server := New(cfg, slog.New(slog.NewTextHandler(io.Discard, nil)), nil)
 	request := httptest.NewRequest(http.MethodGet, "/health", nil)
 	response := httptest.NewRecorder()
 

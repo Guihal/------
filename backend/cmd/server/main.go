@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	_ "github.com/lib/pq"
 
 	"taskcompanion/backend/internal/config"
 	"taskcompanion/backend/internal/httpserver"
@@ -15,8 +18,18 @@ import (
 func main() {
 	cfg := config.Load()
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	db, err := sql.Open("postgres", cfg.DatabaseURL)
+	if err != nil {
+		logger.Error("database_open_failed", "error", err)
+		os.Exit(1)
+	}
+	defer db.Close()
+	if err := db.Ping(); err != nil {
+		logger.Error("database_ping_failed", "error", err)
+		os.Exit(1)
+	}
 
-	srv := httpserver.New(cfg, logger)
+	srv := httpserver.New(cfg, logger, db)
 	errs := make(chan error, 1)
 
 	go func() {
