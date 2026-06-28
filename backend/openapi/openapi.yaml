@@ -1,0 +1,84 @@
+openapi: 3.1.0
+info:
+  title: Task Manager Backend API
+  version: 0.1.0
+servers:
+  - url: http://127.0.0.1:8080
+security:
+  - bearerAuth: []
+paths:
+  /health:
+    get:
+      security: []
+      tags: [system]
+      responses:
+        "200":
+          description: Service health.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /auth/register: { post: { security: [], tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /auth/login: { post: { security: [], tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /auth/logout: { post: { tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /auth/refresh: { post: { security: [], tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /auth/me: { get: { tags: [auth], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /tasks: { get: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /tasks/{id}: { get: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, patch: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /tasks/{id}/complete: { post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /tasks/{id}/archive: { post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /profile: { get: { tags: [profile], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, patch: { tags: [profile], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /profile/progression: { get: { tags: [profile], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /inventory: { get: { tags: [inventory], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /inventory/{userInventoryItemId}/equip: { post: { tags: [inventory], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /inventory/{userInventoryItemId}/unequip: { post: { tags: [inventory], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /settings: { get: { tags: [settings], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, patch: { tags: [settings], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /visual-state: { get: { tags: [visual-state], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /visual-state/refresh: { post: { tags: [visual-state], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/users: { get: { tags: [admin-users], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/items: { get: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/items/{id}: { patch: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/items/{id}/disable: { post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/items/{id}/assets: { post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/stats: { get: { tags: [admin-stats], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/logs: { get: { tags: [admin-logs], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    NotImplemented:
+      description: Endpoint planned by rebuild spec.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    HealthResponse:
+      type: object
+      required: [service, status, env, request_id]
+      properties:
+        service: { type: string }
+        status: { type: string, enum: [ok] }
+        env: { type: string }
+        request_id: { type: string }
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string }
+        message: { type: string }
+        field_errors:
+          type: object
+          additionalProperties: { type: string }
+        request_id: { type: string }
+    PageParams:
+      type: object
+      properties:
+        limit: { type: integer, minimum: 1, maximum: 100 }
+        cursor: { type: string }
+        page: { type: integer, minimum: 1 }
+        sort: { type: string }
+        filter: { type: string }
