@@ -74,14 +74,62 @@ paths:
   /tasks/{id}: { get: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, patch: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /tasks/{id}/complete: { post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /tasks/{id}/archive: { post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /profile: { get: { tags: [profile], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, patch: { tags: [profile], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /profile/progression: { get: { tags: [profile], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /profile:
+    get:
+      tags: [profile]
+      responses:
+        "200": { description: Current user profile., content: { application/json: { schema: { $ref: "#/components/schemas/ProfileResponse" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+    patch:
+      tags: [profile]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/ProfilePatchRequest" } } }
+      responses:
+        "200": { description: Updated current user profile., content: { application/json: { schema: { $ref: "#/components/schemas/ProfileResponse" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+  /profile/progression:
+    get:
+      tags: [profile]
+      responses:
+        "200": { description: Current user progression., content: { application/json: { schema: { $ref: "#/components/schemas/Progression" } } } }
+        "401": { $ref: "#/components/responses/Error" }
   /inventory: { get: { tags: [inventory], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /inventory/{userInventoryItemId}/equip: { post: { tags: [inventory], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /inventory/{userInventoryItemId}/unequip: { post: { tags: [inventory], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /settings: { get: { tags: [settings], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, patch: { tags: [settings], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /visual-state: { get: { tags: [visual-state], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /visual-state/refresh: { post: { tags: [visual-state], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /settings:
+    get:
+      tags: [settings]
+      responses:
+        "200": { description: Current user settings., content: { application/json: { schema: { $ref: "#/components/schemas/Settings" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+    patch:
+      tags: [settings]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/SettingsPatchRequest" } } }
+      responses:
+        "200": { description: Updated current user settings., content: { application/json: { schema: { $ref: "#/components/schemas/Settings" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+  /visual-state:
+    get:
+      tags: [visual-state]
+      responses:
+        "200": { description: Current persisted visual state or stable fallback., content: { application/json: { schema: { $ref: "#/components/schemas/VisualState" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+  /visual-state/refresh:
+    post:
+      tags: [visual-state]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/VisualRefreshRequest" } } }
+      responses:
+        "200": { description: Refreshed or existing visual state., content: { application/json: { schema: { $ref: "#/components/schemas/VisualState" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
   /admin/users: { get: { tags: [admin-users], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /admin/items: { get: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /admin/items/{id}: { patch: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
@@ -159,6 +207,72 @@ components:
         access_expires_at: { type: string, format: date-time }
         user:
           $ref: "#/components/schemas/AuthUser"
+    ProfilePatchRequest:
+      type: object
+      required: [display_name]
+      additionalProperties: false
+      properties:
+        display_name: { type: string, minLength: 1, maxLength: 80 }
+    ProfileResponse:
+      type: object
+      required: [display_name, progression, stats]
+      properties:
+        display_name: { type: string }
+        progression: { $ref: "#/components/schemas/Progression" }
+        stats: { $ref: "#/components/schemas/ProfileStats" }
+    Progression:
+      type: object
+      required: [level, xp_total, xp_in_current_level, xp_to_next_level, xp_per_level]
+      properties:
+        level: { type: integer, minimum: 1 }
+        xp_total: { type: integer, minimum: 0 }
+        xp_in_current_level: { type: integer, minimum: 0 }
+        xp_to_next_level: { type: integer, minimum: 1 }
+        xp_per_level: { type: integer, enum: [1000] }
+    ProfileStats:
+      type: object
+      required: [tasks_created, tasks_completed, tasks_archived]
+      properties:
+        tasks_created: { type: integer, minimum: 0 }
+        tasks_completed: { type: integer, minimum: 0 }
+        tasks_archived: { type: integer, minimum: 0 }
+    Settings:
+      type: object
+      required: [notifications_enabled, default_reminder_minutes_before_deadline, disable_visual_randomness, reduced_motion]
+      properties:
+        notifications_enabled: { type: boolean }
+        default_reminder_minutes_before_deadline: { type: integer, minimum: 0, maximum: 10080 }
+        disable_visual_randomness: { type: boolean }
+        reduced_motion: { type: boolean }
+    SettingsPatchRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        notifications_enabled: { type: boolean }
+        default_reminder_minutes_before_deadline: { type: integer, minimum: 0, maximum: 10080 }
+        disable_visual_randomness: { type: boolean }
+        reduced_motion: { type: boolean }
+    VisualRefreshRequest:
+      type: object
+      required: [event]
+      additionalProperties: false
+      properties:
+        event:
+          type: string
+          enum: [app-enter, page-enter, task-created, task-completed, level-up, manual-refresh]
+    VisualState:
+      type: object
+      required: [accent_color, background_variant, card_variant, task_button_text, task_list_heading, profile_background, decorative_detail, level_up_text, empty_state_text]
+      properties:
+        accent_color: { type: string, enum: ["#7dd3fc", "#a7f3d0", "#f9a8d4", "#fde68a"] }
+        background_variant: { type: string, enum: [dark-ember, deep-forest, midnight] }
+        card_variant: { type: string, enum: [graphite, pine, plum] }
+        task_button_text: { type: string, enum: [Добавить задачу, Записать задачу, Новая задача] }
+        task_list_heading: { type: string, enum: [Что сделать сейчас, План на сегодня, Активные задачи] }
+        profile_background: { type: string, enum: [quiet-grid, night-lines, calm-shapes] }
+        decorative_detail: { type: string, enum: [soft-sparks, thin-rings, small-dots] }
+        level_up_text: { type: string, enum: [Новый уровень, Уровень повышен, Прогресс обновлен] }
+        empty_state_text: { type: string, enum: [Пока нет активных задач, Список задач пуст, Можно добавить первую задачу] }
     ErrorResponse:
       type: object
       required: [code, message]

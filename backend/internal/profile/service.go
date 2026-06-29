@@ -1,0 +1,75 @@
+package profile
+
+import (
+	"context"
+	"errors"
+	"strings"
+)
+
+const xpPerLevel = 1000
+
+var ErrValidation = errors.New("validation failed")
+
+type Repository interface {
+	Summary(context.Context, string) (Summary, error)
+	UpdateDisplayName(context.Context, string, string) (Summary, error)
+	Progression(context.Context, string) (Progression, error)
+	Settings(context.Context, string) (Settings, error)
+	PatchSettings(context.Context, string, SettingsPatch) (Settings, error)
+}
+
+type Service struct {
+	repo Repository
+}
+
+func NewService(repo Repository) *Service {
+	return &Service{repo: repo}
+}
+
+func (s *Service) Summary(ctx context.Context, userID string) (Summary, error) {
+	summary, err := s.repo.Summary(ctx, userID)
+	if err != nil {
+		return Summary{}, err
+	}
+	summary.Progression = enrich(summary.Progression)
+	return summary, nil
+}
+
+func (s *Service) UpdateDisplayName(ctx context.Context, userID string, name string) (Summary, error) {
+	name = strings.TrimSpace(name)
+	if name == "" || len([]rune(name)) > 80 {
+		return Summary{}, ErrValidation
+	}
+	summary, err := s.repo.UpdateDisplayName(ctx, userID, name)
+	if err != nil {
+		return Summary{}, err
+	}
+	summary.Progression = enrich(summary.Progression)
+	return summary, nil
+}
+
+func (s *Service) Progression(ctx context.Context, userID string) (Progression, error) {
+	progression, err := s.repo.Progression(ctx, userID)
+	return enrich(progression), err
+}
+
+func (s *Service) Settings(ctx context.Context, userID string) (Settings, error) {
+	return s.repo.Settings(ctx, userID)
+}
+
+func (s *Service) PatchSettings(ctx context.Context, userID string, patch SettingsPatch) (Settings, error) {
+	if patch.DefaultReminderMinutesBeforeDeadline != nil {
+		minutes := *patch.DefaultReminderMinutesBeforeDeadline
+		if minutes < 0 || minutes > 10080 {
+			return Settings{}, ErrValidation
+		}
+	}
+	return s.repo.PatchSettings(ctx, userID, patch)
+}
+
+func enrich(progression Progression) Progression {
+	progression.XPPerLevel = xpPerLevel
+	progression.XPInCurrentLevel = progression.XPTotal % xpPerLevel
+	progression.XPToNextLevel = xpPerLevel - progression.XPInCurrentLevel
+	return progression
+}

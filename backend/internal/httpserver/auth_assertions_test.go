@@ -7,11 +7,14 @@ import (
 
 func assertBaselines(t *testing.T, db *sql.DB, userID string) {
 	t.Helper()
-	tables := []string{"profiles", "progressions", "notification_settings", "settings"}
+	tables := []string{"profiles", "progressions", "notification_settings"}
 	for _, table := range tables {
 		if countRows(t, db, `SELECT count(*) FROM `+table+` WHERE user_id = $1`, userID) != 1 {
 			t.Fatalf("expected %s baseline for user %s", table, userID)
 		}
+	}
+	if countRows(t, db, `SELECT count(*) FROM settings WHERE user_id = $1`, userID) != 4 {
+		t.Fatalf("expected settings baseline for user %s", userID)
 	}
 }
 

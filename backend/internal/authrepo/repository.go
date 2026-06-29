@@ -79,7 +79,10 @@ func insertBaselines(ctx context.Context, tx *sql.Tx, userID string, name string
 		{`INSERT INTO profiles (user_id, display_name) VALUES ($1, $2)`, []any{userID, name}},
 		{`INSERT INTO progressions (user_id) VALUES ($1)`, []any{userID}},
 		{`INSERT INTO notification_settings (user_id) VALUES ($1)`, []any{userID}},
-		{`INSERT INTO settings (user_id, key, value) VALUES ($1, 'preferences', '{}'::jsonb)`, []any{userID}},
+		{`INSERT INTO settings (user_id, key, value) VALUES ($1, 'reduced_motion', '{"enabled":false}'::jsonb)`, []any{userID}},
+		{`INSERT INTO settings (user_id, key, value) VALUES ($1, 'disable_visual_randomness', '{"enabled":false}'::jsonb)`, []any{userID}},
+		{`INSERT INTO settings (user_id, key, value) VALUES ($1, 'notifications_enabled', '{"enabled":true}'::jsonb)`, []any{userID}},
+		{`INSERT INTO settings (user_id, key, value) VALUES ($1, 'default_reminder_minutes_before_deadline', '{"minutes":60}'::jsonb)`, []any{userID}},
 	}
 	for _, statement := range statements {
 		if _, err := tx.ExecContext(ctx, statement.query, statement.args...); err != nil {
