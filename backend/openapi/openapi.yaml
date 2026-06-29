@@ -130,6 +130,63 @@ paths:
         "400": { $ref: "#/components/responses/Error" }
         "401": { $ref: "#/components/responses/Error" }
         "429": { $ref: "#/components/responses/Error" }
+  /tasks:
+    get:
+      tags: [tasks]
+      description: List tasks for the authenticated user with filters, sort, and pagination.
+      parameters:
+        - { in: query, name: status, schema: { type: string, enum: [active, archived, completed, all] }, default: active }
+        - { in: query, name: category_id, schema: { type: string, format: uuid } }
+        - { in: query, name: priority, schema: { type: string, enum: [low, normal, high] } }
+        - { in: query, name: sort, schema: { type: string, enum: [overdue, deadline, created_at] }, default: overdue }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100 }, default: 20 }
+        - { in: query, name: offset, schema: { type: integer, minimum: 0 }, default: 0 }
+      responses:
+        "200": { description: Paginated task list. Overdue active tasks sort first. , content: { application/json: { schema: { $ref: "#/components/schemas/TaskListResponse" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+    post:
+      tags: [tasks]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/TaskCreateRequest" } } }
+      responses:
+        "201": { description: Created task. , content: { application/json: { schema: { $ref: "#/components/schemas/Task" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+  /tasks/{id}:
+    get:
+      tags: [tasks]
+      parameters: [ { in: path, name: id, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        "200": { description: Task detail., content: { application/json: { schema: { $ref: "#/components/schemas/Task" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    patch:
+      tags: [tasks]
+      parameters: [ { in: path, name: id, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/TaskPatchRequest" } } }
+      responses:
+        "200": { description: Updated task., content: { application/json: { schema: { $ref: "#/components/schemas/Task" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+  /tasks/{id}/archive:
+    post:
+      tags: [tasks]
+      parameters: [ { in: path, name: id, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        "200": { description: Archived task (status=archived)., content: { application/json: { schema: { $ref: "#/components/schemas/Task" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+  /task-categories:
+    get:
+      tags: [task-categories]
+      description: Stable list of task categories for forms (system + user), ordered is_system DESC, title ASC.
+      responses:
+        "200": { description: Category list., content: { application/json: { schema: { $ref: "#/components/schemas/TaskCategoryListResponse" } } } }
+        "401": { $ref: "#/components/responses/Error" }
   /admin/users: { get: { tags: [admin-users], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /admin/items: { get: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /admin/items/{id}: { patch: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
@@ -291,3 +348,65 @@ components:
         page: { type: integer, minimum: 1 }
         sort: { type: string }
         filter: { type: string }
+    Task:
+      type: object
+      required: [id, title, description, status, priority, complexity, overdue, created_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        category_id: { type: string, format: uuid, nullable: true }
+        title: { type: string }
+        description: { type: string }
+        status: { type: string, enum: [active, completed, archived] }
+        priority: { type: string, enum: [low, normal, high] }
+        complexity: { type: string, enum: [tiny, small, medium, large] }
+        deadline_at: { type: string, format: date-time, nullable: true }
+        completed_at: { type: string, format: date-time, nullable: true }
+        archived_at: { type: string, format: date-time, nullable: true }
+        overdue: { type: boolean, description: Derived; true when status=active and deadline passed. Never persisted. }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    TaskCreateRequest:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200 }
+        description: { type: string }
+        category_id: { type: string, format: uuid, nullable: true, description: Defaults to the user's общее system category. }
+        priority: { type: string, enum: [low, normal, high], default: normal }
+        complexity: { type: string, enum: [tiny, small, medium, large], default: medium }
+        deadline_at: { type: string, format: date-time, nullable: true }
+    TaskPatchRequest:
+      type: object
+      description: Partial update. status and completed_at are intentionally absent — completion is owned by the reward engine (P06).
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200 }
+        description: { type: string }
+        category_id: { type: string, format: uuid, nullable: true }
+        priority: { type: string, enum: [low, normal, high] }
+        complexity: { type: string, enum: [tiny, small, medium, large] }
+        deadline_at: { type: string, format: date-time, nullable: true }
+    TaskListResponse:
+      type: object
+      required: [items, total, limit, offset]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Task" }
+        total: { type: integer }
+        limit: { type: integer }
+        offset: { type: integer }
+    TaskCategory:
+      type: object
+      required: [id, title, color, is_system]
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        color: { type: string }
+        is_system: { type: boolean }
+    TaskCategoryListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/TaskCategory" }

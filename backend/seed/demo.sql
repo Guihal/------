@@ -108,7 +108,8 @@ category_values (title, color, is_system) AS (
   VALUES
     ('Учеба', '#4f46e5', true),
     ('Работа', '#0891b2', true),
-    ('Личное', '#16a34a', true)
+    ('Личное', '#16a34a', true),
+    ('общее', '#6b7280', true)
 ),
 categories_seed AS (
   INSERT INTO task_categories (user_id, title, color, is_system)

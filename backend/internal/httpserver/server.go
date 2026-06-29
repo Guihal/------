@@ -13,6 +13,8 @@ import (
 	"taskcompanion/backend/internal/config"
 	"taskcompanion/backend/internal/profile"
 	"taskcompanion/backend/internal/profilerepo"
+	"taskcompanion/backend/internal/task"
+	"taskcompanion/backend/internal/taskrepo"
 	"taskcompanion/backend/internal/visual"
 	"taskcompanion/backend/internal/visualrepo"
 )
@@ -55,6 +57,7 @@ func registerAuthRoutes(router chi.Router, cfg config.Config, db *sql.DB) {
 	router.With(RequireAuth(tokens), RequireAdmin(service)).Get("/admin/stats", AdminStatsHandler)
 	registerProfileRoutes(router, tokens, db)
 	registerVisualRoutes(router, tokens, db)
+	registerTaskRoutes(router, tokens, db)
 }
 
 func registerProfileRoutes(router chi.Router, tokens auth.TokenManager, db *sql.DB) {
@@ -76,4 +79,17 @@ func registerVisualRoutes(router chi.Router, tokens auth.TokenManager, db *sql.D
 
 	router.With(RequireAuth(tokens)).Get("/visual-state", handlers.Get)
 	router.With(RequireAuth(tokens), RateLimit(limit, "visual-refresh")).Post("/visual-state/refresh", handlers.Refresh)
+}
+
+func registerTaskRoutes(router chi.Router, tokens auth.TokenManager, db *sql.DB) {
+	service := task.NewService(taskrepo.New(db))
+	tasks := NewTaskHandlers(service)
+	categories := NewTaskCategoryHandlers(service)
+
+	router.With(RequireAuth(tokens)).Get("/tasks", tasks.List)
+	router.With(RequireAuth(tokens)).Post("/tasks", tasks.Create)
+	router.With(RequireAuth(tokens)).Get("/tasks/{id}", tasks.Get)
+	router.With(RequireAuth(tokens)).Patch("/tasks/{id}", tasks.Patch)
+	router.With(RequireAuth(tokens)).Post("/tasks/{id}/archive", tasks.Archive)
+	router.With(RequireAuth(tokens)).Get("/task-categories", categories.List)
 }
