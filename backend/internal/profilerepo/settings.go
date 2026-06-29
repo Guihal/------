@@ -2,6 +2,7 @@ package profilerepo
 
 import (
 	"context"
+	"database/sql"
 
 	"taskcompanion/backend/internal/profile"
 )
@@ -27,7 +28,7 @@ func (r *Repository) Settings(ctx context.Context, userID string) (profile.Setti
 	return mapSettings(values), rows.Err()
 }
 
-func (r *Repository) SaveSettings(ctx context.Context, userID string, settings profile.Settings) (profile.Settings, error) {
+func (r *Repository) SaveSettings(ctx context.Context, userID string, apply func(profile.Settings) profile.Settings) (profile.Settings, error) {
 	if err := r.ensureSettings(ctx, userID); err != nil {
 		return profile.Settings{}, err
 	}
@@ -40,20 +41,45 @@ func (r *Repository) SaveSettings(ctx context.Context, userID string, settings p
 	if _, err = tx.ExecContext(ctx, `SELECT 1 FROM settings WHERE user_id = $1 FOR UPDATE`, userID); err != nil {
 		return profile.Settings{}, err
 	}
+	current, err := readSettingsTx(ctx, tx, userID)
+	if err != nil {
+		return profile.Settings{}, err
+	}
+	next := apply(current)
 	if _, err = tx.ExecContext(ctx, `UPDATE notification_settings
 		SET enabled = $2, default_minutes_before_deadline = $3, updated_at = now()
-		WHERE user_id = $1`, userID, settings.NotificationsEnabled,
-		settings.DefaultReminderMinutesBeforeDeadline); err != nil {
+		WHERE user_id = $1`, userID, next.NotificationsEnabled,
+		next.DefaultReminderMinutesBeforeDeadline); err != nil {
 		return profile.Settings{}, err
 	}
 	for _, key := range []string{keyNotifications, keyDefaultReminder, keyDisableRandom, keyReducedMotion} {
 		if _, err = tx.ExecContext(ctx, `UPDATE settings SET value = $3::jsonb, updated_at = now()
-			WHERE user_id = $1 AND key = $2`, userID, key, settingJSON(key, settings)); err != nil {
+			WHERE user_id = $1 AND key = $2`, userID, key, settingJSON(key, next)); err != nil {
 			return profile.Settings{}, err
 		}
 	}
 	if err = tx.Commit(); err != nil {
 		return profile.Settings{}, err
 	}
-	return settings, nil
+	return next, nil
+}
+
+func readSettingsTx(ctx context.Context, q interface {
+	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
+}, userID string) (profile.Settings, error) {
+	rows, err := q.QueryContext(ctx, `SELECT key, value FROM settings WHERE user_id = $1`, userID)
+	if err != nil {
+		return profile.Settings{}, err
+	}
+	defer rows.Close()
+	values := map[string][]byte{}
+	for rows.Next() {
+		var key string
+		var raw []byte
+		if err = rows.Scan(&key, &raw); err != nil {
+			return profile.Settings{}, err
+		}
+		values[key] = raw
+	}
+	return mapSettings(values), rows.Err()
 }

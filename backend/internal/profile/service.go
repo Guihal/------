@@ -15,7 +15,7 @@ type Repository interface {
 	UpdateDisplayName(context.Context, string, string) (Summary, error)
 	Progression(context.Context, string) (Progression, error)
 	Settings(context.Context, string) (Settings, error)
-	SaveSettings(context.Context, string, Settings) (Settings, error)
+	SaveSettings(context.Context, string, func(Settings) Settings) (Settings, error)
 }
 
 type Service struct {
@@ -64,12 +64,9 @@ func (s *Service) PatchSettings(ctx context.Context, userID string, patch Settin
 			return Settings{}, ErrValidation
 		}
 	}
-	current, err := s.repo.Settings(ctx, userID)
-	if err != nil {
-		return Settings{}, err
-	}
-	merged := mergeSettings(current, patch)
-	return s.repo.SaveSettings(ctx, userID, merged)
+	return s.repo.SaveSettings(ctx, userID, func(current Settings) Settings {
+		return mergeSettings(current, patch)
+	})
 }
 
 func mergeSettings(settings Settings, patch SettingsPatch) Settings {
