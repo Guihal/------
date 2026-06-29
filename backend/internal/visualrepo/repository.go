@@ -37,15 +37,19 @@ func (r *Repository) Load(ctx context.Context, userID string) (visual.State, boo
 }
 
 func (r *Repository) Save(ctx context.Context, userID string, state visual.State) error {
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
 	for key, value := range stateValues(state) {
 		raw, _ := json.Marshal(map[string]string{"value": value})
-		_, err := r.db.ExecContext(ctx, `INSERT INTO visual_state (user_id, scope, key, value)
+		if _, err := tx.ExecContext(ctx, `INSERT INTO visual_state (user_id, scope, key, value)
 			VALUES ($1, $2, $3, $4::jsonb)
 			ON CONFLICT (user_id, scope, key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`,
-			userID, scope, key, raw)
-		if err != nil {
+			userID, scope, key, raw); err != nil {
 			return err
 		}
 	}
-	return nil
+	return tx.Commit()
 }

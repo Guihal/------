@@ -131,11 +131,11 @@ settings_seed AS (
 ),
 visual_values (scope, key, value) AS (
   VALUES
-    ('global', 'accent_color', '{"value":"#4f46e5","palette":"default"}'::jsonb),
-    ('global', 'background_variant', '{"value":"soft-grid"}'::jsonb),
-    ('tasks', 'task_button_text', '{"value":"Завершить задачу"}'::jsonb),
-    ('tasks', 'task_list_heading', '{"value":"Сегодняшние задачи"}'::jsonb),
-    ('profile', 'profile_background', '{"value":"morning"}'::jsonb)
+    ('mobile', 'accent_color', '{"value":"#7dd3fc"}'::jsonb),
+    ('mobile', 'background_variant', '{"value":"dark-ember"}'::jsonb),
+    ('mobile', 'task_button_text', '{"value":"Добавить задачу"}'::jsonb),
+    ('mobile', 'task_list_heading', '{"value":"План на сегодня"}'::jsonb),
+    ('mobile', 'profile_background', '{"value":"quiet-grid"}'::jsonb)
 ),
 visual_seed AS (
   INSERT INTO visual_state (user_id, scope, key, value)

@@ -35,6 +35,8 @@ func (s *Service) Get(ctx context.Context, userID string) (State, error) {
 }
 
 func (s *Service) Refresh(ctx context.Context, userID string, event string) (State, error) {
+	// ponytail: Refresh Load→Save not tx-bounded; concurrent refresh can interleave.
+	// Fix: wrap in repo-level tx when contention observed.
 	if !AllowedEvents[event] {
 		return State{}, ErrValidation
 	}

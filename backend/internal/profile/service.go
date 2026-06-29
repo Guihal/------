@@ -15,7 +15,7 @@ type Repository interface {
 	UpdateDisplayName(context.Context, string, string) (Summary, error)
 	Progression(context.Context, string) (Progression, error)
 	Settings(context.Context, string) (Settings, error)
-	PatchSettings(context.Context, string, SettingsPatch) (Settings, error)
+	SaveSettings(context.Context, string, Settings) (Settings, error)
 }
 
 type Service struct {
@@ -64,7 +64,28 @@ func (s *Service) PatchSettings(ctx context.Context, userID string, patch Settin
 			return Settings{}, ErrValidation
 		}
 	}
-	return s.repo.PatchSettings(ctx, userID, patch)
+	current, err := s.repo.Settings(ctx, userID)
+	if err != nil {
+		return Settings{}, err
+	}
+	merged := mergeSettings(current, patch)
+	return s.repo.SaveSettings(ctx, userID, merged)
+}
+
+func mergeSettings(settings Settings, patch SettingsPatch) Settings {
+	if patch.NotificationsEnabled != nil {
+		settings.NotificationsEnabled = *patch.NotificationsEnabled
+	}
+	if patch.DefaultReminderMinutesBeforeDeadline != nil {
+		settings.DefaultReminderMinutesBeforeDeadline = *patch.DefaultReminderMinutesBeforeDeadline
+	}
+	if patch.DisableVisualRandomness != nil {
+		settings.DisableVisualRandomness = *patch.DisableVisualRandomness
+	}
+	if patch.ReducedMotion != nil {
+		settings.ReducedMotion = *patch.ReducedMotion
+	}
+	return settings
 }
 
 func enrich(progression Progression) Progression {
