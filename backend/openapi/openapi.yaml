@@ -70,10 +70,7 @@ paths:
       responses:
         "200": { description: Current user., content: { application/json: { schema: { $ref: "#/components/schemas/AuthUser" } } } }
         "401": { $ref: "#/components/responses/Error" }
-  /tasks: { get: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /tasks/{id}: { get: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, patch: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /tasks/{id}/complete: { post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /tasks/{id}/archive: { post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
   /profile:
     get:
       tags: [profile]
