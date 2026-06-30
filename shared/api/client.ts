@@ -44,7 +44,13 @@ export function createApiClient(options: ApiClientOptions): ApiClient {
 
     if (response.status === 401 && requestOptions.auth !== false) {
       if (!retried) {
-        const refreshed = await refreshAccessToken();
+        let refreshed: string | null = null;
+        try {
+          refreshed = await refreshAccessToken();
+        } catch {
+          // ponytail: refresh reject (network/offline) → treat as failure, fall through to teardown
+          refreshed = null;
+        }
         if (refreshed) {
           options.tokenStore.set(refreshed);
           return run(path, requestOptions, true);
