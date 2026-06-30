@@ -70,7 +70,14 @@ paths:
       responses:
         "200": { description: Current user., content: { application/json: { schema: { $ref: "#/components/schemas/AuthUser" } } } }
         "401": { $ref: "#/components/responses/Error" }
-  /tasks/{id}/complete: { post: { tags: [tasks], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /tasks/{id}/complete:
+    post:
+      tags: [tasks]
+      parameters: [ { in: path, name: id, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        "200": { description: Authoritative completion outcome with refreshed visual_state. Idempotent on repeat (is_fresh_completion_event=false)., content: { application/json: { schema: { $ref: "#/components/schemas/CompletionPayload" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
   /profile:
     get:
       tags: [profile]
@@ -407,3 +414,66 @@ components:
         items:
           type: array
           items: { $ref: "#/components/schemas/TaskCategory" }
+    CompletionPayload:
+      type: object
+      description: Authoritative complete-task outcome. Server owns XP, level, drop, and roll outcomes; the client never sends or receives roll_value.
+      required: [task, is_fresh_completion_event, xp_grant, progression_before, progression_after, level_ups, level_rewards, task_drop]
+      properties:
+        task:
+          type: object
+          required: [id, status]
+          properties:
+            id: { type: string, format: uuid }
+            status: { type: string, enum: [completed] }
+        is_fresh_completion_event: { type: boolean, description: false on a repeat completion (no reroll, no new inserts). }
+        xp_grant: { $ref: "#/components/schemas/XPGrant" }
+        progression_before: { $ref: "#/components/schemas/ProgressionSnapshot" }
+        progression_after: { $ref: "#/components/schemas/ProgressionSnapshot" }
+        level_ups:
+          type: array
+          items: { type: integer, minimum: 1 }
+        level_rewards:
+          type: array
+          items: { $ref: "#/components/schemas/LevelReward" }
+        task_drop: { $ref: "#/components/schemas/DropResult" }
+        visual_state: { $ref: "#/components/schemas/VisualState", nullable: true }
+    XPGrant:
+      type: object
+      required: [base_xp, task_multiplier, equipment_xp_multiplier, final_xp]
+      properties:
+        base_xp: { type: integer, minimum: 0 }
+        task_multiplier: { type: number, format: float, minimum: 0 }
+        equipment_xp_multiplier: { type: number, format: float, minimum: 0 }
+        final_xp: { type: integer, minimum: 0 }
+    ProgressionSnapshot:
+      type: object
+      required: [xp_total, level, xp_in_current_level, xp_to_next_level]
+      properties:
+        xp_total: { type: integer, minimum: 0 }
+        level: { type: integer, minimum: 1 }
+        xp_in_current_level: { type: integer, minimum: 0 }
+        xp_to_next_level: { type: integer, minimum: 1 }
+    LevelReward:
+      type: object
+      required: [level, item]
+      properties:
+        level: { type: integer, minimum: 1, description: Granted on milestone levels divisible by 5. }
+        item: { $ref: "#/components/schemas/InventoryItemView" }
+    DropResult:
+      type: object
+      required: [dropped]
+      properties:
+        dropped: { type: boolean }
+        rarity: { type: string, enum: [common, rare, epic, legendary] }
+        item: { $ref: "#/components/schemas/InventoryItemView", nullable: true }
+    InventoryItemView:
+      type: object
+      required: [id, inventory_item_id, name, rarity, xp_multiplier, slot_key, asset_url]
+      properties:
+        id: { type: string, format: uuid, description: user_inventory_item id. }
+        inventory_item_id: { type: string, format: uuid, description: Catalog item id. }
+        name: { type: string }
+        rarity: { type: string, enum: [common, rare, epic, legendary] }
+        xp_multiplier: { type: number, format: float, minimum: 1 }
+        slot_key: { type: string }
+        asset_url: { type: string }

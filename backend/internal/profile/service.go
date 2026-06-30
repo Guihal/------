@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"strings"
-)
 
-const xpPerLevel = 1000
+	"taskcompanion/backend/internal/task"
+)
 
 var ErrValidation = errors.New("validation failed")
 
@@ -86,8 +86,8 @@ func mergeSettings(settings Settings, patch SettingsPatch) Settings {
 }
 
 func enrich(progression Progression) Progression {
-	progression.XPPerLevel = xpPerLevel
-	progression.XPInCurrentLevel = progression.XPTotal % xpPerLevel
-	progression.XPToNextLevel = xpPerLevel - progression.XPInCurrentLevel
+	progression.XPPerLevel = task.XPPerLevel
+	progression.XPInCurrentLevel = progression.XPTotal % task.XPPerLevel
+	progression.XPToNextLevel = task.XPPerLevel - progression.XPInCurrentLevel
 	return progression
 }

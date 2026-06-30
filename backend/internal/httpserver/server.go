@@ -13,6 +13,8 @@ import (
 	"taskcompanion/backend/internal/config"
 	"taskcompanion/backend/internal/profile"
 	"taskcompanion/backend/internal/profilerepo"
+	"taskcompanion/backend/internal/reward"
+	"taskcompanion/backend/internal/rewardrepo"
 	"taskcompanion/backend/internal/task"
 	"taskcompanion/backend/internal/taskrepo"
 	"taskcompanion/backend/internal/visual"
@@ -25,7 +27,7 @@ func New(cfg config.Config, logger *slog.Logger, db *sql.DB) *http.Server {
 	router.Use(AccessLog(logger))
 	router.Get("/health", HealthHandler(cfg))
 	if db != nil {
-		registerAuthRoutes(router, cfg, db)
+		registerAuthRoutes(router, cfg, db, logger)
 	}
 
 	return &http.Server{
@@ -35,7 +37,7 @@ func New(cfg config.Config, logger *slog.Logger, db *sql.DB) *http.Server {
 	}
 }
 
-func registerAuthRoutes(router chi.Router, cfg config.Config, db *sql.DB) {
+func registerAuthRoutes(router chi.Router, cfg config.Config, db *sql.DB, logger *slog.Logger) {
 	accessTTL, err := time.ParseDuration(cfg.AccessTokenTTL)
 	if err != nil {
 		accessTTL = 15 * time.Minute
@@ -58,6 +60,17 @@ func registerAuthRoutes(router chi.Router, cfg config.Config, db *sql.DB) {
 	registerProfileRoutes(router, tokens, db)
 	registerVisualRoutes(router, tokens, db)
 	registerTaskRoutes(router, tokens, db)
+	registerRewardRoutes(router, tokens, db, logger)
+}
+
+func registerRewardRoutes(router chi.Router, tokens auth.TokenManager, db *sql.DB, logger *slog.Logger) {
+	// Reuse the same visual service shape as the visual routes; reward needs it
+	// for the post-commit visual_state refresh.
+	visualService := visual.NewService(visualrepo.New(db))
+	service := reward.NewService(rewardrepo.New(db), visualService, logger)
+	handlers := NewRewardHandlers(service)
+
+	router.With(RequireAuth(tokens)).Post("/tasks/{id}/complete", handlers.Complete)
 }
 
 func registerProfileRoutes(router chi.Router, tokens auth.TokenManager, db *sql.DB) {
