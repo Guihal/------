@@ -226,20 +226,123 @@ paths:
       responses:
         "200": { description: Category list., content: { application/json: { schema: { $ref: "#/components/schemas/TaskCategoryListResponse" } } } }
         "401": { $ref: "#/components/responses/Error" }
-  /admin/users: { get: { tags: [admin-users], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /admin/items: { get: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } }, post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /admin/items/{id}: { patch: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /admin/items/{id}/disable: { post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /admin/items/{id}/assets: { post: { tags: [admin-items], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/users:
+    get:
+      tags: [admin-users]
+      description: Admin-only user list. Does not expose password hashes or refresh tokens.
+      parameters:
+        - { in: query, name: role, schema: { type: string, enum: [user, admin] } }
+        - { in: query, name: q, schema: { type: string }, description: Case-insensitive email search. }
+        - { in: query, name: sort, schema: { type: string, enum: [created_at, email, role] }, default: created_at }
+        - { in: query, name: dir, schema: { type: string, enum: [asc, desc] }, default: desc }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100 }, default: 20 }
+        - { in: query, name: offset, schema: { type: integer, minimum: 0 }, default: 0 }
+      responses:
+        "200": { description: Paginated users., content: { application/json: { schema: { $ref: "#/components/schemas/AdminUsersResponse" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+  /admin/items:
+    get:
+      tags: [admin-items]
+      description: Admin catalog list with pagination, filters, and allowlisted sorting. Disabled items remain visible for audit and granted inventory safety.
+      parameters:
+        - { in: query, name: q, schema: { type: string }, description: Case-insensitive name/description search. }
+        - { in: query, name: rarity, schema: { type: string, enum: [common, rare, epic, legendary] } }
+        - { in: query, name: active, schema: { type: boolean } }
+        - { in: query, name: slot, schema: { type: string } }
+        - { in: query, name: sort, schema: { type: string, enum: [created_at, name, rarity, slot_key] }, default: created_at }
+        - { in: query, name: dir, schema: { type: string, enum: [asc, desc] }, default: desc }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100 }, default: 20 }
+        - { in: query, name: offset, schema: { type: integer, minimum: 0 }, default: 0 }
+      responses:
+        "200": { description: Paginated catalog items., content: { application/json: { schema: { $ref: "#/components/schemas/AdminItemsResponse" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+    post:
+      tags: [admin-items]
+      description: Create catalog item and write item.create audit event. Does not grant inventory or XP.
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/AdminItemCreateRequest" } } }
+      responses:
+        "201": { description: Created catalog item., content: { application/json: { schema: { $ref: "#/components/schemas/AdminItem" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /admin/items/{id}:
+    patch:
+      tags: [admin-items]
+      description: Patch mutable catalog fields and write item.update audit event. Rarity is immutable.
+      parameters: [ { in: path, name: id, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/AdminItemPatchRequest" } } }
+      responses:
+        "200": { description: Updated catalog item., content: { application/json: { schema: { $ref: "#/components/schemas/AdminItem" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /admin/items/{id}/disable:
+    post:
+      tags: [admin-items]
+      description: Soft-disable catalog item and write item.disable audit event. Existing user_inventory_items are not deleted.
+      parameters: [ { in: path, name: id, required: true, schema: { type: string, format: uuid } } ]
+      responses:
+        "200": { description: Disabled catalog item., content: { application/json: { schema: { $ref: "#/components/schemas/AdminItem" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /admin/items/{id}/assets:
+    post:
+      tags: [admin-items]
+      description: Upload png, jpg/jpeg, or webp item asset up to 2 MB. Backend generates the stored filename and writes asset.upload audit event.
+      parameters: [ { in: path, name: id, required: true, schema: { type: string, format: uuid } } ]
+      requestBody:
+        required: true
+        content:
+          image/png: { schema: { type: string, format: binary } }
+          image/jpeg: { schema: { type: string, format: binary } }
+          image/webp: { schema: { type: string, format: binary } }
+      responses:
+        "200": { description: Asset URL stored on the item., content: { application/json: { schema: { $ref: "#/components/schemas/AdminAssetUploadResponse" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "413": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
   /admin/stats:
     get:
       tags: [admin-stats]
-      description: Minimal protected admin placeholder for RBAC verification. Requires role `admin`.
+      description: Admin-only aggregate counts for dashboard cards.
       responses:
-        "200": { description: Admin placeholder. }
+        "200": { description: Aggregate counts., content: { application/json: { schema: { $ref: "#/components/schemas/AdminStats" } } } }
         "401": { $ref: "#/components/responses/Error" }
         "403": { $ref: "#/components/responses/Error" }
-  /admin/logs: { get: { tags: [admin-logs], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /admin/logs:
+    get:
+      tags: [admin-logs]
+      description: Admin-only audit log list with user, action, and RFC3339 date filters.
+      parameters:
+        - { in: query, name: user_id, schema: { type: string, format: uuid } }
+        - { in: query, name: action, schema: { type: string } }
+        - { in: query, name: from, schema: { type: string, format: date-time } }
+        - { in: query, name: to, schema: { type: string, format: date-time } }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100 }, default: 50 }
+        - { in: query, name: offset, schema: { type: integer, minimum: 0 }, default: 0 }
+      responses:
+        "200": { description: Audit events., content: { application/json: { schema: { $ref: "#/components/schemas/AdminAuditLogsResponse" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
 components:
   securitySchemes:
     bearerAuth:
@@ -249,12 +352,6 @@ components:
   responses:
     Error:
       description: Error response.
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorResponse"
-    NotImplemented:
-      description: Endpoint planned by rebuild spec.
       content:
         application/json:
           schema:
@@ -449,6 +546,92 @@ components:
         items:
           type: array
           items: { $ref: "#/components/schemas/TaskCategory" }
+    AdminUserSummary:
+      type: object
+      required: [id, email, role, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        role: { type: string, enum: [user, admin] }
+        created_at: { type: string, format: date-time }
+    AdminUsersResponse:
+      type: object
+      required: [items, total]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/AdminUserSummary" }
+        total: { type: integer, minimum: 0 }
+    AdminItem:
+      type: object
+      required: [id, name, description, rarity, slot_key, asset_url, base_xp_multiplier, active, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        description: { type: string }
+        rarity: { type: string, enum: [common, rare, epic, legendary] }
+        slot_key: { type: string }
+        asset_url: { type: string }
+        base_xp_multiplier: { type: number, format: float, minimum: 1 }
+        active: { type: boolean }
+        created_at: { type: string, format: date-time }
+    AdminItemsResponse:
+      type: object
+      required: [items, total]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/AdminItem" }
+        total: { type: integer, minimum: 0 }
+    AdminItemCreateRequest:
+      type: object
+      required: [name, rarity, slot_key]
+      additionalProperties: false
+      properties:
+        name: { type: string, minLength: 1 }
+        description: { type: string }
+        rarity: { type: string, enum: [common, rare, epic, legendary] }
+        slot_key: { type: string, minLength: 1 }
+        base_xp_multiplier: { type: number, format: float, minimum: 1, default: 1 }
+    AdminItemPatchRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        name: { type: string, minLength: 1 }
+        description: { type: string }
+        slot_key: { type: string, minLength: 1 }
+        base_xp_multiplier: { type: number, format: float, minimum: 1 }
+    AdminAssetUploadResponse:
+      type: object
+      required: [asset_url]
+      properties:
+        asset_url: { type: string }
+    AdminStats:
+      type: object
+      required: [users, tasks, completed_tasks, reward_rolls, items, granted_items]
+      properties:
+        users: { type: integer, minimum: 0 }
+        tasks: { type: integer, minimum: 0 }
+        completed_tasks: { type: integer, minimum: 0 }
+        reward_rolls: { type: integer, minimum: 0 }
+        items: { type: integer, minimum: 0 }
+        granted_items: { type: integer, minimum: 0 }
+    AdminAuditLogEntry:
+      type: object
+      required: [id, user_id, action, details, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        user_id: { type: string, format: uuid, nullable: true }
+        action: { type: string }
+        details: { type: object, additionalProperties: true }
+        created_at: { type: string, format: date-time }
+    AdminAuditLogsResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/AdminAuditLogEntry" }
     CompletionPayload:
       type: object
       description: Authoritative complete-task outcome. Server owns XP, level, drop, and roll outcomes; the client never sends or receives roll_value.

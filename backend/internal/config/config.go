@@ -9,6 +9,7 @@ const (
 	defaultServiceName = "task-manager-backend"
 	defaultAccessTTL   = "15m"
 	defaultRefreshTTL  = "720h"
+	defaultAssetsDir   = "./assets"
 )
 
 type Config struct {
@@ -20,6 +21,7 @@ type Config struct {
 	RefreshTokenSecret string
 	AccessTokenTTL     string
 	RefreshTokenTTL    string
+	AssetsDir          string
 }
 
 func Load() Config {
@@ -32,6 +34,7 @@ func Load() Config {
 		RefreshTokenSecret: envOrDefault("REFRESH_TOKEN_SECRET", "dev-refresh-secret"),
 		AccessTokenTTL:     envOrDefault("ACCESS_TOKEN_TTL", defaultAccessTTL),
 		RefreshTokenTTL:    envOrDefault("REFRESH_TOKEN_TTL", defaultRefreshTTL),
+		AssetsDir:          envOrDefault("ASSETS_DIR", defaultAssetsDir),
 	}
 }
 

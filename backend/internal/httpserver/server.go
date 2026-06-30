@@ -28,6 +28,7 @@ func New(cfg config.Config, logger *slog.Logger, db *sql.DB) *http.Server {
 	router.Use(RequestID)
 	router.Use(AccessLog(logger))
 	router.Get("/health", HealthHandler(cfg))
+	serveAssets(router, cfg.AssetsDir)
 	if db != nil {
 		registerAuthRoutes(router, cfg, db, logger)
 	}
@@ -58,7 +59,7 @@ func registerAuthRoutes(router chi.Router, cfg config.Config, db *sql.DB, logger
 	router.With(RateLimit(limit, "refresh")).Post("/auth/refresh", handlers.Refresh)
 	router.With(RequireAuth(tokens)).Post("/auth/logout", handlers.Logout)
 	router.With(RequireAuth(tokens)).Get("/auth/me", handlers.Me)
-	router.With(RequireAuth(tokens), RequireAdmin(service)).Get("/admin/stats", AdminStatsHandler)
+	registerAdminRoutes(router, cfg, tokens, service, db)
 	registerProfileRoutes(router, tokens, db)
 	registerVisualRoutes(router, tokens, db)
 	registerTaskRoutes(router, tokens, db)
