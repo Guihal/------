@@ -99,9 +99,44 @@ paths:
       responses:
         "200": { description: Current user progression., content: { application/json: { schema: { $ref: "#/components/schemas/Progression" } } } }
         "401": { $ref: "#/components/responses/Error" }
-  /inventory: { get: { tags: [inventory], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /inventory/{userInventoryItemId}/equip: { post: { tags: [inventory], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
-  /inventory/{userInventoryItemId}/unequip: { post: { tags: [inventory], responses: { "501": { $ref: "#/components/responses/NotImplemented" } } } }
+  /inventory:
+    get:
+      tags: [inventory]
+      responses:
+        "200": { description: Current user owned items and equipped bindings., content: { application/json: { schema: { $ref: "#/components/schemas/InventoryResponse" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+  /mascot/active:
+    get:
+      tags: [inventory]
+      responses:
+        "200": { description: Active mascot with equippable slots and placement anchors., content: { application/json: { schema: { $ref: "#/components/schemas/ActiveMascot" } } } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+  /inventory/{userInventoryItemId}/equip:
+    post:
+      tags: [inventory]
+      parameters:
+        - name: userInventoryItemId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200": { description: Item equipped into its slot on the active mascot (replaces any prior occupant)., content: { application/json: { schema: { $ref: "#/components/schemas/EquippedItem" } } } }
+        "400": { $ref: "#/components/responses/Error", description: Item slot_key is not a slot on the active mascot. }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error", description: Item not owned by current user (also returned for foreign-owned ids; no cross-user leak). }
+  /inventory/{userInventoryItemId}/unequip:
+    post:
+      tags: [inventory]
+      parameters:
+        - name: userInventoryItemId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204": { description: Item unequipped. }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error", description: Item not currently equipped by current user. }
   /settings:
     get:
       tags: [settings]
@@ -477,3 +512,50 @@ components:
         xp_multiplier: { type: number, format: float, minimum: 1 }
         slot_key: { type: string }
         asset_url: { type: string }
+    OwnedItem:
+      type: object
+      required: [id, inventory_item_id, name, rarity, xp_multiplier, slot_key, asset_url, source, equipped]
+      description: Granted item owned by the user. Catalog active flag is NOT filtered; granted items stay usable after their catalog row is disabled.
+      properties:
+        id: { type: string, format: uuid, description: user_inventory_item id. }
+        inventory_item_id: { type: string, format: uuid, description: Catalog item id. }
+        name: { type: string }
+        rarity: { type: string, enum: [common, rare, epic, legendary] }
+        xp_multiplier: { type: number, format: float, minimum: 1 }
+        slot_key: { type: string }
+        asset_url: { type: string }
+        source: { type: string, enum: [seed, task_drop, level_reward, admin_grant] }
+        equipped: { type: boolean, description: True when this item is in an equipped slot. }
+    EquippedItem:
+      type: object
+      required: [slot_key, user_inventory_item_id]
+      properties:
+        slot_key: { type: string }
+        user_inventory_item_id: { type: string, format: uuid }
+    InventoryResponse:
+      type: object
+      required: [items, equipped]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/OwnedItem" }
+        equipped:
+          type: array
+          items: { $ref: "#/components/schemas/EquippedItem" }
+    MascotSlot:
+      type: object
+      required: [slot_key, title, anchor_json]
+      properties:
+        slot_key: { type: string }
+        title: { type: string }
+        anchor_json: { type: object, description: Placement anchors (x/y/scale) for the frontend. }
+    ActiveMascot:
+      type: object
+      required: [mascot_id, name, asset_url, slots]
+      properties:
+        mascot_id: { type: string, format: uuid }
+        name: { type: string }
+        asset_url: { type: string }
+        slots:
+          type: array
+          items: { $ref: "#/components/schemas/MascotSlot" }

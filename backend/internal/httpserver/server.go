@@ -11,6 +11,8 @@ import (
 	"taskcompanion/backend/internal/auth"
 	"taskcompanion/backend/internal/authrepo"
 	"taskcompanion/backend/internal/config"
+	"taskcompanion/backend/internal/inventory"
+	"taskcompanion/backend/internal/inventoryrepo"
 	"taskcompanion/backend/internal/profile"
 	"taskcompanion/backend/internal/profilerepo"
 	"taskcompanion/backend/internal/reward"
@@ -61,6 +63,17 @@ func registerAuthRoutes(router chi.Router, cfg config.Config, db *sql.DB, logger
 	registerVisualRoutes(router, tokens, db)
 	registerTaskRoutes(router, tokens, db)
 	registerRewardRoutes(router, tokens, db, logger)
+	registerInventoryRoutes(router, tokens, db, logger)
+}
+
+func registerInventoryRoutes(router chi.Router, tokens auth.TokenManager, db *sql.DB, logger *slog.Logger) {
+	service := inventory.NewService(inventoryrepo.New(db), logger)
+	handlers := NewInventoryHandlers(service)
+
+	router.With(RequireAuth(tokens)).Get("/inventory", handlers.List)
+	router.With(RequireAuth(tokens)).Get("/mascot/active", handlers.ActiveMascot)
+	router.With(RequireAuth(tokens)).Post("/inventory/{userInventoryItemId}/equip", handlers.Equip)
+	router.With(RequireAuth(tokens)).Post("/inventory/{userInventoryItemId}/unequip", handlers.Unequip)
 }
 
 func registerRewardRoutes(router chi.Router, tokens auth.TokenManager, db *sql.DB, logger *slog.Logger) {
