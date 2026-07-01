@@ -1,6 +1,19 @@
 {
 	"queue": [
 		{
+			"id": "polish-19",
+			"title": "Split workspace/server/tests/tasks/tasks.test.ts (433 lines >150 cap)",
+			"status": "pending",
+			"priority": 8,
+			"evidence_path": "workspace/server/tests/tasks/tasks.test.ts:433",
+			"code_ref": "workspace/server/tests/tasks/tasks.test.ts",
+			"spec_refs": ["watchdog CHECK 3", "AGENTS.md §9 150 LOC cap"],
+			"allowed_write_paths": ["workspace/server/tests/tasks/tasks.test.ts"],
+			"acceptance_commands": ["wc -l workspace/server/tests/tasks/tasks.test.ts", "bun test workspace/server/tests/tasks/tasks.test.ts", "bunx tsc --noEmit"],
+			"non_goals": ["Do not change test logic or assertions", "Do not modify source code", "Do not refactor unrelated files"],
+			"max_diff_loc": 250
+		},
+		{
 			"id": "polish-15",
 			"title": "Add onUnmounted cleanup for app.vue bootstrap polling loop",
 			"status": "done",
