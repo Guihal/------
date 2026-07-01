@@ -46,6 +46,7 @@ func TestCompleteLevelJumpGrantsMilestone(t *testing.T) {
 	defer db.Close()
 	user := registerUser(t, server, "complete-level@example.test")
 	taskID := createTaskID(t, server, user.AccessToken)
+	seedCatalogItems(t, db)
 	// Level 5 starts at xp_total=4000; seed just below so a medium task (+200) crosses it.
 	if _, err := db.Exec(
 		`UPDATE progressions SET xp_total=3999, level=4 WHERE user_id=$1`, user.User.ID); err != nil {
@@ -53,6 +54,9 @@ func TestCompleteLevelJumpGrantsMilestone(t *testing.T) {
 	}
 
 	resp := doJSON(t, server, http.MethodPost, "/tasks/"+taskID+"/complete", nil, user.AccessToken)
+	if resp.Code != http.StatusOK {
+		t.Fatalf("expected complete 200, got %d: %s", resp.Code, resp.Body.String())
+	}
 	payload := decodeBody[reward.CompletionPayload](t, resp)
 	found5 := false
 	for _, lr := range payload.LevelRewards {

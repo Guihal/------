@@ -30,7 +30,7 @@ async function submit() {
 
 <template>
   <div class="wrap">
-    <p class="brand text-grad" aria-hidden="true">TC</p>
+    <Logo class="brand" :size="72" glow decorative />
     <h1 class="title display">Вход</h1>
     <p v-if="expired" class="banner" role="alert">
       Сессия истекла. Войдите снова.
@@ -66,11 +66,7 @@ async function submit() {
   gap: 1rem;
 }
 .brand {
-  margin: 0 0 0.25rem;
-  font-weight: 800;
-  font-size: 2.5rem;
-  letter-spacing: -0.04em;
-  text-align: center;
+  margin: 0 auto 0.25rem;
 }
 .title {
   margin: 0;

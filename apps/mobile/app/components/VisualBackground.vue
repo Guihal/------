@@ -69,9 +69,13 @@ function styleFor(x: number, y: number, rot: number, scale: number, asset: strin
 .visual-bg {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
-  background: var(--bg);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 22% 18%, color-mix(in srgb, var(--background-orb-1) 24%, transparent), transparent 26rem),
+    radial-gradient(circle at 82% 72%, color-mix(in srgb, var(--background-orb-2) 18%, transparent), transparent 24rem),
+    var(--bg-variant, var(--bg));
 }
 .decor {
   position: absolute;
@@ -82,8 +86,11 @@ function styleFor(x: number, y: number, rot: number, scale: number, asset: strin
   transition: opacity var(--motion-med);
 }
 .decor:nth-child(odd) {
-  background: var(--brand-decoration-muted);
+  background: var(--brand-decoration-secondary);
   opacity: var(--decorative-opacity-medium);
+}
+.decor:nth-child(3n) {
+  background: var(--brand-decoration-muted);
 }
 .decor--muted {
   opacity: calc(var(--decorative-opacity-low) * 0.5);

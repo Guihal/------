@@ -38,9 +38,9 @@ label {
 .input {
   width: 100%;
   padding: 0.75rem 0.85rem;
-  border-radius: 10px;
-  border: 1.5px solid #2f3441;
-  background: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--stroke);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
   color: var(--text);
   font-size: 1rem;
 }

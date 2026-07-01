@@ -28,21 +28,21 @@ defineProps<{
   width: 100%;
   padding: 0.85rem 1rem;
   border: none;
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   background: var(--accent-grad);
-  color: #fff;
+  color: var(--bg);
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 8px 20px -8px rgba(124, 92, 255, 0.6);
-  transition: transform 0.06s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--accent) 70%, transparent);
+  transition: transform var(--motion-fast), box-shadow var(--motion-med);
 }
 .btn:active {
   transform: translateY(1px);
 }
 .btn:focus-visible {
-  box-shadow: var(--ring), 0 8px 20px -8px rgba(124, 92, 255, 0.6);
+  box-shadow: var(--ring), 0 10px 24px -12px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 .btn:disabled {
   opacity: 0.55;
@@ -52,8 +52,8 @@ defineProps<{
 .spinner {
   width: 1rem;
   height: 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff;
+  border: 2px solid color-mix(in srgb, var(--bg) 35%, transparent);
+  border-top-color: var(--bg);
   border-radius: 999px;
   animation: spin 0.7s linear infinite;
 }

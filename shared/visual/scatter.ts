@@ -12,7 +12,7 @@ export type ScatterItem = {
 };
 
 // Invariant deterministic layout table keyed by backend decorative_detail.
-// NO Math.random, NO per-launch drift. Positions spread evenly across the
+// No client random, no per-launch drift. Positions spread evenly across the
 // viewport so decor never piles up (docs/visual-foundation.md §6).
 // ponytail: fixed table; swap for backend scatter seed once OD2 is decided.
 const LAYOUT_TABLE: Record<DecorativeDetail, ScatterItem[]> = {

@@ -29,7 +29,7 @@ function isCatalogAccent(v: string): boolean {
 }
 
 // Maps backend VisualState (+ settings) to CSS variables consumed by the UI.
-// null OR disable_visual_randomness → stable fallback. NO Math.random.
+// null OR disable_visual_randomness → stable fallback. No client random.
 // ponytail: returns plain Record; caller applies to :style on .app-shell.
 export function visualStateToCssVars(
   state: VisualState | null,

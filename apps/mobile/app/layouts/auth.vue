@@ -19,9 +19,10 @@
   width: 100%;
   max-width: 24rem;
   padding: 1.75rem 1.25rem;
-  background: var(--surface);
-  border: 1px solid var(--surface-2);
-  border-radius: 20px;
-  box-shadow: var(--shadow-card);
+  background: color-mix(in srgb, var(--card-variant, var(--surface)) 86%, transparent);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(14px);
 }
 </style>
