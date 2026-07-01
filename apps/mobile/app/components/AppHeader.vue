@@ -1,14 +1,26 @@
 <script setup lang="ts">
 import { User } from "lucide-vue-next";
 
-// Compact header: greeting + level/XP PLACEHOLDER (read-only display only;
-// progression data wiring is a later packet). Profile action is decorative.
 const auth = useAuthStore();
+const profile = useProfileStore();
 const greeting = computed(
-  () => `Привет, ${auth.user?.display_name ?? "гость"}`,
+  () => `Привет, ${profile.profile?.display_name ?? auth.user?.display_name ?? "гость"}`,
 );
-// ponytail: placeholder numbers — real progression arrives via /profile in P11.
-const levelLine = "Ур. 1 · 0/1000 XP";
+const progression = computed(() => profile.profile?.progression);
+const levelLine = computed(() => {
+  const p = progression.value;
+  if (!p) return "Прогресс загружается";
+  return `Ур. ${p.level} · ${p.xp_in_current_level}/${p.xp_per_level} XP`;
+});
+const barWidth = computed(() => {
+  const p = progression.value;
+  if (!p) return "0%";
+  return `${Math.round((p.xp_in_current_level / p.xp_per_level) * 100)}%`;
+});
+
+onMounted(() => {
+  if (!profile.profile) void profile.load().catch(() => {});
+});
 </script>
 
 <template>
@@ -17,7 +29,7 @@ const levelLine = "Ур. 1 · 0/1000 XP";
       <p class="greeting display">{{ greeting }}</p>
       <p class="xp">{{ levelLine }}</p>
       <div class="bar" role="img" aria-label="Прогресс XP">
-        <span class="bar-fill"></span>
+        <span class="bar-fill" :style="{ width: barWidth }"></span>
       </div>
     </div>
     <button
@@ -69,7 +81,7 @@ const levelLine = "Ур. 1 · 0/1000 XP";
   width: 8%; // ponytail: placeholder — real % from /profile in P11.
   border-radius: 999px;
   background: var(--accent-grad);
-  box-shadow: 0 0 8px rgba(124, 92, 255, 0.7);
+  box-shadow: var(--glow-accent);
 }
 .profile-btn {
   display: inline-flex;

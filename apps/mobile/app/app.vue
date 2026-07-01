@@ -2,8 +2,20 @@
 import { visualStateToCssVars } from "~~/api";
 
 const visual = useVisualStore();
-const rootVars = computed(() => visualStateToCssVars(visual.current));
+const settings = useSettingsStore();
+const auth = useAuthStore();
+const rootVars = computed(() =>
+  visualStateToCssVars(visual.current, settings.settings),
+);
 const decor = computed(() => visual.current.decorative_detail);
+
+watch(
+  () => auth.isAuthenticated,
+  (ok) => {
+    if (ok && !settings.settings) void settings.load();
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
