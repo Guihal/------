@@ -18,7 +18,7 @@ export const useInventoryStore = defineStore("inventory", () => {
     try {
       const [inventory, activeMascot] = await Promise.all([
         api.inventory.list(),
-        api.inventory.mascot(),
+        loadMascot(),
       ]);
       applyInventory(inventory);
       mascot.value = activeMascot;
@@ -27,6 +27,15 @@ export const useInventoryStore = defineStore("inventory", () => {
       throw e;
     } finally {
       loading.value = false;
+    }
+  }
+
+  async function loadMascot() {
+    try {
+      return await api.inventory.mascot();
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) return null;
+      throw e;
     }
   }
 

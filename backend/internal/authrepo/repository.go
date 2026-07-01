@@ -83,6 +83,8 @@ func insertBaselines(ctx context.Context, tx *sql.Tx, userID string, name string
 		{`INSERT INTO settings (user_id, key, value) VALUES ($1, 'disable_visual_randomness', '{"enabled":false}'::jsonb)`, []any{userID}},
 		{`INSERT INTO settings (user_id, key, value) VALUES ($1, 'notifications_enabled', '{"enabled":true}'::jsonb)`, []any{userID}},
 		{`INSERT INTO settings (user_id, key, value) VALUES ($1, 'default_reminder_minutes_before_deadline', '{"minutes":60}'::jsonb)`, []any{userID}},
+		{`INSERT INTO user_mascots (user_id, mascot_id, is_active)
+			SELECT $1, id, true FROM mascots WHERE is_default LIMIT 1`, []any{userID}},
 	}
 	for _, statement := range statements {
 		if _, err := tx.ExecContext(ctx, statement.query, statement.args...); err != nil {

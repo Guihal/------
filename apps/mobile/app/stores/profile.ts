@@ -14,7 +14,7 @@ export const useProfileStore = defineStore("profile", () => {
     loading.value = true;
     error.value = null;
     try {
-      const [p, m] = await Promise.all([api.profile.get(), api.inventory.mascot()]);
+      const [p, m] = await Promise.all([api.profile.get(), loadMascot()]);
       profile.value = p;
       mascot.value = m;
     } catch (e) {
@@ -22,6 +22,15 @@ export const useProfileStore = defineStore("profile", () => {
       throw e;
     } finally {
       loading.value = false;
+    }
+  }
+
+  async function loadMascot() {
+    try {
+      return await api.inventory.mascot();
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) return null;
+      throw e;
     }
   }
 
