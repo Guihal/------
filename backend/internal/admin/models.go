@@ -58,7 +58,10 @@ type Item struct {
 type UserSummary struct {
 	ID        string    `json:"id"`
 	Email     string    `json:"email"`
+	Name      string    `json:"name"`
 	Role      string    `json:"role"`
+	Level     int       `json:"level"`
+	XP        int       `json:"xp"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
@@ -107,6 +110,11 @@ type ItemsPage struct {
 	Total int    `json:"total"`
 }
 
+type AuditLogsPage struct {
+	Items []AuditLogEntry `json:"items"`
+	Total int             `json:"total"`
+}
+
 type ListAuditLogsFilter struct {
 	Limit, Offset  int
 	UserID, Action string
@@ -116,7 +124,8 @@ type ListAuditLogsFilter struct {
 // ReadRepository covers read-only admin lists (handler→repo, no business logic).
 type ReadRepository interface {
 	ListItems(ctx context.Context, f ListItemsFilter) (ItemsPage, error)
+	GetItem(ctx context.Context, id string) (Item, error)
 	ListUsers(ctx context.Context, f ListUsersFilter) (UsersPage, error)
 	Stats(ctx context.Context) (StatsSummary, error)
-	ListAuditLogs(ctx context.Context, f ListAuditLogsFilter) ([]AuditLogEntry, error)
+	ListAuditLogs(ctx context.Context, f ListAuditLogsFilter) (AuditLogsPage, error)
 }

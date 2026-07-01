@@ -15,7 +15,10 @@ export type AdminUsersQuery = AdminListQuery & {
 export type AdminUserSummary = {
   id: UUID;
   email: string;
+  name: string;
   role: Role;
+  level: number;
+  xp: number;
   created_at: ISODateTime;
 };
 
@@ -91,4 +94,5 @@ export type AdminAuditLogEntry = {
 
 export type AdminAuditLogsResponse = {
   items: AdminAuditLogEntry[];
+  total: number;
 };

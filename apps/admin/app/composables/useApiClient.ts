@@ -24,15 +24,7 @@ export function createAppApiClient(baseUrl: string): AppApiClient {
   const { getRefreshToken, setRefreshToken } = useMemoryRefreshToken();
   let onUnauthorized: (() => void) | undefined;
 
-  const client = createApiClient({
-    baseUrl,
-    tokenStore,
-    refreshAccessToken: async () => refreshAccessToken(),
-    onUnauthorized: () => onUnauthorized?.(),
-  });
-  const api = createEndpointClient(client);
-
-  const refreshAccessToken = async (): Promise<string | null> => {
+  async function refreshAccessToken(): Promise<string | null> {
     const refreshToken = await getRefreshToken();
     if (!refreshToken) return null;
 
@@ -44,7 +36,15 @@ export function createAppApiClient(baseUrl: string): AppApiClient {
     await setRefreshToken(res.refresh_token);
     tokenStore.set(res.access_token);
     return res.access_token;
-  };
+  }
+
+  const client = createApiClient({
+    baseUrl,
+    tokenStore,
+    refreshAccessToken: async () => refreshAccessToken(),
+    onUnauthorized: () => onUnauthorized?.(),
+  });
+  const api = createEndpointClient(client);
 
   return {
     api,

@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ApiError } from "~~/api";
 import type { AdminUserSummary } from "~~/api";
 
 const PAGE_SIZE = 20;
@@ -26,7 +25,7 @@ export const useUsersStore = defineStore("users", () => {
       items.value = res.items;
       total.value = res.total;
     } catch (e) {
-      error.value = mapError(e, "Не удалось загрузить пользователей.");
+      error.value = mapStoreError(e, "Не удалось загрузить пользователей.");
       throw e;
     } finally {
       loading.value = false;
@@ -46,8 +45,3 @@ export const useUsersStore = defineStore("users", () => {
 
   return { items, total, loading, error, q, offset, limit, load, search, setOffset };
 });
-
-function mapError(e: unknown, fallback: string): string {
-  if (e instanceof ApiError) return e.body?.message || fallback;
-  return fallback;
-}

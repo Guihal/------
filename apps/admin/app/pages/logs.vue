@@ -37,14 +37,12 @@ onMounted(() => {
         <LogRow v-for="entry in store.items" :key="entry.id" :entry="entry" />
       </template>
     </AdminTable>
-    <nav class="pagination" aria-label="Постраничная навигация">
-      <button type="button" class="tap" :disabled="store.offset <= 0" @click="store.prev">
-        Назад
-      </button>
-      <button type="button" class="tap" :disabled="!store.hasMore" @click="store.next">
-        Вперед
-      </button>
-    </nav>
+    <PaginationControls
+      :limit="store.limit"
+      :offset="store.offset"
+      :total="store.total"
+      @update:offset="store.setOffset"
+    />
   </section>
 </template>
 
@@ -56,21 +54,5 @@ onMounted(() => {
 h1 {
   margin: 0;
   font-size: 1.5rem;
-}
-.pagination {
-  display: flex;
-  gap: 0.75rem;
-}
-button {
-  padding: 0.5rem 0.9rem;
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  color: var(--text);
-  cursor: pointer;
-}
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 </style>

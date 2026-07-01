@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ApiError } from "~~/api";
 import type { AdminStats } from "~~/api";
 
 export const useDashboardStore = defineStore("dashboard", () => {
@@ -14,7 +13,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
     try {
       stats.value = await api.admin.stats();
     } catch (e) {
-      error.value = mapError(e, "Не удалось загрузить статистику.");
+      error.value = mapStoreError(e, "Не удалось загрузить статистику.");
       throw e;
     } finally {
       loading.value = false;
@@ -23,8 +22,3 @@ export const useDashboardStore = defineStore("dashboard", () => {
 
   return { stats, loading, error, load };
 });
-
-function mapError(e: unknown, fallback: string): string {
-  if (e instanceof ApiError) return e.body?.message || fallback;
-  return fallback;
-}

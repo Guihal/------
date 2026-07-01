@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import type { AuthUser, LoginRequest } from "~~/api";
-import { ApiError } from "~~/api";
 
 export type AuthStatus = "idle" | "bootstrapping" | "ready";
 
@@ -72,7 +71,7 @@ export const useAuthStore = defineStore("auth", () => {
       setSession(res.access_token, res.user);
     } catch (e) {
       if (!error.value) {
-        error.value = mapError(e, "Не удалось войти. Проверьте email и пароль.");
+        error.value = mapStoreError(e, "Не удалось войти. Проверьте email и пароль.");
       }
       throw e;
     }
@@ -116,12 +115,3 @@ export const useAuthStore = defineStore("auth", () => {
     handleUnauthorized,
   };
 });
-
-function mapError(e: unknown, fallback: string): string {
-  if (e instanceof ApiError) {
-    const fe = e.body?.field_errors;
-    if (fe && Object.keys(fe).length) return Object.values(fe).join(" ");
-    return e.body?.message || fallback;
-  }
-  return fallback;
-}

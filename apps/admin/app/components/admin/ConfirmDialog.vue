@@ -8,28 +8,74 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ (e: "confirm"): void; (e: "cancel"): void }>();
 
-function onKeydown(e: KeyboardEvent) {
-  if (e.key === "Escape") emit("cancel");
+const dialogEl = ref<HTMLElement | null>(null);
+const cancelBtn = ref<{ $el: HTMLElement } | null>(null);
+let lastFocused: HTMLElement | null = null;
+
+function focusableEls(): HTMLElement[] {
+  if (!dialogEl.value) return [];
+  return Array.from(
+    dialogEl.value.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    ),
+  );
 }
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === "Escape") {
+    emit("cancel");
+    return;
+  }
+  if (e.key !== "Tab") return;
+  const els = focusableEls();
+  if (!els.length) return;
+  const first = els[0]!;
+  const last = els[els.length - 1]!;
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+}
+
+watch(
+  () => props.open,
+  async (isOpen) => {
+    if (isOpen) {
+      lastFocused = document.activeElement as HTMLElement | null;
+      await nextTick();
+      const cancelEl = cancelBtn.value?.$el as HTMLElement | undefined;
+      (cancelEl ?? focusableEls()[0])?.focus();
+      document.addEventListener("keydown", onKeydown, true);
+    } else {
+      document.removeEventListener("keydown", onKeydown, true);
+      lastFocused?.focus();
+      lastFocused = null;
+    }
+  },
+);
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", onKeydown, true);
+});
 </script>
 
 <template>
-  <div
-    v-if="props.open"
-    class="backdrop"
-    role="presentation"
-    @keydown="onKeydown"
-  >
+  <div v-if="props.open" class="backdrop" role="presentation">
     <div
+      ref="dialogEl"
       class="dialog"
       role="alertdialog"
       aria-modal="true"
       :aria-label="title"
+      tabindex="-1"
     >
       <h2>{{ title }}</h2>
       <p>{{ message }}</p>
       <div class="actions">
-        <AppButton variant="ghost" @click="emit('cancel')">
+        <AppButton ref="cancelBtn" variant="ghost" @click="emit('cancel')">
           {{ cancelLabel ?? "Отмена" }}
         </AppButton>
         <AppButton variant="danger" @click="emit('confirm')">

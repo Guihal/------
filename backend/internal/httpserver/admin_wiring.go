@@ -23,6 +23,7 @@ func registerAdminRoutes(router chi.Router, cfg config.Config, tokens auth.Token
 
 	router.With(RequireAuth(tokens), RequireAdmin(authSvc)).Get("/admin/users", handlers.ListUsers)
 	router.With(RequireAuth(tokens), RequireAdmin(authSvc)).Get("/admin/items", handlers.ListItems)
+	router.With(RequireAuth(tokens), RequireAdmin(authSvc)).Get("/admin/items/{id}", handlers.GetItem)
 	router.With(RequireAuth(tokens), RequireAdmin(authSvc), RateLimit(adminLimit, "admin-item-create")).Post("/admin/items", handlers.CreateItem)
 	router.With(RequireAuth(tokens), RequireAdmin(authSvc), RateLimit(adminLimit, "admin-item-update")).Patch("/admin/items/{id}", handlers.UpdateItem)
 	router.With(RequireAuth(tokens), RequireAdmin(authSvc), RateLimit(adminLimit, "admin-item-disable")).Post("/admin/items/{id}/disable", handlers.DisableItem)

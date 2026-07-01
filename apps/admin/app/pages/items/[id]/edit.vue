@@ -65,7 +65,12 @@ async function onUpload(file: File) {
 }
 
 async function onDisable() {
-  await store.disable(id).catch(() => {});
+  formError.value = null;
+  try {
+    await store.disable(id);
+  } catch {
+    formError.value = store.error ?? "Не удалось отключить предмет.";
+  }
 }
 </script>
 

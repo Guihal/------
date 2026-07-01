@@ -9,7 +9,7 @@ import (
 	"taskcompanion/backend/internal/admin"
 )
 
-func (r *Repository) ListAuditLogs(ctx context.Context, f admin.ListAuditLogsFilter) ([]admin.AuditLogEntry, error) {
+func (r *Repository) ListAuditLogs(ctx context.Context, f admin.ListAuditLogsFilter) (admin.AuditLogsPage, error) {
 	var where []string
 	var args []any
 	if strings.TrimSpace(f.UserID) != "" {
@@ -41,7 +41,16 @@ func (r *Repository) ListAuditLogs(ctx context.Context, f admin.ListAuditLogsFil
 	q := fmt.Sprintf(`SELECT id, COALESCE(user_id::text,''), action, details_json, created_at
 		FROM audit_logs %s ORDER BY created_at DESC LIMIT $%d OFFSET $%d`,
 		clause, len(args)-1, len(args))
-	return r.scanAuditLogs(ctx, q, args...)
+	items, err := r.scanAuditLogs(ctx, q, args...)
+	if err != nil {
+		return admin.AuditLogsPage{}, err
+	}
+	var total int
+	countErr := r.db.QueryRowContext(ctx, `SELECT count(*) FROM audit_logs `+clause, args[:len(args)-2]...).Scan(&total)
+	if countErr != nil {
+		return admin.AuditLogsPage{}, countErr
+	}
+	return admin.AuditLogsPage{Items: items, Total: total}, nil
 }
 
 func (r *Repository) scanAuditLogs(ctx context.Context, query string, args ...any) ([]admin.AuditLogEntry, error) {

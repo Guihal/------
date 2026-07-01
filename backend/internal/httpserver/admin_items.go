@@ -32,6 +32,23 @@ func (h *AdminHandlers) CreateItem(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, item)
 }
 
+func (h *AdminHandlers) GetItem(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if !requireUUIDParam(w, r, id) {
+		return
+	}
+	item, err := h.reads.GetItem(r.Context(), id)
+	if errors.Is(err, admin.ErrNotFound) {
+		writeError(w, r, http.StatusNotFound, "not_found", "item not found")
+		return
+	}
+	if err != nil {
+		writeError(w, r, http.StatusInternalServerError, "internal", "item read failed")
+		return
+	}
+	writeJSON(w, http.StatusOK, item)
+}
+
 func (h *AdminHandlers) UpdateItem(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if !requireUUIDParam(w, r, id) {

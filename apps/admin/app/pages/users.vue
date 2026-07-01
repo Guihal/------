@@ -20,7 +20,7 @@ onMounted(() => {
       <SearchInput
         id="user-search"
         v-model="qDraft"
-        label="Поиск по email"
+        label="Поиск по email или имени"
         placeholder="user@example.com"
       />
       <AppButton type="submit">Искать</AppButton>
@@ -35,14 +35,20 @@ onMounted(() => {
       <template #head>
         <tr>
           <th scope="col">Email</th>
+          <th scope="col">Имя</th>
           <th scope="col">Роль</th>
+          <th scope="col">Уровень</th>
+          <th scope="col">XP</th>
           <th scope="col">Дата регистрации</th>
         </tr>
       </template>
       <template #body>
         <tr v-for="u in store.items" :key="u.id">
           <td>{{ u.email }}</td>
+          <td>{{ u.name || "—" }}</td>
           <td>{{ u.role === "admin" ? "администратор" : "пользователь" }}</td>
+          <td>{{ u.level }}</td>
+          <td>{{ u.xp }}</td>
           <td>{{ new Date(u.created_at).toLocaleString("ru-RU") }}</td>
         </tr>
       </template>

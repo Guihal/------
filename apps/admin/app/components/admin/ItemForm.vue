@@ -43,8 +43,15 @@ function pickFile() {
     <FormField id="item-name" v-model="name" label="Название" :error="fieldErrors.name" />
     <div class="field">
       <label for="item-desc">Описание</label>
-      <textarea id="item-desc" v-model="description" rows="3" class="textarea" />
-      <FieldError :message="fieldErrors.description" />
+      <textarea
+        id="item-desc"
+        v-model="description"
+        rows="3"
+        class="textarea"
+        :aria-invalid="fieldErrors.description ? 'true' : undefined"
+        :aria-describedby="fieldErrors.description ? 'item-desc-err' : undefined"
+      />
+      <FieldError id="item-desc-err" :message="fieldErrors.description" />
     </div>
     <label class="field">
       Редкость
@@ -56,7 +63,12 @@ function pickFile() {
 
     <div v-if="mode === 'edit' && initial" class="asset">
       <p class="asset-label">Изображение</p>
-      <img v-if="initial.asset_url" :src="initial.asset_url" alt="" class="preview" />
+      <img
+        v-if="initial.asset_url"
+        :src="initial.asset_url"
+        :alt="`Изображение предмета: ${initial.name}`"
+        class="preview"
+      />
       <input ref="fileInput" type="file" accept="image/*" class="tap" @change="pickFile" />
       <p v-if="uploading" role="status">Загрузка файла…</p>
       <FieldError :message="fieldErrors.asset" />

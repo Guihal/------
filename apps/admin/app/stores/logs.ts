@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ApiError } from "~~/api";
 import type { AdminAuditLogEntry } from "~~/api";
 
 const PAGE_SIZE = 20;
@@ -7,6 +6,7 @@ const PAGE_SIZE = 20;
 export const useLogsStore = defineStore("logs", () => {
   const { api } = useAppClient();
   const items = ref<AdminAuditLogEntry[]>([]);
+  const total = ref(0);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
@@ -16,8 +16,6 @@ export const useLogsStore = defineStore("logs", () => {
   const to = ref("");
   const offset = ref(0);
   const limit = ref(PAGE_SIZE);
-
-  const hasMore = computed(() => items.value.length === limit.value);
 
   async function load() {
     loading.value = true;
@@ -32,8 +30,9 @@ export const useLogsStore = defineStore("logs", () => {
         offset: offset.value,
       });
       items.value = res.items;
+      total.value = res.total;
     } catch (e) {
-      error.value = mapError(e, "Не удалось загрузить журнал.");
+      error.value = mapStoreError(e, "Не удалось загрузить журнал.");
       throw e;
     } finally {
       loading.value = false;
@@ -45,20 +44,14 @@ export const useLogsStore = defineStore("logs", () => {
     void load().catch(() => {});
   }
 
-  function prev() {
-    if (offset.value <= 0) return;
-    offset.value = Math.max(0, offset.value - limit.value);
-    void load().catch(() => {});
-  }
-
-  function next() {
-    if (!hasMore.value) return;
-    offset.value += limit.value;
+  function setOffset(next: number) {
+    offset.value = next;
     void load().catch(() => {});
   }
 
   return {
     items,
+    total,
     loading,
     error,
     userId,
@@ -67,15 +60,8 @@ export const useLogsStore = defineStore("logs", () => {
     to,
     offset,
     limit,
-    hasMore,
     load,
     applyFilters,
-    prev,
-    next,
+    setOffset,
   };
 });
-
-function mapError(e: unknown, fallback: string): string {
-  if (e instanceof ApiError) return e.body?.message || fallback;
-  return fallback;
-}

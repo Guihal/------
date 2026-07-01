@@ -38,7 +38,7 @@ export const useItemsStore = defineStore("items", () => {
       items.value = res.items;
       total.value = res.total;
     } catch (e) {
-      error.value = mapError(e, "Не удалось загрузить предметы.");
+      error.value = mapStoreError(e, "Не удалось загрузить предметы.");
       throw e;
     } finally {
       loading.value = false;
@@ -73,9 +73,15 @@ export const useItemsStore = defineStore("items", () => {
   }
 
   async function disable(id: string): Promise<AdminItem> {
-    const item = await api.admin.disableItem(id);
-    items.value = items.value.map((i) => (i.id === id ? item : i));
-    return item;
+    error.value = null;
+    try {
+      const item = await api.admin.disableItem(id);
+      items.value = items.value.map((i) => (i.id === id ? item : i));
+      return item;
+    } catch (e) {
+      error.value = mapStoreError(e, "Не удалось отключить предмет.");
+      throw e;
+    }
   }
 
   async function uploadAsset(id: string, file: File): Promise<string> {
@@ -86,10 +92,20 @@ export const useItemsStore = defineStore("items", () => {
     return res.asset_url;
   }
 
+  // Deep-link lookup by id: fetches directly since the target item may sit
+  // outside the currently loaded (filtered) page.
   async function ensureLoaded(id: string): Promise<AdminItem | undefined> {
-    if (find(id)) return find(id);
-    await load();
-    return find(id);
+    const cached = find(id);
+    if (cached) return cached;
+
+    try {
+      const found = await api.admin.getItem(id);
+      items.value = [found, ...items.value.filter((i) => i.id !== id)];
+      return found;
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 404) return undefined;
+      throw e;
+    }
   }
 
   return {
@@ -114,8 +130,3 @@ export const useItemsStore = defineStore("items", () => {
     ensureLoaded,
   };
 });
-
-function mapError(e: unknown, fallback: string): string {
-  if (e instanceof ApiError) return e.body?.message || fallback;
-  return fallback;
-}

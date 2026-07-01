@@ -28,11 +28,11 @@ func (r *Repository) ListUsers(ctx context.Context, f admin.ListUsersFilter) (ad
 	var args []any
 	if f.Role == "user" || f.Role == "admin" {
 		args = append(args, f.Role)
-		where = append(where, fmt.Sprintf("role = $%d", len(args)))
+		where = append(where, fmt.Sprintf("u.role = $%d", len(args)))
 	}
 	if strings.TrimSpace(f.Q) != "" {
 		args = append(args, "%"+strings.ToLower(f.Q)+"%")
-		where = append(where, fmt.Sprintf("email_normalized LIKE $%d", len(args)))
+		where = append(where, fmt.Sprintf("(u.email_normalized LIKE $%d OR lower(p.display_name) LIKE $%d)", len(args), len(args)))
 	}
 	clause := ""
 	if len(where) > 0 {
@@ -51,9 +51,14 @@ func (r *Repository) ListUsers(ctx context.Context, f admin.ListUsersFilter) (ad
 	if offset < 0 {
 		offset = 0
 	}
+	from := `FROM users u
+		LEFT JOIN profiles p ON p.user_id = u.id
+		LEFT JOIN progressions pr ON pr.user_id = u.id`
 	args = append(args, limit, offset)
-	q := fmt.Sprintf(`SELECT id, email, role, created_at FROM users %s ORDER BY %s %s LIMIT $%d OFFSET $%d`,
-		clause, col, dir, len(args)-1, len(args))
+	q := fmt.Sprintf(`SELECT u.id, u.email, COALESCE(p.display_name, ''), u.role,
+			COALESCE(pr.level, 1), COALESCE(pr.xp_total, 0), u.created_at
+		%s %s ORDER BY u.%s %s LIMIT $%d OFFSET $%d`,
+		from, clause, col, dir, len(args)-1, len(args))
 	rows, err := r.db.QueryContext(ctx, q, args...)
 	if err != nil {
 		return admin.UsersPage{}, err
@@ -62,7 +67,7 @@ func (r *Repository) ListUsers(ctx context.Context, f admin.ListUsersFilter) (ad
 	items := []admin.UserSummary{}
 	for rows.Next() {
 		var u admin.UserSummary
-		if err := rows.Scan(&u.ID, &u.Email, &u.Role, &u.CreatedAt); err != nil {
+		if err := rows.Scan(&u.ID, &u.Email, &u.Name, &u.Role, &u.Level, &u.XP, &u.CreatedAt); err != nil {
 			return admin.UsersPage{}, err
 		}
 		items = append(items, u)
@@ -71,7 +76,7 @@ func (r *Repository) ListUsers(ctx context.Context, f admin.ListUsersFilter) (ad
 		return admin.UsersPage{}, err
 	}
 	var total int
-	countErr := r.db.QueryRowContext(ctx, `SELECT count(*) FROM users `+clause, args[:len(args)-2]...).Scan(&total)
+	countErr := r.db.QueryRowContext(ctx, `SELECT count(*) `+from+` `+clause, args[:len(args)-2]...).Scan(&total)
 	if countErr != nil {
 		return admin.UsersPage{}, countErr
 	}

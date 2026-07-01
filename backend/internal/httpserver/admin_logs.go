@@ -20,7 +20,7 @@ func (h *AdminHandlers) ListLogs(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	entries, err := h.reads.ListAuditLogs(r.Context(), admin.ListAuditLogsFilter{
+	page, err := h.reads.ListAuditLogs(r.Context(), admin.ListAuditLogsFilter{
 		Limit:  atoi(q.Get("limit"), 50),
 		Offset: atoi(q.Get("offset"), 0),
 		UserID: q.Get("user_id"),
@@ -32,5 +32,5 @@ func (h *AdminHandlers) ListLogs(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusInternalServerError, "internal", "logs read failed")
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"items": entries})
+	writeJSON(w, http.StatusOK, page)
 }

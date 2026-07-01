@@ -75,6 +75,7 @@ export function createEndpointClient(api: ApiClient) {
     admin: {
       users: (query?: AdminUsersQuery) => api.request<AdminUsersResponse>("/admin/users", { query }),
       items: (query?: AdminItemsQuery) => api.request<AdminItemsResponse>("/admin/items", { query }),
+      getItem: (id: string) => api.request<AdminItem>(`/admin/items/${id}`),
       createItem: (body: AdminItemCreateRequest) => api.request<AdminItem>("/admin/items", { method: "POST", body }),
       patchItem: (id: string, body: AdminItemPatchRequest) => api.request<AdminItem>(`/admin/items/${id}`, { method: "PATCH", body }),
       disableItem: (id: string) => api.request<AdminItem>(`/admin/items/${id}/disable`, { method: "POST" }),
