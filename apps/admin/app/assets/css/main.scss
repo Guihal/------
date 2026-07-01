@@ -1,0 +1,51 @@
+@use "./tokens.scss";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#__nuxt {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.4;
+  // No horizontal scroll at 320px.
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+// Visible keyboard focus for a11y. box-shadow ring because Tailwind
+// preflight resets outline-style to none.
+:focus-visible {
+  box-shadow: var(--ring);
+  outline: none;
+}
+
+.display {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+// Minimum 44x44 tap target helper.
+.tap {
+  min-height: 44px;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
