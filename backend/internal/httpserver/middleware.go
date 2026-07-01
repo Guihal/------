@@ -47,3 +47,26 @@ func AccessLog(logger *slog.Logger) func(http.Handler) http.Handler {
 		})
 	}
 }
+
+func DevCORS(next http.Handler) http.Handler {
+	allowed := map[string]bool{
+		"http://127.0.0.1:3000": true,
+		"http://127.0.0.1:3001": true,
+		"http://localhost:3000": true,
+		"http://localhost:3001": true,
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		origin := r.Header.Get("Origin")
+		if allowed[origin] {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Vary", "Origin")
+			w.Header().Set("Access-Control-Allow-Headers", "authorization, content-type, x-request-id")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+		}
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}

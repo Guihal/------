@@ -89,9 +89,11 @@ items_seed AS (
   RETURNING id, name, rarity, base_xp_multiplier
 ),
 seed_item AS (
-  SELECT id, name, rarity, base_xp_multiplier FROM items_seed WHERE name = 'Starter Cap'
+  SELECT id, name, rarity, base_xp_multiplier FROM items_seed
+  WHERE name IN ('Starter Cap', 'Momentum Hoodie')
   UNION
-  SELECT id, name, rarity, base_xp_multiplier FROM inventory_items WHERE name = 'Starter Cap'
+  SELECT id, name, rarity, base_xp_multiplier FROM inventory_items
+  WHERE name IN ('Starter Cap', 'Momentum Hoodie')
 ),
 user_items_seed AS (
   INSERT INTO user_inventory_items (user_id, inventory_item_id, rarity, source, xp_multiplier)

@@ -2,25 +2,25 @@
 import { computed, onMounted, ref } from "vue";
 import type { VisualState } from "~~/api";
 import { scatterLayout } from "~~/api";
-import sparkUrl from "~/assets/brand/magic-spark.svg";
-import tinySparkUrl from "~/assets/brand/tiny-spark.svg";
-import curlUrl from "~/assets/brand/magic-curl.svg";
-import wispUrl from "~/assets/brand/magic-wisp.svg";
-import orbitUrl from "~/assets/brand/magic-orbit.svg";
-import threadUrl from "~/assets/brand/magic-thread.svg";
+import sparkSvg from "~/assets/brand/magic-spark.svg?raw";
+import tinySparkSvg from "~/assets/brand/tiny-spark.svg?raw";
+import curlSvg from "~/assets/brand/magic-curl.svg?raw";
+import wispSvg from "~/assets/brand/magic-wisp.svg?raw";
+import orbitSvg from "~/assets/brand/magic-orbit.svg?raw";
+import threadSvg from "~/assets/brand/magic-thread.svg?raw";
 
 const props = withDefaults(
   defineProps<{ decorativeDetail?: VisualState["decorative_detail"] }>(),
   { decorativeDetail: "soft-sparks" },
 );
 
-const ASSET_URLS: Record<string, string> = {
-  "magic-spark": sparkUrl,
-  "tiny-spark": tinySparkUrl,
-  "magic-curl": curlUrl,
-  "magic-wisp": wispUrl,
-  "magic-orbit": orbitUrl,
-  "magic-thread": threadUrl,
+const SVG_MARKUP: Record<string, string> = {
+  "magic-spark": sparkSvg,
+  "tiny-spark": tinySparkSvg,
+  "magic-curl": curlSvg,
+  "magic-wisp": wispSvg,
+  "magic-orbit": orbitSvg,
+  "magic-thread": threadSvg,
 };
 
 const items = computed(() => scatterLayout(props.decorativeDetail));
@@ -38,18 +38,26 @@ onMounted(() => {
 });
 
 function styleFor(x: number, y: number, rot: number, scale: number, asset: string) {
-  const url = ASSET_URLS[asset];
   return {
     left: `${x}%`,
     top: `${y}%`,
     transform: `translate(-50%, -50%) rotate(${rot}deg) scale(${scale})`,
-    WebkitMaskImage: `url(${url})`,
-    maskImage: `url(${url})`,
-    WebkitMaskRepeat: "no-repeat",
-    maskRepeat: "no-repeat",
-    WebkitMaskSize: "contain",
-    maskSize: "contain",
+    color: colorFor(asset),
   } as Record<string, string>;
+}
+
+function svgFor(asset: string): string {
+  return SVG_MARKUP[asset] ?? sparkSvg;
+}
+
+function colorFor(asset: string): string {
+  if (asset === "magic-orbit" || asset === "magic-thread") {
+    return "var(--brand-decoration-secondary)";
+  }
+  if (asset === "tiny-spark" || asset === "magic-spark") {
+    return "var(--brand-decoration-primary)";
+  }
+  return "var(--brand-decoration-muted)";
 }
 </script>
 
@@ -61,6 +69,7 @@ function styleFor(x: number, y: number, rot: number, scale: number, asset: strin
       class="decor"
       :class="{ 'decor--muted': reduced }"
       :style="styleFor(it.x, it.y, it.rotation, it.scale, it.asset)"
+      v-html="svgFor(it.asset)"
     />
   </div>
 </template>
@@ -79,18 +88,18 @@ function styleFor(x: number, y: number, rot: number, scale: number, asset: strin
 }
 .decor {
   position: absolute;
-  width: 64px;
-  height: 64px;
-  background: var(--brand-decoration-primary);
+  width: 88px;
+  height: 88px;
   opacity: var(--decorative-opacity-low);
   transition: opacity var(--motion-med);
 }
-.decor:nth-child(odd) {
-  background: var(--brand-decoration-secondary);
-  opacity: var(--decorative-opacity-medium);
+.decor :deep(svg) {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
-.decor:nth-child(3n) {
-  background: var(--brand-decoration-muted);
+.decor:nth-child(odd) {
+  opacity: var(--decorative-opacity-medium);
 }
 .decor--muted {
   opacity: calc(var(--decorative-opacity-low) * 0.5);

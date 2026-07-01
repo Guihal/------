@@ -15,21 +15,28 @@ async function read(key: string): Promise<string | null> {
     const { value } = await SecureStoragePlugin.get({ key });
     return value ?? null;
   } catch {
-    // Key absent — normal "no session" state, not an error.
-    return null;
+    return localFallback().getItem(key);
   }
 }
 
 async function write(key: string, value: string): Promise<void> {
-  await SecureStoragePlugin.set({ key, value });
+  try {
+    await SecureStoragePlugin.set({ key, value });
+  } catch {
+    localFallback().setItem(key, value);
+  }
 }
 
 async function remove(key: string): Promise<void> {
   try {
     await SecureStoragePlugin.remove({ key });
   } catch {
-    // Already gone — ignore.
+    localFallback().removeItem(key);
   }
+}
+
+function localFallback(): Storage {
+  return window.localStorage;
 }
 
 export function useSecureStorage() {

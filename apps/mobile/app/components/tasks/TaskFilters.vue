@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Archive, CheckCircle2, ListTodo } from "lucide-vue-next";
+import { Archive, CheckCircle2, ListChecks, ListTodo } from "lucide-vue-next";
 import type { TaskCategory, TaskListQuery, TaskStatus } from "~~/api";
 
 const props = defineProps<{
@@ -19,7 +19,7 @@ const statuses = [
   { value: "active", label: "Активные", icon: ListTodo },
   { value: "completed", label: "Готовые", icon: CheckCircle2 },
   { value: "archived", label: "Архив", icon: Archive },
-  { value: "all", label: "Все", icon: ListTodo },
+  { value: "all", label: "Все", icon: ListChecks },
 ] as const;
 </script>
 
@@ -39,7 +39,7 @@ const statuses = [
         {{ s.label }}
       </button>
     </div>
-    <div class="row">
+    <div class="select-row">
       <label>
         <span>Сортировка</span>
         <select :value="sort" @change="emit('update:sort', ($event.target as HTMLSelectElement).value as NonNullable<TaskListQuery['sort']>)">
@@ -64,21 +64,37 @@ const statuses = [
 <style scoped lang="scss">
 .filters {
   display: grid;
-  gap: 0.65rem;
+  gap: 0.6rem;
 }
-.tabs,
-.row {
+.tabs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: 0.45rem;
+  padding: 0.2rem;
+  border: 1px solid color-mix(in srgb, var(--stroke) 82%, transparent);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+}
+.select-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.55rem;
+}
+@media (min-width: 390px) {
+  .select-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .chip {
-  min-height: 44px;
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  min-height: 42px;
+  justify-content: flex-start;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
   color: var(--text);
   font-weight: 700;
+  padding: 0 0.6rem;
+  transition: border-color var(--motion-fast), background var(--motion-fast);
 }
 .chip,
 label {
@@ -88,7 +104,8 @@ label {
 }
 .chip.active {
   border-color: var(--accent);
-  box-shadow: var(--ring);
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-2));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 42%, transparent);
 }
 label {
   min-width: 0;
@@ -100,10 +117,13 @@ label {
 select {
   min-height: 44px;
   width: 100%;
-  border: 1px solid var(--stroke);
+  border: 1px solid color-mix(in srgb, var(--stroke) 82%, transparent);
   border-radius: var(--radius-md);
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
   color: var(--text);
   padding: 0 0.65rem;
+}
+@media (max-width: 340px) {
+  .chip { padding: 0 0.5rem; font-size: 0.9rem; }
 }
 </style>

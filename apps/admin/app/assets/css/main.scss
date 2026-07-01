@@ -1,3 +1,4 @@
+@use "./font-faces.css";
 @use "./tokens.scss";
 
 * {
@@ -29,7 +30,12 @@ body {
   outline: none;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
 .display {
+  font-family: var(--font-heading);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.05;

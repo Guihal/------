@@ -1,5 +1,5 @@
 import type { VisualState } from "../contracts/visual-settings";
-import { MAGIC_SVG_FILES } from "./assets";
+import { MAGIC_SVG_FILES, type MagicSvgName } from "./assets";
 
 type DecorativeDetail = VisualState["decorative_detail"];
 
@@ -8,7 +8,7 @@ export type ScatterItem = {
   y: number; // %
   rotation: number; // deg
   scale: number;
-  asset: string; // basename of a MAGIC_SVG_FILES entry
+  asset: MagicSvgName; // basename of a MAGIC_SVG_FILES entry
 };
 
 // Invariant deterministic layout table keyed by backend decorative_detail.
@@ -17,24 +17,44 @@ export type ScatterItem = {
 // ponytail: fixed table; swap for backend scatter seed once OD2 is decided.
 const LAYOUT_TABLE: Record<DecorativeDetail, ScatterItem[]> = {
   "soft-sparks": [
-    { x: 12, y: 18, rotation: -12, scale: 1.1, asset: "magic-spark" },
-    { x: 82, y: 14, rotation: 18, scale: 0.8, asset: "tiny-spark" },
-    { x: 24, y: 72, rotation: 8, scale: 0.9, asset: "tiny-spark" },
-    { x: 68, y: 64, rotation: -20, scale: 1.0, asset: "magic-spark" },
-    { x: 48, y: 40, rotation: 4, scale: 0.7, asset: "tiny-spark" },
+    { x: 9, y: 13, rotation: -14, scale: 0.74, asset: "magic-spark" },
+    { x: 25, y: 20, rotation: 18, scale: 0.58, asset: "magic-curl" },
+    { x: 76, y: 12, rotation: -10, scale: 0.7, asset: "magic-orbit" },
+    { x: 91, y: 25, rotation: 22, scale: 0.56, asset: "magic-wisp" },
+    { x: 15, y: 39, rotation: 7, scale: 0.52, asset: "magic-thread" },
+    { x: 45, y: 34, rotation: -18, scale: 0.46, asset: "tiny-spark" },
+    { x: 68, y: 42, rotation: 28, scale: 0.64, asset: "magic-curl" },
+    { x: 86, y: 53, rotation: -28, scale: 0.5, asset: "magic-spark" },
+    { x: 28, y: 61, rotation: 16, scale: 0.62, asset: "magic-wisp" },
+    { x: 57, y: 68, rotation: -6, scale: 0.54, asset: "magic-orbit" },
+    { x: 11, y: 79, rotation: 34, scale: 0.5, asset: "magic-curl" },
+    { x: 39, y: 88, rotation: -22, scale: 0.44, asset: "magic-thread" },
+    { x: 75, y: 84, rotation: 12, scale: 0.6, asset: "tiny-spark" },
   ],
   "thin-rings": [
-    { x: 16, y: 22, rotation: 0, scale: 1.2, asset: "magic-orbit" },
-    { x: 74, y: 30, rotation: -8, scale: 0.9, asset: "magic-orbit" },
-    { x: 38, y: 76, rotation: 12, scale: 1.0, asset: "magic-thread" },
-    { x: 86, y: 70, rotation: -4, scale: 0.85, asset: "magic-orbit" },
+    { x: 12, y: 15, rotation: 0, scale: 0.68, asset: "magic-orbit" },
+    { x: 34, y: 17, rotation: -8, scale: 0.52, asset: "magic-thread" },
+    { x: 67, y: 19, rotation: 11, scale: 0.64, asset: "magic-orbit" },
+    { x: 88, y: 31, rotation: -19, scale: 0.48, asset: "magic-curl" },
+    { x: 18, y: 42, rotation: 24, scale: 0.48, asset: "magic-wisp" },
+    { x: 52, y: 43, rotation: -4, scale: 0.58, asset: "magic-orbit" },
+    { x: 79, y: 56, rotation: 16, scale: 0.5, asset: "magic-thread" },
+    { x: 27, y: 66, rotation: -18, scale: 0.56, asset: "magic-curl" },
+    { x: 60, y: 76, rotation: 8, scale: 0.46, asset: "magic-spark" },
+    { x: 90, y: 83, rotation: -6, scale: 0.54, asset: "magic-orbit" },
   ],
   "small-dots": [
-    { x: 20, y: 16, rotation: 0, scale: 0.9, asset: "tiny-spark" },
-    { x: 60, y: 24, rotation: 0, scale: 0.7, asset: "tiny-spark" },
-    { x: 30, y: 58, rotation: 0, scale: 1.0, asset: "tiny-spark" },
-    { x: 78, y: 50, rotation: 0, scale: 0.8, asset: "tiny-spark" },
-    { x: 50, y: 84, rotation: 0, scale: 0.75, asset: "tiny-spark" },
+    { x: 11, y: 12, rotation: 0, scale: 0.42, asset: "tiny-spark" },
+    { x: 31, y: 18, rotation: 12, scale: 0.34, asset: "magic-spark" },
+    { x: 58, y: 14, rotation: -10, scale: 0.38, asset: "tiny-spark" },
+    { x: 84, y: 23, rotation: 16, scale: 0.36, asset: "magic-curl" },
+    { x: 21, y: 39, rotation: -12, scale: 0.36, asset: "magic-wisp" },
+    { x: 49, y: 42, rotation: 8, scale: 0.3, asset: "tiny-spark" },
+    { x: 76, y: 49, rotation: -18, scale: 0.34, asset: "magic-thread" },
+    { x: 14, y: 62, rotation: 18, scale: 0.32, asset: "tiny-spark" },
+    { x: 39, y: 71, rotation: -6, scale: 0.34, asset: "magic-orbit" },
+    { x: 64, y: 76, rotation: 14, scale: 0.32, asset: "tiny-spark" },
+    { x: 88, y: 86, rotation: -10, scale: 0.36, asset: "magic-spark" },
   ],
 };
 
@@ -53,7 +73,7 @@ function selfCheck(): void {
     const a = scatterLayout(k);
     const b = scatterLayout(k);
     assert(JSON.stringify(a) === JSON.stringify(b), `deterministic ${k}`);
-    assert(a.length > 0, `non-empty ${k}`);
+    assert(a.length >= 10 && a.length <= 15, `10-15 decor items ${k}`);
     for (const item of a) {
       assert(names.has(item.asset), `asset in registry ${item.asset}`);
       assert(item.x >= 0 && item.x <= 100, `x in range ${item.x}`);

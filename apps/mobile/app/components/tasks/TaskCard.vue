@@ -49,59 +49,100 @@ const deadline = computed(() =>
         <span><Gauge :size="14" />{{ complexity[task.complexity] }}</span>
       </span>
     </button>
-    <div class="actions">
-      <button class="ghost tap" type="button" @click="emit('open', task)">
+    <div class="actions" aria-label="Действия с задачей">
+      <button
+        class="icon-action tap"
+        type="button"
+        aria-label="Открыть детали"
+        title="Детали"
+        @click="emit('open', task)"
+      >
         <Eye :size="17" aria-hidden="true" />
-        Детали
       </button>
       <button
         v-if="task.status === 'active'"
-        class="ghost tap"
+        class="icon-action primary tap"
         type="button"
+        aria-label="Выполнить задачу"
+        title="Выполнить"
         :disabled="busy"
         @click="emit('complete', task)"
       >
         <CheckCircle2 :size="17" aria-hidden="true" />
-        Выполнить
       </button>
       <button
         v-if="task.status !== 'archived'"
-        class="ghost tap"
+        class="icon-action tap"
         type="button"
+        aria-label="Переместить в архив"
+        title="Архив"
         :disabled="busy"
         @click="emit('archive', task)"
       >
         <Archive :size="17" aria-hidden="true" />
-        Архив
       </button>
     </div>
   </article>
 </template>
 
 <style scoped lang="scss">
-.card { border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--surface) 88%, transparent); box-shadow: var(--shadow-soft); overflow: hidden; }
-.card.completed,
-.card.archived {
-  opacity: 0.72;
+.card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  border: 1px solid color-mix(in srgb, var(--stroke) 86%, transparent);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface) 91%, transparent);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
 }
-.main { display: grid; gap: 0.45rem; width: 100%; padding: 0.85rem; border: 0; background: transparent; color: var(--text); text-align: left; }
-.topline, .meta, .actions, .meta span, .overdue { display: flex; align-items: center; gap: 0.4rem; }
-.topline,
-.actions {
-  justify-content: space-between;
+.card.completed, .card.archived { opacity: 0.72; }
+.main {
+  min-width: 0;
+  display: grid;
+  gap: 0.42rem;
+  width: 100%;
+  padding: 0.9rem 0.2rem 0.9rem 0.95rem;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
 }
+.main strong { line-height: 1.2; }
+.topline, .meta, .meta span, .overdue {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.topline { justify-content: space-between; }
 .category, .description, .meta { color: var(--muted); font-size: 0.82rem; }
 .description { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.meta {
-  flex-wrap: wrap;
-}
+.meta { flex-wrap: wrap; row-gap: 0.25rem; }
 .overdue { color: var(--danger); font-size: 0.78rem; font-weight: 800; }
 .actions {
-  padding: 0 0.55rem 0.55rem;
-  gap: 0.4rem;
+  display: grid;
+  align-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.55rem 0.55rem 0.2rem;
 }
-.ghost { min-height: 40px; border: 1px solid var(--stroke); border-radius: var(--radius-md); background: var(--surface-2); color: var(--text); padding: 0 0.55rem; font-weight: 700; }
-.ghost:disabled {
-  opacity: 0.5;
+.icon-action {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--stroke) 86%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-2) 84%, transparent);
+  color: var(--text);
+  padding: 0;
 }
+.icon-action.primary {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--stroke));
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+}
+.icon-action:disabled { opacity: 0.5; }
+.icon-action:focus-visible, .main:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--accent); }
 </style>

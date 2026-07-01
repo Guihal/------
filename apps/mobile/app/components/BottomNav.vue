@@ -34,8 +34,9 @@ const tabs: Tab[] = [
   bottom: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
   border-top: 1px solid var(--surface-2);
+  backdrop-filter: blur(16px);
   // Respect Android/iOS safe area (gesture nav bar).
   padding-bottom: var(--safe-bottom);
   z-index: 50;
@@ -46,7 +47,7 @@ const tabs: Tab[] = [
   align-items: center;
   justify-content: center;
   gap: 0.15rem;
-  padding: 0.4rem 0.25rem;
+  padding: 0.38rem 0.25rem;
   color: var(--muted);
   text-decoration: none;
   min-height: 56px;
@@ -54,10 +55,14 @@ const tabs: Tab[] = [
 .tab-active {
   color: var(--accent);
 }
-.tab-active ::v-deep(svg) {
-  filter: drop-shadow(0 0 6px rgba(124, 92, 255, 0.7));
+.tab svg {
+  stroke-width: 1.9;
+}
+.tab-active :deep(svg) {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 65%, transparent));
 }
 .label {
   font-size: 0.7rem;
+  line-height: 1;
 }
 </style>

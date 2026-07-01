@@ -26,6 +26,7 @@ import (
 func New(cfg config.Config, logger *slog.Logger, db *sql.DB) *http.Server {
 	router := chi.NewRouter()
 	router.Use(RequestID)
+	router.Use(DevCORS)
 	router.Use(AccessLog(logger))
 	router.Get("/health", HealthHandler(cfg))
 	serveAssets(router, cfg.AssetsDir)
