@@ -3,13 +3,14 @@ package config
 import "os"
 
 const (
-	defaultAppEnv      = "development"
-	defaultHTTPAddr    = "127.0.0.1:8080"
-	defaultDatabaseURL = "postgres://task_companion:task_companion@localhost:5432/task_companion?sslmode=disable"
-	defaultServiceName = "task-manager-backend"
-	defaultAccessTTL   = "15m"
-	defaultRefreshTTL  = "720h"
-	defaultAssetsDir   = "./assets"
+	defaultAppEnv         = "development"
+	defaultHTTPAddr       = "127.0.0.1:8080"
+	defaultDatabaseURL    = "postgres://task_companion:task_companion@localhost:5432/task_companion?sslmode=disable"
+	defaultServiceName    = "task-manager-backend"
+	defaultAccessTTL      = "15m"
+	defaultRefreshTTL     = "720h"
+	defaultAssetsDir      = "./assets"
+	defaultAllowedOrigins = "http://127.0.0.1:3000,http://127.0.0.1:3001,http://localhost:3000,http://localhost:3001"
 )
 
 type Config struct {
@@ -22,6 +23,7 @@ type Config struct {
 	AccessTokenTTL     string
 	RefreshTokenTTL    string
 	AssetsDir          string
+	AllowedOrigins     string
 }
 
 func Load() Config {
@@ -35,6 +37,7 @@ func Load() Config {
 		AccessTokenTTL:     envOrDefault("ACCESS_TOKEN_TTL", defaultAccessTTL),
 		RefreshTokenTTL:    envOrDefault("REFRESH_TOKEN_TTL", defaultRefreshTTL),
 		AssetsDir:          envOrDefault("ASSETS_DIR", defaultAssetsDir),
+		AllowedOrigins:     envOrDefault("ALLOWED_ORIGINS", defaultAllowedOrigins),
 	}
 }
 
