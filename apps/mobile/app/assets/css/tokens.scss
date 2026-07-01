@@ -1,0 +1,80 @@
+// Canonical visual tokens. Raw hex lives ONLY here (+ shared/visual/visual-state.ts
+// fallback catalog). Source: docs/visual-foundation.md §4-§5.
+
+:root {
+  // --- Canonical fixed brand colors (raw hex only here) ---
+  --bg: #0d0f17;
+  --surface: #181b25;
+  --surface-2: #222635;
+  --stroke: #30364a;
+  --text: #f4f0e8;
+  --muted: #9ea7b8;
+  --magic: #b9a7ff; // FIXED brand lilac (decoration only, NOT runtime accent)
+  --mana: #8fd7c7;
+  --xp: #f6c76b;
+  --blue: #7ea7ff;
+  --danger: #ff6b7a;
+
+  // --- Runtime accent: default fallback from backend catalog (non-lilac).
+  // Overridden at runtime by visualStateToCssVars(state) on .app-shell.
+  --accent: #7dd3fc;
+
+  // --- Semantic aliases (no raw hex, var() only) ---
+  --brand-decoration-primary: var(--magic);
+  --brand-decoration-secondary: var(--mana);
+  --brand-decoration-muted: var(--muted);
+  --magic-glow: var(--magic);
+  --xp-accent: var(--xp);
+  --background-orb-1: var(--magic);
+  --background-orb-2: var(--blue);
+  --decorative-opacity-low: 0.16;
+  --decorative-opacity-medium: 0.3;
+
+  // --- Variant tints (raw hex only here). Mapper maps VisualState → these. ---
+  --bg-dark-ember: #1a0f0a;
+  --bg-deep-forest: #0c1410;
+  --bg-midnight: #0d0f17;
+  --card-graphite: #181b25;
+  --card-pine: #14201a;
+  --card-plum: #1d1622;
+  --profile-quiet-grid: #141821;
+  --profile-night-lines: #0f1219;
+  --profile-calm-shapes: #161b22;
+
+  // --- Non-color hierarchy ---
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --surface-opacity-translucent: 0.82;
+  --shadow-soft: 0 10px 30px -12px rgba(0, 0, 0, 0.7),
+    0 2px 8px -4px rgba(0, 0, 0, 0.5);
+  --motion-fast: 0.12s ease;
+  --motion-med: 0.22s ease;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  // Local system font stack — NO Google Fonts / external CDN.
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji";
+
+  // ponytail: legacy --accent-* / --ring / --glow-accent / --shadow-card /
+  // --error / --ok aliases kept so committed P10 pages keep resolving.
+  // Drop once P10/P11 consume canonical tokens directly.
+  --accent-2: var(--blue);
+  --accent-grad: linear-gradient(135deg, var(--accent), var(--blue));
+  --accent-weak: #2a2347; // was raw in old main.scss, kept raw
+  --glow-accent: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+  --ring: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
+  --shadow-card: var(--shadow-soft);
+  --error: var(--danger);
+  --ok: var(--mana);
+}
