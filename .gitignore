@@ -116,7 +116,28 @@ playwright/.cache/
 
 # Agent state
 .agent-state/
+.codex/
+.pi/
+.pi-loop.json.lock
 
 # Polish cycles
 /docs/polish-cycles/
 .gstack/
+
+# Local-only scratch: build symlink, unfilled agent-identity templates,
+# thesis draft binaries, personal photos, one-off scripts/screenshots
+/dist
+HEARTBEAT.md
+IDENTITY.md
+SOUL.md
+TOOLS.md
+USER.md
+/Диплом (кусок).docx
+/Диплом (кусок).pdf
+/комбинизоончик.png
+/комбинизоончик + котик.png
+/tmp-screenshots.mjs
+/p10-login-320.png
+/p10-login-320-v2.png
+/p10-login-final.png
+/p10-register-320.png
