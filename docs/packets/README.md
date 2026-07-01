@@ -60,7 +60,7 @@ Vue page/component
 | P06 | [backend-rewards-engine.md](backend-rewards-engine.md) | Complete transaction, XP grant, drops, level rewards, audit |
 | P07 | [backend-inventory-mascot-equip.md](backend-inventory-mascot-equip.md) | Inventory, mascot, equip/unequip |
 | P08 | [backend-admin-assets-audit-stats.md](backend-admin-assets-audit-stats.md) | Admin API, assets, audit, stats |
-| P09 | [frontend-contracts-shared-client.md](frontend-contracts-shared-client.md) | OpenAPI client, shared DTO/error handling |
+| P09-1 | [frontend-contracts-shared-client.md](frontend-contracts-shared-client.md) | Frontend foundation: API client, DTO, error mapper, visual tokens, VisualState mapper, brand assets, page contracts |
 | P10 | [mobile-scaffold-auth-shell.md](mobile-scaffold-auth-shell.md) | Nuxt+Capacitor app shell, auth gate, nav |
 | P11 | [mobile-task-flow.md](mobile-task-flow.md) | Mobile task list/form/details/complete/archive |
 | P12 | [mobile-rewards-profile-inventory-settings.md](mobile-rewards-profile-inventory-settings.md) | Rewards, profile, inventory, settings |
@@ -68,8 +68,15 @@ Vue page/component
 | P14 | [quality-demo-acceptance.md](quality-demo-acceptance.md) | Tests, smoke, demo path, accessibility checks |
 | P15 | [reminders-model-ui.md](reminders-model-ui.md) | Reminder model/API/UI without native push |
 
-P09 can start after P01 creates the OpenAPI shell, but it must be refreshed after
-P03-P08 stabilize endpoints and DTOs.
+P09-1 — добавочный пакет над закоммиченными P09/P10 (commits `58ede85` и `04d0554`),
+без revert: API-клиент, DTO и error-mapper уже реализованы, P09-1 добавляет
+визуальный контракт (tokens, VisualState→CSS-vars mapper, brand asset registry,
+fallback theme, page contracts, shared Logo/VisualBackground компоненты).
+Визуальный источник правды для P09-1/P10/P11/P12:
+[../visual-foundation.md](../visual-foundation.md).
+
+P09-1 можно начинать после P01 (OpenAPI shell), но он должен быть обновлён после
+стабилизации endpoints и DTO в P03-P08.
 
 ## Packet Template
 
