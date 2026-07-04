@@ -23,7 +23,7 @@ export const useSettingsStore = defineStore("settings", () => {
 
   async function patch(body: SettingsPatchRequest) {
     if (!navigator.onLine) {
-      error.value = "Нет сети. Настройки не сохранены.";
+      error.value = "Нет сети. Проверьте соединение и попробуйте ещё раз.";
       return null;
     }
     saving.value = true;
@@ -32,7 +32,7 @@ export const useSettingsStore = defineStore("settings", () => {
       settings.value = await api.settings.patch(body);
       return settings.value;
     } catch (e) {
-      error.value = mapSettingsError(e, "Не удалось сохранить настройки.");
+      error.value = mapSettingsError(e, "Не удалось сохранить настройки. Попробуйте ещё раз?");
       throw e;
     } finally {
       saving.value = false;

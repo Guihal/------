@@ -1,14 +1,8 @@
-import type { CompletionPayload, InventoryItemView, Rarity } from "~~/api";
-
-const rarity: Record<Rarity, string> = {
-  common: "обычный",
-  rare: "редкий",
-  epic: "эпический",
-  legendary: "легендарный",
-};
+import type { CompletionPayload, InventoryItemView } from "~~/api";
+import { rarityLabels } from "./useInventoryLabels";
 
 export function rewardItemLine(item: InventoryItemView) {
-  return `${item.name}, ${rarity[item.rarity]}, ${item.xp_multiplier.toFixed(2)}x XP`;
+  return `${item.name}, ${rarityLabels[item.rarity]}, ${item.xp_multiplier.toFixed(2)}x XP`;
 }
 
 export function rewardXpLine(payload: CompletionPayload) {

@@ -37,12 +37,13 @@ const emit = defineEmits<{
 <style scoped lang="scss">
 .backdrop { position: fixed; inset: 0; z-index: 25; display: grid; align-items: end; background: color-mix(in srgb, var(--bg) 70%, transparent); }
 .sheet {
-  max-height: 92vh;
+  max-height: 92dvh;
   overflow: auto;
   padding: 1rem;
   border: 1px solid var(--stroke);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  background: var(--surface);
+  background: var(--surface-card);
+  backdrop-filter: blur(14px);
 }
 .sheet h2 {
   margin: 0 0 0.85rem;

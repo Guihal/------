@@ -46,7 +46,14 @@ onMounted(() => {
         <tr v-for="u in store.items" :key="u.id">
           <td>{{ u.email }}</td>
           <td>{{ u.name || "—" }}</td>
-          <td>{{ u.role === "admin" ? "администратор" : "пользователь" }}</td>
+          <td>
+            <span
+              class="badge"
+              :style="badgeStyle(u.role === 'admin' ? '#7c5cff' : '#9aa0ab')"
+            >
+              {{ u.role === "admin" ? "администратор" : "пользователь" }}
+            </span>
+          </td>
           <td>{{ u.level }}</td>
           <td>{{ u.xp }}</td>
           <td>{{ new Date(u.created_at).toLocaleString("ru-RU") }}</td>
@@ -76,5 +83,16 @@ h1 {
   align-items: flex-end;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-transform: capitalize;
 }
 </style>

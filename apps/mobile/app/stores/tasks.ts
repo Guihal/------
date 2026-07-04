@@ -29,7 +29,7 @@ export const useTasksStore = defineStore("tasks", () => {
       items.value = res.items;
       total.value = res.total;
     } catch (e) {
-      error.value = mapTaskError(e, "Не удалось загрузить задачи.");
+      error.value = mapTaskError(e, "Не удалось загрузить задачи. Проверьте соединение?");
       throw e;
     } finally {
       loading.value = false;
@@ -61,7 +61,7 @@ export const useTasksStore = defineStore("tasks", () => {
       total.value += 1;
       return task;
     } catch (e) {
-      error.value = mapTaskError(e, "Не удалось создать задачу.");
+      error.value = mapTaskError(e, "Не удалось создать задачу. Попробуйте ещё раз?");
       throw e;
     }
   }
@@ -73,7 +73,7 @@ export const useTasksStore = defineStore("tasks", () => {
       selected.value = task;
       return task;
     } catch (e) {
-      error.value = mapTaskError(e, "Не удалось сохранить задачу.");
+      error.value = mapTaskError(e, "Не удалось сохранить задачу. Попробуйте ещё раз?");
       throw e;
     }
   }

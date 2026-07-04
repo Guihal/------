@@ -28,6 +28,6 @@ label { color: var(--muted); font-size: 0.85rem; }
 .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem; }
 input, button { min-height: 44px; border-radius: var(--radius-md); border: 1px solid var(--stroke); }
 input { min-width: 0; padding: 0 0.75rem; background: var(--surface); color: var(--text); }
-button { padding: 0 0.8rem; background: var(--accent-grad); color: var(--bg); font-weight: 900; }
+button { padding: 0 0.8rem; background: color-mix(in srgb, var(--accent) 14%, var(--surface-2)); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--stroke)); font-weight: 800; }
 button:disabled { opacity: 0.55; }
 </style>

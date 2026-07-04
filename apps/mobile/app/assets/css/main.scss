@@ -8,7 +8,16 @@
 html,
 body,
 #__nuxt {
-  height: 100%;
+  min-height: 100dvh;
+}
+
+// dvh fallback for older browsers
+@supports not (min-height: 100dvh) {
+  html,
+  body,
+  #__nuxt {
+    height: 100%;
+  }
 }
 
 body {

@@ -32,7 +32,7 @@ defineProps<{
   padding: 0.85rem;
   border: 1px solid var(--stroke);
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-card);
   color: var(--muted);
 }
 .error {

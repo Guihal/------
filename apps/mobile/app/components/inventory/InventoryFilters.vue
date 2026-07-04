@@ -7,7 +7,7 @@ const slot = defineModel<string>("slot", { required: true });
 
 const rarities: Array<Rarity | "all"> = ["all", "common", "rare", "epic", "legendary"];
 const rarityText = (value: Rarity | "all") =>
-  value === "all" ? "все" : rarityLabels[value];
+  value === "all" ? "Все" : rarityLabels[value];
 </script>
 
 <template>
@@ -23,7 +23,7 @@ const rarityText = (value: Rarity | "all") =>
     <label>
       Слот
       <select v-model="slot" class="tap">
-        <option value="all">все</option>
+        <option value="all">Все</option>
         <option v-for="value in slots" :key="value" :value="value">
           {{ slotLabel(value) }}
         </option>

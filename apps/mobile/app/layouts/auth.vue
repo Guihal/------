@@ -8,7 +8,7 @@
 
 <style scoped lang="scss">
 .auth-shell {
-  min-height: 100%;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;

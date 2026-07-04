@@ -23,7 +23,7 @@ export const useInventoryStore = defineStore("inventory", () => {
       applyInventory(inventory);
       mascot.value = activeMascot;
     } catch (e) {
-      error.value = mapInventoryError(e, "Не удалось загрузить инвентарь.");
+      error.value = mapInventoryError(e, "Не удалось загрузить инвентарь. Проверьте соединение?");
       throw e;
     } finally {
       loading.value = false;
@@ -45,7 +45,7 @@ export const useInventoryStore = defineStore("inventory", () => {
       await api.inventory.equip(item.id);
       await reloadInventory();
     } catch (e) {
-      error.value = mapInventoryError(e, "Не удалось надеть предмет.");
+      error.value = mapInventoryError(e, "Не удалось надеть предмет. Попробуйте ещё раз?");
       throw e;
     } finally {
       mutatingId.value = null;
@@ -58,7 +58,7 @@ export const useInventoryStore = defineStore("inventory", () => {
       await api.inventory.unequip(item.id);
       await reloadInventory();
     } catch (e) {
-      error.value = mapInventoryError(e, "Не удалось снять предмет.");
+      error.value = mapInventoryError(e, "Не удалось снять предмет. Попробуйте ещё раз?");
       throw e;
     } finally {
       mutatingId.value = null;
@@ -67,7 +67,7 @@ export const useInventoryStore = defineStore("inventory", () => {
 
   function canMutate(id: string) {
     if (!navigator.onLine) {
-      error.value = "Нет сети. Изменение экипировки не выполнено.";
+      error.value = "Нет сети. Проверьте соединение и попробуйте ещё раз.";
       return false;
     }
     if (mutatingId.value) return false;

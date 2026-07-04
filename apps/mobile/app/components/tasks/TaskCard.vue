@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AlertTriangle, Archive, CalendarClock, CheckCircle2, Eye, Flag, Gauge } from "lucide-vue-next";
+import { AlertTriangle, Archive, CalendarClock, CheckCircle2, Flag, Gauge } from "lucide-vue-next";
 import type { Task } from "~~/api";
 
 const props = defineProps<{
@@ -51,15 +51,6 @@ const deadline = computed(() =>
     </button>
     <div class="actions" aria-label="Действия с задачей">
       <button
-        class="icon-action tap"
-        type="button"
-        aria-label="Открыть детали"
-        title="Детали"
-        @click="emit('open', task)"
-      >
-        <Eye :size="17" aria-hidden="true" />
-      </button>
-      <button
         v-if="task.status === 'active'"
         class="icon-action primary tap"
         type="button"
@@ -93,7 +84,7 @@ const deadline = computed(() =>
   align-items: stretch;
   border: 1px solid color-mix(in srgb, var(--stroke) 86%, transparent);
   border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--surface) 91%, transparent);
+  background: var(--surface-card);
   box-shadow: var(--shadow-soft);
   overflow: hidden;
 }

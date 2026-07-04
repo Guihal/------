@@ -36,10 +36,10 @@ onMounted(() => {
     </div>
     <InventoryMascot :mascot="store.mascot" :equipped="store.equipped" />
     <InventoryFilters v-model:rarity="rarity" v-model:slot="slot" :slots="slots" />
-    <p v-if="store.error" class="state error" role="alert" aria-live="assertive">
+    <p v-if="store.loading" class="state" role="status">Инвентарь загружается…</p>
+    <p v-else-if="store.error" class="state error" role="alert" aria-live="assertive">
       {{ store.error }}
     </p>
-    <p v-if="store.loading" class="state" role="status">Инвентарь загружается…</p>
     <div v-else-if="!filtered.length" class="empty" role="status">
       {{ emptyText }}
     </div>
@@ -62,7 +62,7 @@ onMounted(() => {
 .title p, .title h1 { margin: 0; }
 .title p { color: var(--muted); }
 .title h1 { font-size: 1.55rem; }
-.state, .empty { margin: 0; padding: 0.85rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface); }
+.state, .empty { margin: 0; padding: 0.85rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface-card); }
 .error { color: var(--danger); }
 .empty { color: var(--muted); }
 .items { display: grid; gap: 0.75rem; }

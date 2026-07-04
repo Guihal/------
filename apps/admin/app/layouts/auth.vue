@@ -18,7 +18,7 @@
   width: 100%;
   max-width: 24rem;
   padding: 1.75rem 1.5rem;
-  background: var(--surface);
+  background: var(--surface-card);
   border: 1px solid var(--stroke);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);

@@ -46,8 +46,13 @@ defineProps<{
   cursor: not-allowed;
 }
 .primary {
-  background: var(--accent-grad);
+  background: var(--accent);
+  border-color: color-mix(in srgb, #fff 22%, var(--accent));
   color: #fff;
+}
+.primary:hover:not(:disabled) {
+  background: var(--accent-grad);
+  border-color: transparent;
 }
 .danger {
   background: var(--danger);

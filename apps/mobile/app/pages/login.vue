@@ -33,7 +33,7 @@ async function submit() {
     <Logo class="brand" :size="72" glow decorative />
     <h1 class="title display">Вход</h1>
     <p v-if="expired" class="banner" role="alert">
-      Сессия истекла. Войдите снова.
+      Сессия закончилась. Войдите заново
     </p>
     <form class="form" novalidate @submit.prevent="submit">
       <FormField

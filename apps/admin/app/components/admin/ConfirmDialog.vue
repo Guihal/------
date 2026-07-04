@@ -102,7 +102,8 @@ onUnmounted(() => {
   max-width: 26rem;
   padding: 1.25rem;
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-card);
+  backdrop-filter: blur(14px);
   border: 1px solid var(--stroke);
   box-shadow: var(--shadow-card);
 }

@@ -52,7 +52,7 @@ watch(() => props.payload, (payload) => {
 <style scoped lang="scss">
 .compact { margin: 0; padding: 0.75rem; border: 1px solid var(--stroke); border-radius: var(--radius-md); background: var(--surface); color: var(--text); }
 .shade { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; padding: 1rem; background: color-mix(in srgb, var(--bg) 78%, transparent); }
-.popup { position: relative; width: min(100%, 22rem); max-height: calc(100dvh - 2rem); overflow: auto; display: grid; gap: 0.7rem; padding: 1.2rem; border: 1px solid var(--magic); border-radius: var(--radius-xl); background: var(--surface); color: var(--text); box-shadow: var(--shadow-soft), 0 0 28px color-mix(in srgb, var(--magic) 35%, transparent); }
+.popup { position: relative; width: min(100%, 22rem); max-height: calc(100dvh - 2rem); overflow: auto; display: grid; gap: 0.7rem; padding: 1.2rem; border: 1px solid var(--magic); border-radius: var(--radius-xl); background: var(--surface-card); backdrop-filter: blur(14px); color: var(--text); box-shadow: var(--shadow-soft), 0 0 28px color-mix(in srgb, var(--magic) 35%, transparent); }
 .close { position: absolute; top: 0.6rem; right: 0.6rem; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--stroke); border-radius: var(--radius-md); background: var(--surface-2); color: var(--text); }
 .icon { color: var(--magic); filter: drop-shadow(0 0 10px var(--magic)); }
 h2, .xp, ul { margin: 0; }

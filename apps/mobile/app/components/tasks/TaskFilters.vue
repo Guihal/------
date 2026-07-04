@@ -73,7 +73,7 @@ const statuses = [
   padding: 0.2rem;
   border: 1px solid color-mix(in srgb, var(--stroke) 82%, transparent);
   border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  background: var(--surface-card);
 }
 .select-row {
   display: grid;
@@ -119,7 +119,7 @@ select {
   width: 100%;
   border: 1px solid color-mix(in srgb, var(--stroke) 82%, transparent);
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  background: var(--surface-card);
   color: var(--text);
   padding: 0 0.65rem;
 }

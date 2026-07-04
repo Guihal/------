@@ -12,10 +12,6 @@ const taskPage = useTaskPage();
     />
 
     <TaskCompleteToast :payload="taskPage.store.completion" />
-    <p v-if="taskPage.store.error" class="state error" role="alert">
-      {{ taskPage.store.error }}
-    </p>
-
     <TaskFilters
       v-model:status="taskPage.status.value"
       v-model:sort="taskPage.sort.value"
@@ -25,6 +21,9 @@ const taskPage = useTaskPage();
 
     <p v-if="taskPage.store.loading" class="state" role="status">
       Задачи загружаются…
+    </p>
+    <p v-else-if="taskPage.store.error" class="state error" role="alert">
+      {{ taskPage.store.error }}
     </p>
     <div v-else-if="!taskPage.store.items.length" class="empty" role="status">
       {{ taskPage.emptyText.value }}
@@ -66,7 +65,7 @@ const taskPage = useTaskPage();
 
 <style scoped lang="scss">
 .tasks-page { display: grid; gap: 0.8rem; padding-top: 0.8rem; }
-.state, .empty { margin: 0; padding: 0.85rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface); }
+.state, .empty { margin: 0; padding: 0.85rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface-card); }
 .error {
   color: var(--danger);
 }

@@ -9,7 +9,7 @@ const displayName = computed(
 const progression = computed(() => profile.profile?.progression);
 const levelLine = computed(() => {
   const p = progression.value;
-  if (!p) return "Прогресс загружается";
+  if (!p) return "Профиль загружается…";
   return `Ур. ${p.level} · ${p.xp_in_current_level}/${p.xp_per_level} XP`;
 });
 const barWidth = computed(() => {

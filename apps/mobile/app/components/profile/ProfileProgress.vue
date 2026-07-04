@@ -31,7 +31,7 @@ const width = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.panel { display: grid; gap: 0.75rem; padding: 1rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface); }
+.panel { display: grid; gap: 0.75rem; padding: 1rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface-card); }
 .top { display: flex; justify-content: space-between; gap: 0.75rem; color: var(--text); }
 .top span, dt { color: var(--muted); }
 .bar { height: 0.6rem; overflow: hidden; border-radius: var(--radius-sm); background: var(--surface-2); }

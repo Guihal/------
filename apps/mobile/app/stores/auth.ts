@@ -59,7 +59,7 @@ export const useAuthStore = defineStore("auth", () => {
       await setRefreshToken(res.refresh_token);
       setSession(res.access_token, res.user);
     } catch (e) {
-      error.value = mapError(e, "Не удалось войти. Проверьте email и пароль.");
+      error.value = mapError(e, "Что-то пошло не так при входе. Попробуйте ещё раз?");
       throw e;
     }
   }
@@ -71,7 +71,7 @@ export const useAuthStore = defineStore("auth", () => {
       await setRefreshToken(res.refresh_token);
       setSession(res.access_token, res.user);
     } catch (e) {
-      error.value = mapError(e, "Не удалось зарегистрироваться.");
+      error.value = mapError(e, "Не удалось зарегистрироваться. Попробуйте ещё раз?");
       throw e;
     }
   }

@@ -2,12 +2,21 @@ package httpserver
 
 import (
 	"net/http"
+	"time"
 
 	"taskcompanion/backend/internal/auth"
 )
 
+// refreshCookieName carries the refresh token for browser clients (admin SPA).
+// It is httpOnly so JS can never read it — RULES.md forbids storing secrets in
+// localStorage/sessionStorage. Native clients keep sending the token in the
+// JSON body and ignore this cookie.
+const refreshCookieName = "admin_rt"
+
 type AuthHandlers struct {
-	service *auth.Service
+	service      *auth.Service
+	refreshTTL   time.Duration
+	cookieSecure bool
 }
 
 type authRequest struct {

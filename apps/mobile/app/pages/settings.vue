@@ -24,14 +24,14 @@ onMounted(() => {
       <p>Настройки</p>
       <h1>Приложение</h1>
     </div>
-    <p v-if="store.error" class="state error" role="alert" aria-live="assertive">
+    <p v-if="store.loading" class="state" role="status">Настройки загружаются…</p>
+    <p v-else-if="store.error" class="state error" role="alert" aria-live="assertive">
       {{ store.error }}
     </p>
-    <p v-if="store.loading" class="state" role="status">Настройки загружаются…</p>
-    <template v-if="settings">
+    <template v-else-if="settings">
       <SettingsToggle
         label="Уведомления"
-        description="Разрешить будущие напоминания. Push-доставка появится в P15."
+        description="Разрешить будущие напоминания. Push-уведомления появятся позже."
         :model-value="settings.notifications_enabled"
         :disabled="store.saving"
         @update:model-value="save('notifications_enabled', $event)"
@@ -43,7 +43,7 @@ onMounted(() => {
       />
       <SettingsToggle
         label="Стабильное оформление"
-        description="Отключает визуальную вариативность и использует спокойный fallback."
+        description="Отключает визуальную вариативность и использует спокойный вид."
         :model-value="settings.disable_visual_randomness"
         :disabled="store.saving"
         @update:model-value="save('disable_visual_randomness', $event)"
@@ -64,6 +64,6 @@ onMounted(() => {
 .title p, .title h1 { margin: 0; }
 .title p { color: var(--muted); }
 .title h1 { font-size: 1.55rem; }
-.state { margin: 0; padding: 0.85rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface); }
+.state { margin: 0; padding: 0.85rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface-card); }
 .error { color: var(--danger); }
 </style>

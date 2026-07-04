@@ -8,9 +8,20 @@ const emit = defineEmits<{ (e: "disable", item: AdminItem): void }>();
 <template>
   <tr>
     <td>{{ props.item.name }}</td>
-    <td>{{ rarityLabel(props.item.rarity) }}</td>
+    <td>
+      <span class="badge" :style="badgeStyle(rarityColor(props.item.rarity))">
+        {{ rarityLabel(props.item.rarity) }}
+      </span>
+    </td>
     <td>{{ props.item.slot_key }}</td>
-    <td>{{ statusLabel(props.item.active) }}</td>
+    <td>
+      <span
+        class="badge"
+        :style="badgeStyle(props.item.active ? '#3fd07a' : '#9aa0ab')"
+      >
+        {{ statusLabel(props.item.active) }}
+      </span>
+    </td>
     <td>{{ new Date(props.item.created_at).toLocaleString("ru-RU") }}</td>
     <td class="actions">
       <NuxtLink :to="`/items/${props.item.id}/edit`" class="tap">
@@ -29,6 +40,17 @@ const emit = defineEmits<{ (e: "disable", item: AdminItem): void }>();
 </template>
 
 <style scoped lang="scss">
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-transform: capitalize;
+}
 .actions {
   display: flex;
   gap: 0.6rem;

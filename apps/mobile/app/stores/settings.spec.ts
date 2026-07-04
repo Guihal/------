@@ -40,7 +40,7 @@ describe("useSettingsStore", () => {
     const result = await store.patch({ locale: "ru" } as never);
 
     expect(result).toBeNull();
-    expect(store.error).toBe("Нет сети. Настройки не сохранены.");
+    expect(store.error).toBe("Нет сети. Проверьте соединение и попробуйте ещё раз.");
     expect(patchMock).not.toHaveBeenCalled();
   });
 });

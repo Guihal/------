@@ -3,6 +3,7 @@ import type { Task, TaskCreateRequest, TaskListQuery, TaskStatus } from "~~/api"
 export function useTaskPage() {
   const store = useTasksStore();
   const visual = useVisualStore();
+  const profile = useProfileStore();
   const status = ref<TaskStatus | "all">("active");
   const sort = ref<NonNullable<TaskListQuery["sort"]>>("overdue");
   const categoryId = ref("");
@@ -70,7 +71,7 @@ export function useTaskPage() {
       formOpen.value = false;
       await loadTasks();
     } catch {
-      formError.value = store.error ?? "Не удалось сохранить задачу.";
+      formError.value = store.error ?? "Не удалось сохранить задачу. Попробуйте ещё раз?";
     } finally {
       saving.value = false;
     }
@@ -80,6 +81,7 @@ export function useTaskPage() {
     try {
       const res = await store.complete(task.id);
       if (res?.visual_state) visual.apply(res.visual_state);
+      if (res) profile.applyProgression(res.progression_after);
       if (res) await loadTasks();
     } catch {
       // Store keeps the Russian error visible.

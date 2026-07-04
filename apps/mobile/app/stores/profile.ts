@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ApiError } from "~~/api";
-import type { ActiveMascot, ProfileResponse } from "~~/api";
+import type { ActiveMascot, ProfileResponse, ProgressionSnapshot } from "~~/api";
 
 export const useProfileStore = defineStore("profile", () => {
   const { api } = useAppClient();
@@ -18,7 +18,7 @@ export const useProfileStore = defineStore("profile", () => {
       profile.value = p;
       mascot.value = m;
     } catch (e) {
-      error.value = mapProfileError(e, "Не удалось загрузить профиль.");
+      error.value = mapProfileError(e, "Не удалось загрузить профиль. Проверьте соединение?");
       throw e;
     } finally {
       loading.value = false;
@@ -41,14 +41,22 @@ export const useProfileStore = defineStore("profile", () => {
       profile.value = await api.profile.patch({ display_name: displayName });
       return profile.value;
     } catch (e) {
-      error.value = mapProfileError(e, "Не удалось сохранить имя.");
+      error.value = mapProfileError(e, "Не удалось сохранить имя. Попробуйте ещё раз?");
       throw e;
     } finally {
       saving.value = false;
     }
   }
 
-  return { profile, mascot, loading, saving, error, load, saveName };
+  function applyProgression(snapshot: ProgressionSnapshot) {
+    if (!profile.value) return;
+    profile.value = {
+      ...profile.value,
+      progression: { ...profile.value.progression, ...snapshot },
+    };
+  }
+
+  return { profile, mascot, loading, saving, error, load, saveName, applyProgression };
 });
 
 function mapProfileError(e: unknown, fallback: string): string {

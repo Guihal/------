@@ -27,10 +27,10 @@ onMounted(async () => {
       <h1>{{ profile.profile?.display_name ?? "Профиль" }}</h1>
     </div>
     <p v-if="profile.loading" class="state" role="status">Профиль загружается…</p>
-    <p v-if="profile.error" class="state error" role="alert" aria-live="assertive">
+    <p v-else-if="profile.error" class="state error" role="alert" aria-live="assertive">
       {{ profile.error }}
     </p>
-    <template v-if="profile.profile">
+    <template v-else-if="profile.profile">
       <ProfileMascot :mascot="profile.mascot" :equipped="inventory.equipped" />
       <ProfileNameForm
         :name="profile.profile.display_name"
@@ -42,7 +42,7 @@ onMounted(async () => {
         :stats="profile.profile.stats"
       />
     </template>
-    <button class="logout tap" type="button" @click="onLogout">Выйти</button>
+    <button class="logout tap" type="button" aria-label="Выйти из аккаунта" @click="onLogout">Выйти</button>
   </section>
 </template>
 
@@ -55,7 +55,7 @@ onMounted(async () => {
 .title p, .title h1 { margin: 0; }
 .title p { color: var(--muted); }
 .title h1 { font-size: 1.55rem; }
-.state { margin: 0; padding: 0.85rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface); }
+.state { margin: 0; padding: 0.85rem; border: 1px solid var(--stroke); border-radius: var(--radius-lg); background: var(--surface-card); }
 .error { color: var(--danger); }
 .profile-quiet-grid { --profile-bg: var(--profile-quiet-grid); }
 .profile-night-lines { --profile-bg: var(--profile-night-lines); }

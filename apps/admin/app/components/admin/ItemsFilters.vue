@@ -30,7 +30,7 @@ const slot = defineModel<string>("slot", { required: true });
     </label>
     <label class="select-field">
       Слот
-      <input v-model="slot" type="text" class="tap" placeholder="head" />
+      <input v-model="slot" type="text" class="tap" placeholder="любой слот" />
     </label>
     <AppButton type="submit">Применить</AppButton>
   </form>

@@ -20,7 +20,7 @@ const complexity = { tiny: "очень малая", small: "малая", medium:
 const status = { active: "активная", completed: "выполнена", archived: "в архиве" };
 
 function formatDate(value?: string | null) {
-  if (!value) return "не задано";
+  if (!value) return "без дедлайна";
   return new Intl.DateTimeFormat("ru-RU", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
 }
 </script>
@@ -78,12 +78,13 @@ function formatDate(value?: string | null) {
 <style scoped lang="scss">
 .backdrop { position: fixed; inset: 0; z-index: 30; display: grid; align-items: end; background: color-mix(in srgb, var(--bg) 70%, transparent); }
 .sheet {
-  max-height: 88vh;
+  max-height: 88dvh;
   overflow: auto;
   padding: 1rem;
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   border: 1px solid var(--stroke);
-  background: var(--surface);
+  background: var(--surface-card);
+  backdrop-filter: blur(14px);
 }
 header, dt, .actions, .ghost { display: flex; align-items: center; gap: 0.5rem; }
 header {
